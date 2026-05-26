@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profilage Alimentaire — taty.be</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1a3d25;--green-mid:#2a5c38;--green-light:#eef5f0;--green-pale:#f3f8f4;
+  --cream:#f4efe6;--cream-dark:#ede6d8;--cream-mid:#f9f6f0;
+  --text:#1c1c1a;--text-mid:#4a4a45;--text-soft:#888880;
+  --border:#e2dbd0;--border-soft:#ece7de;
+}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;padding:28px 20px}
+.wrap{max-width:800px;margin:0 auto;padding-bottom:80px}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;margin-bottom:14px;overflow:hidden}
+.p20{padding:24px 28px}
+.th-banner,.db-banner{background:#fff;border:1px solid var(--border);border-radius:16px;margin-bottom:14px;overflow:hidden}
+.th-banner.ok{border-color:var(--green)}.db-banner.ok{border-color:var(--green)}
+.th-top,.db-top{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;cursor:pointer}
+.th-top:hover,.db-top:hover{background:var(--cream-mid);border-radius:16px}
+.th-left,.db-left{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500;color:var(--text)}
+.th-dot,.db-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.th-dot.on,.db-dot.on{background:var(--green);box-shadow:0 0 0 3px #d0e8d8}
+.th-badge,.db-badge{font-size:11px;padding:2px 9px;border-radius:20px;background:var(--green-light);color:var(--green);border:1px solid #b8d9c4;font-weight:500}
+.th-body,.db-body{border-top:1px solid var(--border-soft);padding:20px 24px}
+.db-help{font-size:12px;color:var(--text-soft);line-height:1.7;background:var(--cream-mid);border-radius:10px;padding:12px 14px;margin-top:8px}
+.db-help ol{padding-left:18px;margin-top:4px}.db-help li{margin-bottom:3px}.db-help a{color:var(--green);text-decoration:none}
+.db-status{font-size:12px;padding:5px 11px;border-radius:8px;margin-top:8px;display:inline-block}
+.db-status.ok{background:var(--green-light);color:var(--green)}.db-status.err{background:#fdecea;color:#c62828}
+.db-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.db-row input{flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:13px;background:var(--cream-mid);font-family:inherit}
+.db-row input:focus{outline:none;border-color:var(--green);background:#fff}
+.btn-fb{padding:10px 18px;border-radius:10px;border:none;background:var(--green);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-fb-out{padding:9px 15px;border-radius:10px;border:1px solid var(--green);background:transparent;color:var(--green);font-size:13px;cursor:pointer;font-family:inherit}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fld label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);margin-bottom:5px}
+.fld input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:var(--cream-mid);color:var(--text);font-family:inherit;transition:border-color .15s}
+.fld input:focus{outline:none;border-color:var(--green);background:#fff}
+.fld textarea{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:var(--cream-mid);color:var(--text);font-family:inherit;resize:vertical;transition:border-color .15s}
+.fld textarea:focus{outline:none;border-color:var(--green);background:#fff}
+.bt-wrap{display:flex;flex-wrap:wrap;gap:6px}
+.btp{padding:7px 15px;border-radius:30px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;color:var(--text-soft);font-family:inherit;transition:all .15s}
+.btp:hover{border-color:var(--green);color:var(--green)}.btp.on{background:var(--green);border-color:var(--green);color:#fff}
+.abar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:16px;border-top:1px solid var(--border-soft);margin-top:16px}
+.bsend{padding:11px 28px;border-radius:30px;border:none;background:var(--green);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .15s}
+.bsend:hover{background:var(--green-mid)}.bsend:disabled{opacity:.5;cursor:not-allowed}
+.breset{padding:10px 18px;border-radius:30px;border:1.5px solid var(--border);background:transparent;color:var(--text-soft);font-size:13px;cursor:pointer;font-family:inherit}
+#stt{font-size:13px}
+.rgpd-box{margin-top:14px;padding:14px 16px;background:var(--cream-mid);border-radius:12px;border:1px solid var(--border-soft)}
+.rgpd-row{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.rgpd-ck{width:20px;height:20px;border:1.5px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:12px;transition:all .15s}
+.rgpd-ck.on{background:var(--green);border-color:var(--green);color:#fff}
+.rgpd-txt{font-size:12px;line-height:1.7;color:var(--text-soft);flex:1}.rgpd-txt a{color:var(--green)}
+.rgpd-warn{font-size:12px;color:#c03030;margin-top:6px;padding:6px 10px;background:#fdf0f0;border-radius:7px;display:none}
+.ph{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;cursor:pointer}
+.ph:hover{background:var(--cream-mid);border-radius:16px}
+.phl{font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:8px}
+.pcount{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--cream-mid);border:1px solid var(--border-soft);color:var(--text-soft);font-weight:500}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse .8s infinite;margin-right:2px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.pbody{border-top:1px solid var(--border-soft);padding:18px 22px}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.scard{padding:13px 15px;border:1.5px solid var(--border);border-radius:12px;background:var(--cream-mid);cursor:pointer;transition:all .15s}
+.scard:hover{border-color:var(--green)}.scard.cur{border-color:var(--green);background:var(--green-light)}
+.sname{font-size:13px;font-weight:500;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.smeta{font-size:11px;color:var(--text-soft)}
+.sacts{display:flex;gap:5px;margin-top:8px}
+.sl{padding:4px 10px;font-size:11px;cursor:pointer;border-radius:20px;background:var(--green-light);color:var(--green);border:1px solid #b8d9c4;font-family:inherit;font-weight:500}
+.sdel{padding:4px 10px;font-size:11px;cursor:pointer;border-radius:20px;background:#fff;color:#c03030;border:1px solid #e8c0c0;font-family:inherit}
+.sinrow{display:flex;gap:10px;flex-wrap:wrap}
+.sinrow input{flex:1;min-width:130px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:13px;background:var(--cream-mid);color:var(--text);font-family:inherit}
+.sinrow input:focus{outline:none;border-color:var(--green)}
+.bsave{padding:10px 18px;border-radius:10px;border:1.5px solid var(--green);background:var(--green-light);color:var(--green);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.bsave:hover{background:var(--green);color:#fff}
+.sec{background:#fff;border:1px solid var(--border);border-radius:16px;margin-bottom:14px;overflow:hidden}
+.sh{display:flex;align-items:center;gap:12px;padding:16px 22px;cursor:pointer;border-left:4px solid var(--green)}
+.sh:hover{background:var(--cream-mid)}
+.sinfo{flex:1;min-width:0}
+.sname2{font-size:15px;font-weight:500;color:var(--green)}
+.shint{font-size:12px;color:var(--text-soft);margin-top:2px}
+.ssc{flex-shrink:0;font-size:12px;padding:4px 12px;border-radius:20px;background:var(--cream-mid);color:var(--text-soft);border:1px solid var(--border-soft);font-weight:500;white-space:nowrap;margin-right:4px}
+.ssc.g{background:var(--green-light);color:var(--green);border-color:#b8d9c4}
+.ssc.w{background:#fff8ec;color:#7a4800;border-color:#e8c47a}
+.chv{font-size:16px;color:var(--text-soft);transition:transform .2s;flex-shrink:0}
+.chv.o{transform:rotate(180deg)}
+.sbody{border-top:1px solid var(--border-soft);padding:0 22px 22px}
+.sub{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:var(--text-soft);margin:18px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--border-soft)}
+.qr{padding:9px 0;border-bottom:1px solid var(--border-soft)}.qr:last-child{border-bottom:none}
+.ql{font-size:11px;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.qtog{display:flex;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;background:var(--cream-mid)}
+.bg{flex:1;padding:9px 14px;border:none;border-right:1px solid var(--border);font-size:13px;cursor:pointer;font-family:inherit;line-height:1.4;text-align:left;background:transparent;color:var(--green);transition:all .15s}
+.bg:hover{background:var(--green-pale)}.bg.on{background:var(--green);color:#fff}
+.br{flex:1;padding:9px 14px;border:none;font-size:13px;cursor:pointer;font-family:inherit;line-height:1.4;text-align:left;background:transparent;color:var(--green);transition:all .15s}
+.br:hover{background:var(--green-pale)}.br.on{background:var(--green);color:#fff}
+.ck{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-soft);cursor:pointer}
+.ck:last-child{border-bottom:none}
+.ckb{width:20px;height:20px;border:1.5px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:12px;transition:all .15s}
+.ckb.on{background:var(--green);border-color:var(--green);color:#fff}
+.ckt{font-size:13px;line-height:1.5;color:var(--text-mid);flex:1}
+.sr{display:flex;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--border-soft)}.sr:last-child{border-bottom:none}
+.stxt{flex:1;font-size:13px;line-height:1.5;color:var(--text-mid)}
+.sgrp{display:flex;gap:4px;flex-shrink:0}
+.sb{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s;background:var(--cream-mid);color:var(--text-soft)}
+.sb.on{border-color:transparent;color:#fff}
+.drow{padding:8px 0;border-bottom:1px solid var(--border-soft)}.drow:last-child{border-bottom:none}
+.dtog{display:flex;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;background:var(--cream-mid)}
+.dg{flex:1;padding:9px 12px;border:none;border-right:1px solid var(--border);font-size:12px;cursor:pointer;text-align:left;font-family:inherit;line-height:1.4;background:transparent;color:var(--green);transition:all .15s}
+.dg:hover{background:var(--green-pale)}.dg.on{background:var(--green);color:#fff}
+.dr2{flex:1;padding:9px 12px;border:none;font-size:12px;cursor:pointer;text-align:left;font-family:inherit;line-height:1.4;background:transparent;color:var(--green);transition:all .15s}
+.dr2:hover{background:var(--green-pale)}.dr2.on{background:var(--green);color:#fff}
+.cbar{display:flex;justify-content:space-between;align-items:center;margin:14px 0 7px;padding:8px 12px;background:var(--cream-mid);border-left:3px solid var(--green)}
+.cbar.ov{border-left-color:#c03030}.cbn{font-size:13px;font-weight:500;color:var(--text)}.cbs{font-size:12px;color:var(--text-soft)}.cbs.ov{color:#c03030;font-weight:500}
+.sbanner{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;padding:12px 16px;background:var(--cream-mid);border-radius:12px}
+.spg{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;background:var(--green-light);color:var(--green);border:1px solid #b8d9c4}
+.spr{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;background:#fdf0f0;color:#8a1a1a;border:1px solid #e8c0c0}
+.spn{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;background:#fff;color:var(--text-soft);border:1px solid var(--border-soft)}
+.spw{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;background:#fff8ec;color:#7a4800;border:1px solid #e8c47a}
+.menu-tabs{display:flex;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.mtab{flex:1;padding:10px 14px;border:none;background:var(--cream-mid);font-size:13px;font-family:inherit;cursor:pointer;color:var(--text-soft);font-weight:500;transition:all .15s}
+.mtab.on{background:var(--green);color:#fff}
+.menu-area{width:100%;min-height:200px;padding:14px;border:1px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;background:var(--cream-mid);resize:vertical;color:var(--text);line-height:1.7}
+.menu-area:focus{outline:none;border-color:var(--green);background:#fff}
+.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .15s;background:var(--cream-mid)}
+.upload-zone:hover{border-color:var(--green);background:var(--green-pale)}
+.file-ok{margin-top:12px;padding:11px 16px;background:var(--green-light);border-radius:10px;border:1px solid #b8d9c4;display:flex;align-items:center;gap:10px}
+.file-ok span{font-size:13px;color:var(--green);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-del-file{padding:4px 10px;font-size:11px;cursor:pointer;border-radius:20px;background:#fff;color:#c03030;border:1px solid #e8c0c0;font-family:inherit}
+.admin-wrap{padding:4px 0 40px}
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.admin-title{font-size:28px;font-weight:500;color:var(--green);letter-spacing:-.3px}
+.admin-subtitle{font-size:13px;color:var(--text-soft);margin-top:3px}
+.admin-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-csv{padding:10px 20px;border-radius:30px;border:1.5px solid var(--green);background:var(--green-light);color:var(--green);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-csv:hover{background:var(--green);color:#fff}
+.btn-new{padding:10px 20px;border-radius:30px;border:none;background:var(--green);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.stat-n{font-size:30px;font-weight:500;color:var(--green);letter-spacing:-.5px}
+.stat-l{font-size:12px;color:var(--text-soft);margin-top:4px}
+.client-table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+.client-table th{padding:12px 16px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);background:var(--cream-mid);border-bottom:1px solid var(--border)}
+.client-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border-soft);vertical-align:middle}
+.client-table tr:last-child td{border-bottom:none}
+.client-table tr:hover td{background:var(--cream-mid)}
+.td-name{font-weight:500;color:var(--text)}.td-meta{font-size:12px;color:var(--text-soft);margin-top:1px}
+.pct-bar{display:inline-flex;align-items:center;gap:8px}
+.pct-track{width:55px;height:5px;background:var(--cream-dark);border-radius:3px;overflow:hidden}
+.pct-fill{height:100%;background:var(--green);border-radius:3px}
+.td-acts{display:flex;gap:5px;align-items:center}
+.btn-view{padding:5px 12px;font-size:11px;cursor:pointer;border-radius:20px;background:var(--green-light);color:var(--green);border:1px solid #b8d9c4;font-family:inherit;font-weight:500}
+.btn-dl{padding:5px 12px;font-size:11px;cursor:pointer;border-radius:20px;background:#e8f0fb;color:#185FA5;border:1px solid #b0d0f0;font-family:inherit;font-weight:500}
+.btn-del-c{padding:5px 12px;font-size:11px;cursor:pointer;border-radius:20px;background:#fff;color:#c03030;border:1px solid #e8c0c0;font-family:inherit}
+.no-clients{text-align:center;padding:50px 20px;color:var(--text-soft);font-size:14px}
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(26,61,37,.5);z-index:1000;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px}
+.modal-box{background:#fff;border-radius:20px;width:100%;max-width:760px;margin:auto;overflow:hidden}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border-soft)}
+.modal-ttl{font-size:18px;font-weight:500;color:var(--green)}
+.modal-close{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:13px;font-family:inherit;color:var(--text-mid)}
+.modal-body{padding:24px;max-height:72vh;overflow-y:auto}
+.modal-body pre{font-size:12px;line-height:1.8;white-space:pre-wrap;font-family:monospace;background:var(--cream-mid);padding:16px;border-radius:12px;border:1px solid var(--border-soft);color:var(--text-mid)}
+</style>
+</head>
+<body>
+<div class="wrap"><div id="app"></div></div>
+
+<script>
+/* ── CONFIG ── */
+const isAdmin=location.search.includes('admin')||location.hash.includes('admin');
+const C6=["#2a7d4f","#5e9e3a","#9ab830","#e09000","#d06020","#c03030"];
+const BTS=["A+","A-","B+","B-","AB+","AB-","O+","O-"];
+
+/* ── STATE ── */
+let S={prenom:"",nom:"",tel:"",email:"",adresse:"",bt:"",answers:{},saves:[],op:false,os:{bt:false,m:true,a:false,j:false,d:false,h:false,menu:true},si:"",cid:null,menuMode:"text",menuText:"",menuFile:"",menuFileName:"",rgpd:false};
+let CFG={fbUrl:"",openCfg:false,openTh:false};
+let TH={name:"",email:"",code:"",rgpdText:""};
+function loadTH(){try{const d=localStorage.getItem("pf4_cons");if(d)Object.assign(TH,JSON.parse(d));}catch(e){}}
+function saveTH(){try{localStorage.setItem("pf4_cons",JSON.stringify(TH));}catch(e){}}
+let syncTimer=null, syncing=false;
+
+/* ── FIREBASE DB ── */
+function fbBase(){return CFG.fbUrl?CFG.fbUrl.replace(/\/+$/,""):null;}
+async function sbH(){return{"apikey":CFG.sbKey,"Authorization":"Bearer "+CFG.sbKey,"Content-Type":"application/json","Prefer":"return=representation"};}
+function sbUrl(path,filter){return CFG.sbUrl+"/rest/v1/profilage_clients"+(filter?"?"+filter:"");}
+function hasSb(){return!!(CFG.sbUrl&&CFG.sbKey&&TH.code);}
+
+async function dbSave(id,data){
+  if(!hasSb()){try{localStorage.setItem("pf5_"+id,JSON.stringify(data));}catch(e){}return;}
+  const row={id,conseiller_code:TH.code,...data,updated_at:new Date().toISOString()};
+  await fetch(sbUrl(),{method:"POST",headers:{...sbH(),"Prefer":"resolution=merge-duplicates"},body:JSON.stringify(row)}).catch(()=>{});
+}
+async function dbLoad(id){
+  if(!hasSb()){try{const v=localStorage.getItem("pf5_"+id);return v?JSON.parse(v):null;}catch(e){return null;}}
+  try{
+    const r=await fetch(sbUrl("","id=eq."+encodeURIComponent(id)+"&conseiller_code=eq."+encodeURIComponent(TH.code)+"&limit=1"),{headers:sbH()});
+    const rows=await r.json();return rows&&rows[0]?rows[0]:null;
+  }catch(e){return null;}
+}
+async function dbDelete(id){
+  if(!hasSb()){try{localStorage.removeItem("pf5_"+id);}catch(e){}return;}
+  await fetch(sbUrl("","id=eq."+encodeURIComponent(id)+"&conseiller_code=eq."+encodeURIComponent(TH.code)),{method:"DELETE",headers:sbH()}).catch(()=>{});
+}
+async function dbLoadAll(){
+  if(!hasSb())return [];
+  try{
+    const r=await fetch(sbUrl("","conseiller_code=eq."+encodeURIComponent(TH.code)+"&is_current=eq.false&order=updated_at.desc"),{headers:sbH()});
+    return await r.json()||[];
+  }catch(e){return [];}
+}
+async function testSb(url,key){
+  try{
+    const r=await fetch(url+"/rest/v1/profilage_clients?limit=1",{headers:{"apikey":key,"Authorization":"Bearer "+key}});
+    return r.ok||r.status===406;
+  }catch(e){return false;}
+}
+function schedSave(){
+  clearTimeout(syncTimer);
+  syncing=true;
+  document.getElementById("sdot")&&(document.getElementById("sdot").style.display="inline-block");
+  syncTimer=setTimeout(async()=>{
+    await dbSet("_cur",{name:S.name,bt:S.bt,email:S.email,answers:S.answers,saves:S.saves,op:S.op,os:S.os,si:S.si,cid:S.cid,prenom:S.prenom,nom:S.nom,tel:S.tel,adresse:S.adresse,menuMode:S.menuMode,menuText:S.menuText,menuFileName:S.menuFileName,rgpd:S.rgpd});
+    syncing=false;
+    const d=document.getElementById("sdot");if(d)d.style.display="none";
+  },700);
+}
+async function init(){
+  loadTH();
+  const saved=localStorage.getItem("pf4_cfg");
+  if(saved)try{Object.assign(CFG,JSON.parse(saved));}catch(e){}
+  const cur=TH.code?await dbLoad("_cur_"+TH.code):null;
+  if(cur)Object.assign(S,cur);
+  R();
+}
+async function saveCfg(){
+  localStorage.setItem("pf4_cfg",JSON.stringify(CFG));
+}
+
+/* ── DATA HELPERS ── */
+function set(k,v){S.answers[k]===v?delete S.answers[k]:S.answers[k]=v;schedSave();R();}
+function sf(k,v){S[k]=v;schedSave();R();}   // save + re-render (for UI choices)
+function sfq(k,v){S[k]=v;schedSave();}              // save only (for text inputs, no focus loss)
+function tog(k){S.os[k]=!S.os[k];R();}
+
+/* ── FIREBASE CONFIG ── */
+async function applyFb(){
+  const inp=document.getElementById("fb-url-inp");
+  const url=(inp?inp.value:"").trim();
+  if(!url){CFG.fbUrl="";await saveCfg();CFG.openCfg=false;R();return;}
+  document.getElementById("fb-status").textContent="Test de connexion…";
+  document.getElementById("fb-status").className="db-status";
+  const ok=await testFb(url);
+  if(ok){
+    CFG.fbUrl=url;await saveCfg();
+    document.getElementById("fb-status").textContent="✓ Connexion réussie ! Rechargement des données…";
+    document.getElementById("fb-status").className="db-status ok";
+    setTimeout(async()=>{const cur=TH.code?await dbLoad("_cur_"+TH.code):null;if(cur)Object.assign(S,cur);CFG.openCfg=false;R();},1000);
+  } else {
+    document.getElementById("fb-status").textContent="✗ Connexion impossible. Vérifiez l'URL et les règles Firebase.";
+    document.getElementById("fb-status").className="db-status err";
+  }
+}
+function resetFb(){CFG.fbUrl="";saveCfg();R();}
+function toggleCfg(){CFG.openCfg=!CFG.openCfg;R();}
+async function applySb(){
+  const url=(document.getElementById("sb-url-inp")?.value||"").trim().replace(/\/+$/,"");
+  const key=(document.getElementById("sb-key-inp")?.value||"").trim();
+  const code=(document.getElementById("sb-code-inp")?.value||"").trim().toUpperCase();
+  const st=document.getElementById("sb-status");
+  if(!url||!key||!code){if(st){st.textContent="Remplissez tous les champs.";st.className="db-status err";}return;}
+  if(st){st.textContent="Test de connexion…";st.className="db-status";}
+  const ok=await testSb(url,key);
+  if(ok){
+    CFG.sbUrl=url;CFG.sbKey=key;TH.code=code;
+    localStorage.setItem("pf4_cfg",JSON.stringify(CFG));saveTH();
+    if(st){st.textContent="✓ Connecté ! Bienvenue "+code;st.className="db-status ok";}
+    setTimeout(()=>{CFG.openCfg=false;R();},1200);
+  }else{
+    if(st){st.textContent="✗ Impossible de se connecter. Vérifiez l\'URL et la clé.";st.className="db-status err";}
+  }
+}
+function resetSb(){CFG.sbUrl="";CFG.sbKey="";localStorage.setItem("pf4_cfg",JSON.stringify(CFG));R();}
+function toggleTh(){CFG.openTh=!CFG.openTh;R();}
+
+/* ── PROFILES ── */
+function togP(){S.op=!S.op;R();}
+async function savePro(){
+  const nm=(S.si||(S.prenom+" "+S.nom).trim()||"Profil").trim();
+  const id="p"+Date.now();
+  const meta={id,name:nm,bt:S.bt,date:new Date().toLocaleDateString("fr-BE"),pct:calcPct()};
+  await dbSave(id,{is_current:false,answers:{...S.answers},prenom:S.prenom,nom:S.nom,nom:S.nom,tel:S.tel,email:S.email,adresse:S.adresse,bt:S.bt,menuMode:S.menuMode,menuText:S.menuText,menuFile:S.menuFile||"",menuFileName:S.menuFileName,rgpd:S.rgpd,save_name:nm,completion_pct:calcPct()});
+  S.saves=[meta,...S.saves.slice(0,19)];S.cid=id;S.si="";
+  schedSave();R();
+}
+async function loadPro(id){
+  const d=await dbLoad(id);
+  if(!d)return;
+  S.prenom=d.prenom||d.name||"";S.nom=d.nom||"";S.tel=d.tel||"";S.adresse=d.adresse||"";
+  S.email=d.email||"";S.bt=d.bt||"";
+  if(d.menuMode)S.menuMode=d.menuMode;
+  if(d.menuText!==undefined)S.menuText=d.menuText;
+  if(d.menuFileName)S.menuFileName=d.menuFileName;
+  S.answers={...d.answers};S.cid=id;
+  schedSave();R();
+}
+async function delPro(id){
+  if(!confirm("Supprimer ce profil ?"))return;
+  await dbDelete(id);
+  S.saves=S.saves.filter(x=>x.id!==id);if(S.cid===id)S.cid=null;
+  schedSave();R();
+}
+function calcPct(){
+  const tot=MB.length+MS.length+VQ.length+PQ.length+KQ.length+JR.reduce((s,c)=>s+c.q.length,0)+(DC1.length+DC2.length)+HC.reduce((s,c)=>s+c.q.length,0);
+  return Math.round(Object.keys(S.answers).length/tot*100);
+}
+
+/* ── SCORES ── */
+function sMet(){let a=0,b=0;MB.forEach(q=>{if(S.answers[q.id]==="a")a++;if(S.answers[q.id]==="b")b++;});return{a,b,type:Math.abs(a-b)>=5?(a>b?"Cueilleur A":"Chasseur B"):"Mixte"};}
+function sAyu(){let v=0,p=0,k=0;VQ.forEach((_,i)=>{v+=+S.answers["v"+i]||0;});PQ.forEach((_,i)=>{p+=+S.answers["p"+i]||0;});KQ.forEach((_,i)=>{k+=+S.answers["k"+i]||0;});return{v,p,k};}
+function sJR(){return JR.map(c=>{let t=0;c.q.forEach((q,i)=>{if(S.answers[c.id+"_"+i])t+=q.w;});return{t,ov:t>c.h};});}
+function sDia(){let c1g=0,c1r=0,c2g=0,c2r=0;DC1.forEach(q=>{if(S.answers[q.id]==="g")c1g++;if(S.answers[q.id]==="r")c1r++;});DC2.forEach(q=>{if(S.answers[q.id]==="g")c2g++;if(S.answers[q.id]==="r")c2r++;});return{c1g,c1r,c2g,c2r};}
+function sHor(){return HC.map(c=>{let t=0;c.q.forEach((_,i)=>{if(S.answers[c.id+"_"+i])t++;});return{t};});}
+
+/* ── EMAIL ── */
+async function sendMail(){
+  const btn=document.getElementById("sendbtn"),stt=document.getElementById("stt");
+  if(!TH.email){stt.textContent="⚠ Configurez d'abord l'email conseiller(ère) (bandeau bleu en haut).";stt.style.color="#c03030";return;}
+  if(!S.rgpd){stt.textContent="⚠ Le client doit accepter le consentement RGPD.";stt.style.color="#c03030";
+    document.getElementById("rgpd-warn")&&(document.getElementById("rgpd-warn").style.display="block");return;}
+  btn.disabled=true;btn.textContent="Envoi…";stt.textContent="";
+  const met=sMet(),ayu=sAyu(),jr=sJR(),dia=sDia(),hor=sHor();
+  const fullName=((S.prenom+" "+S.nom).trim())||"—";
+  let body=`PROFILAGE ALIMENTAIRE\nPrénom : ${S.prenom||"—"} | Nom : ${S.nom||"—"} | Tél : ${S.tel||"—"}\nEmail : ${S.email||"—"} | Adresse : ${S.adresse||"—"}\nGroupe sanguin : ${S.bt||"—"} | Date : ${new Date().toLocaleDateString("fr-BE")}\n\n1. TYPAGE MÉTABOLIQUE\nCueilleur A : ${met.a} pts | Chasseur B : ${met.b} pts | → ${met.type}\n`;
+  const ms=MS.filter(q=>S.answers[q.id]);if(ms.length)body+=`Symptômes : `+ms.map(q=>q.t).join(", ")+"\n";
+  body+=`\n2. AYURVEDA\nVâta : ${ayu.v}/114 | Pitta : ${ayu.p}/120 | Kapha : ${ayu.k}/120\n\n3. JULIA ROSS – 8 CLASSES\n`;
+  JR.forEach((c,i)=>{body+=`${c.t} : ${jr[i].t} pts (seuil ${c.h})${jr[i].ov?" ⚠ DÉPASSÉ":""}\n`;});
+  body+=`\n4. DIATHÈSE DE MÉNÉTRIER\nCol. 1 D1=${dia.c1g} D2=${dia.c1r} | Col. 2 D1=${dia.c2g} D2=${dia.c2r}\n\n5. BILAN HORMONAL\n`;
+  HC.forEach((c,i)=>{body+=`${c.t} : ${hor[i].t}/${c.m}\n`;});
+  if(S.menuText){body+="\n\n6. MENUS 5 JOURS\n"+S.menuText;}
+  else if(S.menuFileName){body+="\n\n6. MENUS — Fichier : "+S.menuFileName;}
+  try{
+    const dest=TH.email+(S.email?" et en copie à "+S.email:"");
+  const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,mcp_servers:[{type:"url",url:"https://gmailmcp.googleapis.com/mcp/v1",name:"gmail"}],messages:[{role:"user",content:`Envoie un email à ${dest} avec le sujet "Suivi profilage alimentaire – ${fullName} – ${new Date().toLocaleDateString("fr-BE")}" et comme corps du message exactement ce texte :\n\n${body}`}]})});
+    if(res.ok){stt.textContent="✓ Email envoyé !";stt.style.color="#1b5934";}
+    else{stt.textContent="Erreur d'envoi";stt.style.color="#c03030";}
+  }catch(e){stt.textContent="Erreur : "+e.message;stt.style.color="#c03030";}
+  btn.disabled=false;btn.textContent="📧 Envoyer par email";
+}
+
+/* ── DATA ── */
+const MB=[{id:"mb1",l:"Apparence",a:"Plus âgé que les gens de mon âge",b:"Plus jeune que les gens de mon âge"},{id:"mb2",l:"Réserve sociale",a:"Distant, solitaire, amis lentement",b:"Chaleureux, ouvert, amis facilement"},{id:"mb3",l:"Climat",a:"J'adore les saisons chaudes",b:"Je me sens mieux par temps frais/froid"},{id:"mb4",l:"Appétit",a:"Peu d'appétit",b:"Grand appétit, excessif"},{id:"mb5",l:"Digestion",a:"Je digère lentement",b:"Je digère tout, assez vite"},{id:"mb6",l:"Nourriture",a:"Manger pour vivre, peu intéressé",b:"J'adore manger, c'est central dans ma vie"},{id:"mb7",l:"Émotions expr.",a:"Émotions difficiles à exprimer",b:"J'exprime facilement mes émotions"},{id:"mb8",l:"Émotions",a:"Sous contrôle, profil non émotionnel",b:"Cœur en bandoulière, on sait ce que je ressens"},{id:"mb9",l:"Yeux",a:"Yeux plutôt secs",b:"Yeux humides, larmoyants"},{id:"mb10",l:"Coloration",a:"Pâle, crayeuse",b:"Rosée, rougeurs parfois"},{id:"mb11",l:"Teint",a:"Facilement terne, brouillé",b:"Clair, lumineux"},{id:"mb12",l:"Aliments gras",a:"Je préfère m'en passer",b:"J'adore, j'en voudrais souvent"},{id:"mb13",l:"Réaction gras",a:"Diminue mon énergie",b:"Améliore mon bien-être"},{id:"mb14",l:"Ongles",a:"Durs, épais, forts",b:"Fins, fragiles, mous"},{id:"mb15",l:"4h sans manger",a:"Cela ne fait rien",b:"Irritable, faible ou déprimé"},{id:"mb16",l:"Gencives",a:"Claires, pâles",b:"Foncées, roses, rouges"},{id:"mb17",l:"Faim",a:"Ça passe vite, je peux attendre",b:"J'ai souvent faim, dois manger souvent"},{id:"mb18",l:"Piqûres",a:"Réaction faible, disparaît vite",b:"Réaction forte, met du temps à disparaître"},{id:"mb19",l:"Jeûne",a:"Ça me réussit très bien",b:"Je me sens vraiment mal"},{id:"mb20",l:"Portions",a:"Je préfère de petites portions",b:"Grandes portions ou mange souvent"},{id:"mb21",l:"Jus d'orange",a:"Énergie, satisfaction",b:"Faim, nausée ou nervosité"},{id:"mb22",l:"Pommes de terre",a:"Pas fan",b:"J'en mangerais tous les jours"},{id:"mb23",l:"Viande rouge",a:"Je me sens moins énergique",b:"Je me sens plus énergique"},{id:"mb24",l:"Salive qté",a:"Bouche plutôt sèche",b:"Je produis beaucoup de salive"},{id:"mb25",l:"Salive texture",a:"Épaisse, visqueuse",b:"Aqueuse, diluée"},{id:"mb26",l:"Aliments salés",a:"Souvent trop salés pour moi",b:"J'adore le salé"},{id:"mb27",l:"Cicatrisation",a:"Je cicatrise lentement",b:"Je cicatrise vite"},{id:"mb28",l:"Peau",a:"J'ai la peau sèche",b:"J'ai la peau grasse"},{id:"mb29",l:"Sauter repas",a:"Ok, pas d'impact négatif",b:"Dois manger souvent et régulièrement"},{id:"mb30",l:"Collations",a:"Rarement envie",b:"Souvent envie"},{id:"mb31",l:"Aliments acides",a:"Ça m'est égal, pas fan",b:"J'aime beaucoup (vinaigre, citron…)"},{id:"mb32",l:"Sucreries",a:"J'adore, besoin à chaque repas",b:"Desserts m'indiffèrent, préfère fromage/chips"},{id:"mb33",l:"Repas végétarien",a:"Me satisfait",b:"Ne me satisfait pas, j'ai vite faim"},{id:"mb34",l:"Protéines matin",a:"Léthargique après, fatigué",b:"Énergisé, tiens jusqu'au déjeuner"},{id:"mb35",l:"Protéines midi",a:"Léthargique l'après-midi",b:"Énergisé, tiens jusqu'au soir"},{id:"mb36",l:"Coup pouce PM",a:"Fruits, pâtisseries, bonbons",b:"Fromage, noix, jambon"},{id:"mb37",l:"En société",a:"Introverti, timide, je parle peu",b:"Extraverti, sociable, j'entame les conversations"}];
+const MS=[{id:"ms1",t:"Oppression thoracique : c'est ma tendance"},{id:"ms2",t:"Cicatrices / marques : j'en ai facilement"},{id:"ms3",t:"Toux : je tousse souvent"},{id:"ms4",t:"Pellicules : c'est ma tendance"},{id:"ms5",t:"Peau crevasse : par tous les temps"},{id:"ms6",t:"Chair de poule : j'en ai facilement"},{id:"ms7",t:"Gencives saignent : quand je me brosse les dents"},{id:"ms8",t:"Irritation des yeux : ça m'arrive souvent"},{id:"ms9",t:"Démangeaisons peau : ça m'arrive souvent"},{id:"ms10",t:"Éternuements : tendance quotidienne"},{id:"ms11",t:"Respiration sifflante : ça m'arrive régulièrement"}];
+const VQ=["Je fais les choses rapidement","Je suis d'un naturel vif et enthousiaste","Je suis mince et ne grossis pas facilement","J'assimile rapidement de nouvelles choses","Ma démarche est vive et légère","J'ai des difficultés à prendre des décisions","Je suis sujet aux flatulences ou à la constipation","J'ai tendance à avoir froid aux mains et aux pieds","Je deviens fréquemment anxieux ou inquiet","Je supporte moins bien le temps froid que la plupart","Je parle rapidement et mes amis me trouvent bavard","Mes humeurs changent facilement, nature émotive","J'ai souvent du mal à m'endormir, sommeil peu profond","Ma peau a tendance à être sèche, surtout en hiver","Mon esprit est très actif, parfois agité, mais très imaginatif","Mes mouvements sont vifs ; mon énergie jaillit par à-coups","Je suis facilement excitable","Seul, mes habitudes de sommeil et d'alimentation deviennent irrégulières","J'apprends vite, mais j'oublie vite également"];
+const PQ=["J'ai le sentiment d'être très efficace","Dans mes activités, je suis extrêmement précis et ordonné","Je suis entêté et j'aime plutôt utiliser la manière forte","Par temps chaud, je me fatigue plus facilement que la plupart","J'ai tendance à transpirer facilement","Même si je ne le montre pas, je deviens irritable ou en colère très facilement","Si je saute un repas ou dois attendre pour manger, je ne me sens pas bien","Cheveux : tendance à grisonner / calvitie précoce / fins / blonds ou roux","J'ai bon appétit : si je le désire, je peux manger beaucoup","Beaucoup de gens me trouvent têtu","Je vais à la selle régulièrement ; plutôt enclin aux diarrhées","Je m'impatiente très facilement","J'ai tendance à être perfectionniste sur les détails","Je me mets facilement en colère, mais ça passe vite","J'adore les aliments froids : glaces et boissons glacées","Je trouve plus souvent qu'une pièce est trop chaude plutôt que trop froide","Je ne supporte pas les aliments trop épicés et piquants","Je ne tolère pas aussi bien les désaccords qu'il le faudrait","J'aime les défis et je suis très déterminé quand je veux quelque chose","J'ai tendance à avoir l'esprit critique sur les autres et sur moi-même"];
+const KQ=["Ma tendance naturelle est de faire les choses de manière lente et calme","Je prends du poids plus facilement et le perds plus lentement que la plupart","Je suis d'une nature placide et calme ; je ne m'irrite pas facilement","Je peux facilement sauter des repas sans me sentir mal","J'ai tendance à avoir des mucosités, congestions chroniques, asthme ou sinusite","J'ai besoin d'au moins huit heures de sommeil pour me sentir bien","Je dors très profondément","Je suis d'un naturel calme et ne me mets pas facilement en colère","Je n'apprends pas aussi vite que certains, mais me souviens très bien et longtemps","J'ai tendance à l'embonpoint : je fais facilement des réserves","Le temps frais et humide ne me convient pas","Mes cheveux sont épais, couleur foncée et ondoyants","J'ai la peau douce et lisse, et le teint plutôt pâle","J'ai une structure physique robuste et solide","Je suis serein, d'un naturel doux, affectueux et enclin au pardon","Ma digestion est lente, ce qui me donne une impression de lourdeur après les repas","J'ai une très bonne résistance et de l'endurance physique et un niveau d'énergie stable","Je marche généralement d'un pas mesuré et lent","J'ai tendance à trop dormir, me sentir vaseux au réveil, m'activer lentement le matin","Je mange lentement et suis lent et méthodique dans mes actions"];
+const JR=[{id:"jr1",t:"Classe 1 – Chimie du cerveau",h:10,q:[{t:"Sensible à la douleur émotionnelle ou physique, pleurez facilement ?",w:4},{t:"Compensez par la nourriture (plaisir, récompense, atténuer douleurs mentales) ?",w:4},{t:"Vous inquiétez facilement, souffrez de phobies, angoisses ou paniques ?",w:4},{t:"Difficultés à vous endormir ou réveils nocturnes ?",w:4},{t:"Difficultés à vous concentrer ?",w:3},{t:"Peu énergique au lever ? Lever difficile même après une bonne nuit ?",w:2},{t:"Pensées ou comportements obsessionnels (si pas des TOC) ?",w:4},{t:"Mal à vous détendre après un moment de stress ou de tension ?",w:4},{t:"En dépression actuellement ? Ou souvent des idées noires ?",w:3},{t:"Peu d'estime de vous-même ?",w:4},{t:"Problèmes d'humeur et d'appétit s'aggravent en hiver ou à la fin du jour ?",w:4},{t:"Facilement irritable ou colérique ?",w:3},{t:"Compensez le stress par de l'alcool ou des drogues ?",w:4},{t:"Utilisez du Prozac ou d'autres aides médicales (sérotonine) ?",w:2}]},{id:"jr2",t:"Classe 2 – Régimes basses calories",h:12,q:[{t:"Obnubilé par la nourriture depuis les régimes ? Ou outremangeur ?",w:4},{t:"Reprenez du poids après un régime (parfois plus que les kilos perdus) ?",w:4},{t:"Sursauts de mélancolie, irritabilité, angoisse, dépression depuis les régimes ?",w:3},{t:"Moins énergique, moins endurant qu'avant les régimes ?",w:3},{t:"Consommez moins de 2 100 calories par jour ?",w:3},{t:"Sautez des repas, en particulier le petit-déjeuner ?",w:3},{t:"Mangez de préférence des produits allégés (pauvres en calories) ?",w:3},{t:"Pensez constamment à votre poids ?",w:2},{t:"Utilisez du faux sucre au quotidien (aspartame, Canderel) ?",w:2},{t:"Votre confiance en vous a diminué depuis le début des régimes ?",w:3},{t:"Êtes-vous devenu (ou avez-vous été) boulimique ou anorexique ?",w:4}]},{id:"jr3",t:"Classe 3 – Glycémie instable",h:15,q:[{t:"Les repas vous rendent-ils somnolents ?",w:3},{t:"Nerveux ou irritable par moments, plus calme après les repas ?",w:3},{t:"Si vous sautez un repas : fatigue, irritabilité, angoisse ou vertiges ?",w:3},{t:"Rages de salé ou désir fréquent de sucre ?",w:4},{t:"Pouls rapide (>80) ? Palpitations cardiaques ?",w:3},{t:"Baisses d'énergie/d'humeur après café, sucreries ou alcool ?",w:4},{t:"Prise de poids concentrée autour des hanches et de la taille ?",w:2},{t:"Sueurs nocturnes (hors ménopause) ?",w:3},{t:"Souvent très soif (réelle soif) ?",w:4},{t:"Envies de pleurer subites sans raison ?",w:3},{t:"Histoire familiale de diabète, hypoglycémie, alcoolisme ?",w:3},{t:"Confusion mentale, mémoire qui s'affaiblit, épuisements nerveux périodiques ?",w:3},{t:"Marques sur les jambes qui mettent longtemps à cicatriser ?",w:5},{t:"Souvent stressé, submergé ?",w:4},{t:"Cernes sous les yeux, même avec des nuits normales de sommeil ?",w:4}]},{id:"jr4",t:"Classe 4 – Thyroïde",h:15,q:[{t:"Peu énergique ? Fatigué même au réveil ?",w:4},{t:"Facilement frileux (surtout mains et pieds) ?",w:4},{t:"Historique familial de troubles de la thyroïde ?",w:4},{t:"Prenez du poids même sans trop manger ? Perdez difficilement du poids ?",w:4},{t:"Devez vous forcer pour faire de l'exercice, même doux ?",w:3},{t:"Peine à vous mettre en route le matin ?",w:4},{t:"Taux de cholestérol total élevé ou bas aux derniers examens ?",w:3},{t:"Tension artérielle faible en permanence ?",w:3},{t:"Prise de poids lors des premières règles, d'une grossesse ou de la ménopause ?",w:4},{t:"Maux de tête chroniques (pas nécessairement des migraines) ?",w:3},{t:"Vous mettez en route avec du café, tabac, certains aliments ou stimulants ?",w:3}]},{id:"jr5",t:"Classe 5 – Allergies cachées",h:12,q:[{t:"Fringales de lait, crème glacée, yaourt, fromage, pâtes/pains très régulièrement ?",w:3},{t:"Facilement ballonné après les repas ?",w:3},{t:"Souffrez de migraines (réelles, pas de maux de tête) ?",w:2},{t:"Gaz et/ou éructations fréquentes ?",w:4},{t:"Inconforts digestifs (acidité, nausées, reflux gastrique) ?",w:3},{t:"Constipation et/ou selles molles de manière chronique ?",w:3},{t:"Asthme ou troubles respiratoires chroniques ?",w:4},{t:"Pathologies fréquentes nez/gorge/oreilles (rhumes, sinusites) ?",w:3},{t:"Légèrement léthargique après les repas ?",w:3},{t:"Allergique à certains aliments (laitages ou autres aliments courants) ?",w:4},{t:"Mangez peu à cause de l'inconfort digestif ?",w:3},{t:"Vous privez de manger ou vomissez à cause des ballonnements ?",w:3},{t:"Vous ne pouvez pas prendre du poids ?",w:4},{t:"Diagnostiqué hyperactivité ou trouble bipolaire ?",w:3},{t:"Historique familial d'allergies alimentaires ?",w:4}]},{id:"jr6",t:"Classe 6 – Hormones (femmes)",h:6,q:[{t:"Avant les règles (3–10 j) : sautes d'humeur ou maux de tête ?",w:4},{t:"Avant les règles : épisodes de fringales alimentaires ?",w:4},{t:"Avant ou pendant les règles : boutons, rétention d'eau, prises de poids ?",w:3},{t:"Règles irrégulières ?",w:4},{t:"Une ou des fausses couches ? Ou stérilité ?",w:3},{t:"Avez utilisé ou utilisez encore la pilule contraceptive ou traitement hormonal ?",w:4},{t:"Crampes prémenstruelles désagréables, saignements longs/volumineux, seins douloureux ?",w:3},{t:"Troubles de la péri- ou post-ménopause (bouffées de chaleur, sueurs, insomnie) ?",w:3}]},{id:"jr7",t:"Classe 7 – Parasitose / Levures",h:13,q:[{t:"Souvent gonflé, gêné par des tensions abdominales ?",w:4},{t:"Confusion mentale ?",w:3},{t:"Sujet à la déprime ?",w:2},{t:"Diagnostiqué victime de « candida » ?",w:4},{t:"Pertes blanches, brûlures, démangeaisons vaginales ? (femmes)",w:3},{t:"Traitement antibiotique > 1 mois d'affilée, ou plusieurs fois dans l'année ?",w:4},{t:"Utilisé de la cortisone ou la pilule contraceptive pendant plus d'un an ?",w:4},{t:"Champignons sur la peau ou ongles, ou pied d'athlète ?",w:4},{t:"Pathologies fréquentes nez/gorge/oreilles, ou c'était le cas enfant ?",w:3},{t:"Douleurs articulaires ou musculaires non reconnues comme arthrose ?",w:3},{t:"Troubles cutanés chroniques (eczéma, psoriasis, dermatite atopique, herpès) ?",w:3},{t:"Épuisement chronique ?",w:3},{t:"Dartres ou rougeurs de peau chroniques ? Démangeaisons ?",w:4},{t:"Selles curieuses en couleur, forme ou consistance ?",w:3}]},{id:"jr8",t:"Classe 8 – Carences acides gras",h:12,q:[{t:"Fringales d'aliments gras (chips, fromages, aliments riches en calories) ?",w:4},{t:"Historique familial d'alcoolisme et dépression ?",w:3},{t:"Taux de cholestérol total élevé et taux de HDL bas aux derniers examens ?",w:3},{t:"Après des repas gras : sentiment de lourdeur, inconfort, congestion ?",w:4},{t:"Historique personnel d'hépatite ou autres troubles du foie ou de la vésicule ?",w:4},{t:"Selles régulièrement claires ?",w:3},{t:"Selles très dures ou malodorantes ?",w:3},{t:"Douleurs au côté droit sous les dernières côtes ?",w:3},{t:"Vous sentez ridé pour votre âge, la peau est peu élastique ?",w:2},{t:"Peau sèche ou rugueuse, spécialement sur les jambes ou les bras ?",w:3}]}];
+const DC1=[{id:"d1a",g:"Avant 12 ans : allergies / inflammations (urticaire, eczéma, tendinites, asthme) ?",r:"Plutôt des infections bactériennes ou virales (angines, otite, sinusite) ?"},{id:"d1b",g:"Du mal à aller vous coucher tant vous étiez encore actif, ET du mal à vous lever ?",r:"Vous endormiez-vous facilement pour vous réveiller frais et dispos ?"},{id:"d1c",g:"Difficultés à vous endormir (enfant et peut-être encore aujourd'hui) ?",r:"Ou aviez-vous besoin de beaucoup dormir ?"},{id:"d1d",g:"Aviez-vous une mémoire défaillante ?",r:"Ou plutôt des difficultés d'attention ?"},{id:"d1e",g:"Étiez-vous plutôt optimiste ?",r:"Ou plutôt pessimiste, facilement défaitiste ?"},{id:"d1f",g:"Cherchiez-vous les sports de défi, l'aventure ?",r:"Ou étiez-vous plutôt bricolage, activités au calme ?"},{id:"d1g",g:"L'effort et le sport vous défatiguaient-ils ?",r:"Ou vous sentiez-vous fatigable à l'effort (grand besoin de récupération) ?"}];
+const DC2=[{id:"d2a",g:"Quand vous êtes malade, vous remettez-vous très vite sur pied ?",r:"Ou avez-vous besoin de dix jours, avec l'impression de devoir cravacher sinon ?"},{id:"d2b",g:"Les homéos, acupuncteurs, etc. vous ont-ils trouvé une faiblesse principale du foie ?",r:"Ou du pancréas ?"},{id:"d2c",g:"Êtes-vous plutôt sûr de vous (actions, pensées) ?",r:"Ou avez-vous le sentiment de devoir être guidé dans vos choix ?"},{id:"d2d",g:"Lors d'un massage bien-être, vous sentez-vous mieux après des pétrissages francs ?",r:"Ou après des effleurements ?"},{id:"d2e",g:"Difficultés à vous lever le matin ?",r:"Ou plutôt une baisse constante d'énergie dans la journée ?"},{id:"d2f",g:"Sans métier physique intensif, choisissez-vous instinctivement des sports intensifs ?",r:"Ou préférez-vous le yoga, la détente, les sports d'endurance à bas régime ?"},{id:"d2g",g:"Êtes-vous fonceur pour prendre une décision ?",r:"Ou pesez-vous longtemps le pour et le contre pour mesurer les risques ?"}];
+const HC=[{id:"h1",t:"Cat.1 – Progestérone (femmes)",m:10,q:["Mes seins sont trop gros","Avant les règles mes seins me font mal","...et mon bas ventre est gonflé","Mes règles sont abondantes","Mes règles sont constamment douloureuses","10–15 j avant les règles : plus agitée et nerveuse","10–15 j avant les règles : plus irritable et agressive","10–15 j avant les règles : je perds le contrôle de moi-même","10–15 j avant les règles : je me sens plus anxieuse","10–15 j avant les règles : sommeil plus léger et agité"]},{id:"h2",t:"Cat.2 – Cortisol",m:10,q:["J'ai des problèmes digestifs","Je souffre d'allergie","Je suis stressé","Mon cœur bat rapidement","Coups de fatigue suivis d'envie de salé ou sucré","Je suis fatigué comme si j'avais la grippe","Mon médecin dit que ma tension artérielle est basse","Mes amis disent que je suis maigre","Mon visage est amaigri","Je souffre d'eczéma, d'urticaire, de psoriasis ou d'allergie sur la peau"]},{id:"h3",t:"Cat.3 – Œstradiol",m:11,q:["Je perds mes cheveux sur le sommet de la tête","Des poils apparaissent sur mon visage","De fines rides sont apparues sur mon visage","J'ai les yeux irrités et secs","J'ai des bouffées de chaleur","J'ai des crises de déprime","Je me sens toujours fatiguée","Mes règles sont peu abondantes","Mes cycles sont irréguliers","Mes seins s'affaissent","Femmes sans règles : je n'ai plus envie de faire l'amour"]},{id:"h4",t:"Cat.4 – Triiodothyronine",m:10,q:["J'ai du mal à me lever le matin","Le matin, visage bouffi ou paupières gonflées","J'ai les mains et les pieds toujours froids","Je suis devenu frileux","J'ai la peau sèche","J'ai tendance à grossir","Je suis constipé","Je me sens plus fatigué au repos que lorsque je suis actif","J'ai l'impression de vivre au ralenti","Mes articulations sont raides le matin"]},{id:"h5",t:"Cat.5 – DHEA",m:10,q:["J'ai pris du ventre","Mes muscles sont relâchés","Mes cheveux sont secs et ternes","Ma peau et la muqueuse de mes yeux sont sèches","Je manque de poil au niveau des aisselles","Je manque de poil sur le pubis","Je manque de graisse sur le pubis (mont de Vénus aplati)","Je manque de libido","Je manque d'odeurs naturelles (sexuelles)","Je ne supporte plus le bruit"]},{id:"h6",t:"Cat.6 – Insuline",m:5,q:["J'ai constamment soif","Je suis porté sur le sucre et les sucreries","J'urine beaucoup, le jour comme la nuit","J'ai du ventre mais des fesses maigres","Je cicatrise très mal"]},{id:"h7",t:"Cat.7 – Aldostérone",m:5,q:["Ma tension artérielle est basse","Au réveil, j'ai la tête qui tourne","Je me sens bien lorsque je suis allongé","J'aime ce qui est salé (nourriture, boisson...)","J'urine plusieurs fois par jour"]},{id:"h8",t:"Cat.8 – EPO",m:5,q:["Le moindre effort m'essouffle","Mon teint est particulièrement pâle","Une anémie a été diagnostiquée dans une analyse sanguine","Mon taux d'urée a augmenté (bilan sanguin)","Je ne connais plus le bien-être"]}];
+
+/* ── RENDER ── */
+function R(){
+  const rgpdDefault="J\'accepte que mes données personnelles (réponses aux questionnaires) soient collectées et traitées par "+( TH.name||"le/la conseiller(ère)")+" dans le cadre de mon suivi, conformément au RGPD (Règlement Européen 2016/679). Ces données ne seront pas partagées avec des tiers. Je peux demander leur suppression à tout moment.";
+  const met=sMet(),ayu=sAyu(),jr=sJR(),dia=sDia(),hor=sHor();
+  const jrW=jr.filter(s=>s.ov).length;
+  const metA=MB.filter(q=>S.answers[q.id]).length+MS.filter(q=>S.answers[q.id]).length;
+  const jrA=JR.reduce((s,c)=>s+c.q.filter((_,i)=>S.answers[c.id+"_"+i]).length,0);
+  const diaA=[...DC1,...DC2].filter(q=>S.answers[q.id]).length;
+  const horA=HC.reduce((s,c)=>s+c.q.filter((_,i)=>S.answers[c.id+"_"+i]).length,0);
+  const horT=HC.reduce((s,c)=>s+c.q.length,0);
+  const ayuA=VQ.filter((_,i)=>+S.answers["v"+i]>0).length+PQ.filter((_,i)=>+S.answers["p"+i]>0).length+KQ.filter((_,i)=>+S.answers["k"+i]>0).length;
+  const hasFb=hasSb();
+
+  let h="";
+
+  /* THERAPIST CONFIG BANNER */
+  const hasTh=!!TH.email;
+  if(isAdmin){
+  h+=`<div class="th-banner${hasTh?" ok":""}">
+    <div class="th-top" onclick="toggleTh()">
+      <div class="th-left">
+        <span class="th-dot${hasTh?" on":""}"></span>
+        Configuration conseiller(ère)
+        ${hasTh?`<span class="th-badge">✓ ${TH.name||TH.email}</span>`:`<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#fff3e0;color:#e65100;border:1px solid #ffcc80;font-weight:600">⚠ Non configuré</span>`}
+      </div>
+      <span style="color:#ccc;font-size:16px">${CFG.openTh?"▲":"▼"}</span>
+    </div>`;
+  if(CFG.openTh){
+    h+=`<div class="th-body">
+      <div class="g2" style="margin-bottom:10px">
+        <div class="fld"><label>Votre nom</label><input id="th-name" type="text" placeholder="Votre prénom et nom" value="${TH.name}" oninput="TH.name=this.value;saveTH()"></div>
+        <div class="fld"><label>Votre email (vous recevrez les résultats)</label><input id="th-email" type="email" placeholder="votre@email.com" value="${TH.email}" oninput="TH.email=this.value;saveTH()"></div>
+      </div>
+      <div class="fld"><label>Texte RGPD personnalisé (optionnel)</label>
+        <textarea id="rgpd-txt" style="min-height:60px" placeholder="Laisser vide pour utiliser le texte par défaut..." oninput="TH.rgpdText=this.value;saveTH()"></textarea>
+      </div>
+    </div>`;
+  }
+  h+=`</div>`;
+
+  /* DB CONFIG BANNER */
+  h+=`<div class="db-banner${hasSb()?" ok":""}">
+    <div class="db-top" onclick="toggleCfg()">
+      <div class="db-left">
+        <span class="db-dot${hasSb()?" on":""}"></span>
+        Base de données Supabase
+        ${hasSb()?`<span class="db-badge">&#10003; Connecté — code ${TH.code}</span>`:`<span style="font-size:11px;padding:2px 9px;border-radius:20px;background:#fff3e0;color:#e65100;border:1px solid #ffcc80;font-weight:500">&#9888; Non configuré</span>`}
+        <span id="sdot" class="sync-dot" style="display:none"></span>
+      </div>
+      <span style="color:var(--text-soft);font-size:16px">${CFG.openCfg?"▲":"▼"}</span>
+    </div>`;
+  if(CFG.openCfg){
+    h+=`<div class="db-body">
+      <div class="g2" style="margin-bottom:10px">
+        <div class="fld" style="grid-column:span 2"><label>URL Supabase</label><input id="sb-url-inp" type="text" placeholder="https://xxxxxx.supabase.co" value="${CFG.sbUrl}" style="font-family:monospace;font-size:12px" oninput="CFG.sbUrl=this.value"></div>
+      </div>
+      <div class="fld" style="margin-bottom:10px"><label>Clé publique (anon key)</label><input id="sb-key-inp" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." value="${CFG.sbKey}" style="font-family:monospace;font-size:12px" oninput="CFG.sbKey=this.value"></div>
+      <div class="fld" style="margin-bottom:12px"><label>Votre code conseiller(ère)</label><input id="sb-code-inp" type="text" placeholder="Ex: MVE2024 (code unique par conseiller)" value="${TH.code}" oninput="TH.code=this.value.toUpperCase();saveTH()"></div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="btn-fb" onclick="applySb()">Connecter</button>
+        ${hasSb()?'<button class="btn-fb-out" onclick="resetSb()">Déconnecter</button>':""}
+      </div>
+      <div id="sb-status"></div>
+      <div class="db-help">
+        <strong>Configuration Supabase (une fois pour toute) :</strong>
+        <ol>
+          <li>Allez sur <a href="https://supabase.com" target="_blank">supabase.com</a> → créez un compte gratuit</li>
+          <li>Nouveau projet → choisissez la région <strong>West EU (Ireland)</strong></li>
+          <li>Dans <strong>SQL Editor</strong>, copiez-collez le code de création de table (ci-dessous)</li>
+          <li>Dans <strong>Settings → API</strong> : copiez l'URL et la clé <em>anon public</em></li>
+          <li>Collez ici, choisissez votre code conseiller, cliquez Connecter</li>
+        </ol>
+        <br>
+        <strong>SQL à exécuter dans Supabase (une seule fois) :</strong><br>
+        <code style="font-size:11px;background:#fff;padding:6px 10px;border-radius:6px;display:block;margin-top:6px;line-height:1.8">
+          CREATE TABLE profilage_clients (<br>
+          &nbsp;&nbsp;id TEXT PRIMARY KEY,<br>
+          &nbsp;&nbsp;conseiller_code TEXT NOT NULL,<br>
+          &nbsp;&nbsp;is_current BOOLEAN DEFAULT false,<br>
+          &nbsp;&nbsp;save_name TEXT, prenom TEXT, nom TEXT,<br>
+          &nbsp;&nbsp;tel TEXT, email TEXT, adresse TEXT, bt TEXT,<br>
+          &nbsp;&nbsp;answers JSONB DEFAULT '{}',<br>
+          &nbsp;&nbsp;menu_text TEXT, menu_file_name TEXT,<br>
+          &nbsp;&nbsp;rgpd BOOLEAN DEFAULT false,<br>
+          &nbsp;&nbsp;completion_pct INTEGER DEFAULT 0,<br>
+          &nbsp;&nbsp;updated_at TIMESTAMPTZ DEFAULT NOW()<br>
+          );<br>
+          ALTER TABLE profilage_clients ENABLE ROW LEVEL SECURITY;<br>
+          CREATE POLICY "public_access" ON profilage_clients FOR ALL USING (true);
+        </code>
+      </div>
+    </div>`;
+  }
+  h+=`</div>`;
+  } // end isAdmin
+
+  /* ADMIN CLIENT LIST */
+  if(isAdmin){
+    const total=S.saves.length;
+    const withBt=S.saves.filter(s=>s.bt).length;
+    const avg=total>0?Math.round(S.saves.reduce((s,x)=>s+(x.pct||0),0)/total):0;
+
+    // Modal
+    if(modalClientId){
+      const mc=adminClients.find(x=>x.id===modalClientId)||S.saves.find(x=>x.id===modalClientId);
+      if(mc){
+        const body=adminClients.find(x=>x.id===modalClientId)?fmtClientBody(adminClients.find(x=>x.id===modalClientId)):"Chargement…";
+        h+=`<div id="modal-bg" class="modal-bg" onclick="if(event.target.id==='modal-bg')closeModal()">
+          <div class="modal-box">
+            <div class="modal-hdr">
+              <div class="modal-ttl">${mc.prenom||""} ${mc.nom||""} — ${mc.date||""}</div>
+              <div style="display:flex;gap:6px">
+                <button class="btn-dl" onclick="downloadClient('${mc.id}')">⬇ Télécharger .txt</button>
+                <button class="modal-close" onclick="closeModal()">✕ Fermer</button>
+              </div>
+            </div>
+            <div class="modal-body"><pre>${body}</pre></div>
+          </div>
+        </div>`;
+      }
+    }
+
+    h+=`<div class="admin-wrap">
+      <div class="admin-topbar">
+        <div>
+          <div class="admin-title">Gestion clients</div>
+          <div class="admin-subtitle">${total} client${total>1?"s":""} enregistré${total>1?"s":""}</div>
+        </div>
+        <div class="admin-actions">
+          <button class="btn-csv" onclick="downloadAllCSV()">⬇ Exporter CSV</button>
+          <button class="btn-new" onclick="newClient()">+ Nouveau client</button>
+        </div>
+      </div>
+      <div class="admin-stats">
+        <div class="stat-card"><div class="stat-n">${total}</div><div class="stat-l">Clients total</div></div>
+        <div class="stat-card"><div class="stat-n">${avg}%</div><div class="stat-l">Complétion moy.</div></div>
+        <div class="stat-card"><div class="stat-n">${S.saves.filter(s=>s.pct>=80).length}</div><div class="stat-l">Formulaires complets</div></div>
+        <div class="stat-card"><div class="stat-n">${S.saves.filter(s=>s.bt).length}</div><div class="stat-l">Groupe sanguin renseigné</div></div>
+      </div>`;
+
+    if(total===0){
+      h+=`<div class="client-table"><div class="no-clients">Aucun client enregistré.<br><br><button class="btn-new" onclick="newClient()">+ Créer le premier client</button></div></div>`;
+    } else {
+      h+=`<table class="client-table">
+        <thead><tr>
+          <th>Client</th><th>Groupe</th><th>Date</th><th>Complétion</th><th>Actions</th>
+        </tr></thead><tbody>`;
+      S.saves.forEach(sv=>{
+        const pct=sv.pct||0;
+        h+=`<tr>
+          <td><div class="td-name">${sv.name||"—"}</div><div class="td-meta">${sv.bt||""}</div></td>
+          <td>${sv.bt||`<span style="color:#ccc">—</span>`}</td>
+          <td style="font-size:12px;color:#888">${sv.date||"—"}</td>
+          <td>
+            <div class="pct-bar">
+              <div class="pct-track"><div class="pct-fill" style="width:${pct}%"></div></div>
+              <span style="font-size:12px;color:#888">${pct}%</span>
+            </div>
+          </td>
+          <td><div class="td-acts">
+            <button class="btn-view" onclick="openModal('${sv.id}');loadAdminClients()">Voir</button>
+            <button class="btn-dl" onclick="downloadClient('${sv.id}')">⬇ .txt</button>
+            <button class="btn-del-c" onclick="deleteClient('${sv.id}')">✕</button>
+          </div></td>
+        </tr>`;
+      });
+      h+=`</tbody></table>`;
+    }
+    h+=`</div>`;
+  }
+
+  /* FORM HEADER */
+  h+=`<div style="text-align:center;margin-bottom:24px"><h1 style="font-size:38px;font-weight:500;color:var(--green);letter-spacing:-.5px;margin-bottom:6px;font-family:Georgia,serif">Suivi profilage alimentaire</h1><p style="font-size:14px;color:var(--text-soft)">Questionnaires nutritionnels &middot; scores en temps r&eacute;el &middot; sauvegarde ${hasFb?"cloud":"locale"}</p></div><div class="card p20">
+    <div class="g2">
+      <div class="fld"><label>Prénom</label><input type="text" placeholder="Prénom" value="${S.prenom}" oninput="sfq('prenom',this.value)"></div>
+      <div class="fld"><label>Nom</label><input type="text" placeholder="Nom de famille" value="${S.nom}" oninput="sfq('nom',this.value)"></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div class="fld"><label>Téléphone</label><input type="tel" placeholder="+32 4xx xxx xxx" value="${S.tel}" oninput="sfq('tel',this.value)"></div>
+      <div class="fld"><label>Email</label><input type="email" placeholder="adresse@email.com" value="${S.email}" oninput="sfq('email',this.value)"></div>
+    </div>
+    <div class="fld" style="margin-bottom:10px"><label>Adresse</label><input type="text" placeholder="Rue, numéro, code postal, ville" value="${S.adresse}" oninput="sfq('adresse',this.value)"></div>
+    <div class="rgpd-box">
+      <div class="rgpd-row" onclick="sf('rgpd',!S.rgpd)">
+        <div class="rgpd-ck${S.rgpd?" on":""}" id="rgpd-ck">${S.rgpd?"✓":""}</div>
+        <div class="rgpd-txt">
+          ${TH.rgpdText||rgpdDefault}
+        </div>
+      </div>
+      <div id="rgpd-warn" class="rgpd-warn">⚠ Veuillez cocher le consentement RGPD avant d'envoyer.</div>
+    </div>
+    <div class="abar">
+      <button class="bsend" id="sendbtn" onclick="sendMail()">📧 Envoyer à ${TH.name||"conseiller(ère)"}</button>
+      <button class="breset" onclick="if(confirm('Effacer toutes les réponses ?')){S.answers={};schedSave();R();}">↺ Réinitialiser</button>
+      <span id="stt"></span>
+    </div>
+  </div>`;
+
+  /* PROFILES */
+  h+=`<div class="card" style="padding:0">
+    <div class="ph" onclick="togP()">
+      <div class="phl">💾 Profils sauvegardés <span class="pcount">${S.saves.length}</span></div>
+      <span style="color:#ccc;font-size:16px">${S.op?"▲":"▼"}</span>
+    </div>`;
+  if(S.op){
+    h+=`<div class="pbody">`;
+    if(S.saves.length){
+      h+=`<div class="sgrid">`;
+      S.saves.forEach(sv=>{h+=`<div class="scard${S.cid===sv.id?" cur":""}">
+        <div class="sname">${sv.name}</div>
+        <div class="smeta">${sv.bt?sv.bt+" · ":""}${sv.date}${sv.pct!==undefined?" · "+sv.pct+"%":""}</div>
+        <div class="sacts"><button class="sl" onclick="loadPro('${sv.id}')">↙ Charger</button><button class="sdel" onclick="delPro('${sv.id}')">✕</button></div>
+      </div>`;});
+      h+=`</div>`;
+    }else{h+=`<p style="font-size:13px;color:#999;font-style:italic;margin-bottom:12px">Aucun profil sauvegardé.</p>`;}
+    h+=`<div class="sinrow">
+      <input type="text" placeholder="Nom du profil à sauvegarder" value="${S.si}" oninput="S.si=this.value">
+      <button class="bsave" onclick="savePro()">💾 Sauvegarder</button>
+    </div></div>`;
+  }
+  h+=`</div>`;
+
+  /* SEC 0 GROUPE SANGUIN */
+  h+=`<div class="sec"><div class="sh" style="border-left-color:#c03030" onclick="tog('bt')">
+    <div class="sinfo"><div class="sname2">🩸 Groupe sanguin</div><div class="shint">Sélectionnez votre groupe sanguin</div></div>
+    <span class="ssc${S.bt?" g":""}">${S.bt||"Non renseigné"}</span>
+    <span class="chv${S.os.bt?" o":""}">▾</span>
+  </div>`;
+  if(S.os.bt){
+    h+=`<div class="sbody" style="padding:16px 18px">
+      <div class="bt-wrap">${BTS.map(b=>`<button class="btp${S.bt===b?" on":""}" onclick="sf('bt','${b}')">${b}</button>`).join("")}</div>
+    </div>`;
+  }
+  h+=`</div>`;
+
+  /* SEC 1 MÉTABOLIQUE */
+  h+=`<div class="sec"><div class="sh" onclick="tog('m')">
+    <div class="sinfo"><div class="sname2">🌿 Typage métabolique</div><div class="shint">Cliquez l'option qui vous correspond — vert = sélectionné</div></div>
+    <span class="ssc${metA>10?" g":""}">${metA}/${MB.length+MS.length} · ${met.type}</span>
+    <span class="chv${S.os.m?" o":""}">▾</span>
+  </div>`;
+  if(S.os.m){
+    h+=`<div class="sbody"><p class="sub">Pour chaque thème — cliquez l'option qui vous ressemble le plus</p>`;
+    MB.forEach(q=>{h+=`<div class="qr"><div class="ql">${q.l}</div><div class="qtog"><button class="bg${S.answers[q.id]==="a"?" on":""}" onclick="set('${q.id}','a')">${q.a}</button><button class="br${S.answers[q.id]==="b"?" on":""}" onclick="set('${q.id}','b')">${q.b}</button></div></div>`;});
+    h+=`<p class="sub">Symptômes ponctuels</p>`;
+    MS.forEach(q=>{const on=!!S.answers[q.id];h+=`<div class="ck" onclick="set('${q.id}',true)"><div class="ckb${on?" on":""}">${on?"✓":""}</div><span class="ckt">${q.t}</span></div>`;});
+    h+=`<div class="sbanner"><span class="spg">Cueilleur A : ${met.a} pts</span><span class="spg">Chasseur B : ${met.b} pts</span><span class="${Math.abs(met.a-met.b)>=5?"spg":"spn"}">${met.type}${Math.abs(met.a-met.b)>=5?" ✓":""}</span></div></div>`;
+  }
+  h+=`</div>`;
+
+  /* SEC 2 AYURVEDA */
+  h+=`<div class="sec"><div class="sh" style="border-left-color:#5b6aa8" onclick="tog('a')">
+    <div class="sinfo"><div class="sname2">☯ Ayurveda – Doshas</div><div class="shint">Vâta · Pitta · Kapha — échelle 1 à 6</div></div>
+    <span class="ssc${ayuA>50?" g":""}">V:${ayu.v} · P:${ayu.p} · K:${ayu.k}</span>
+    <span class="chv${S.os.a?" o":""}">▾</span>
+  </div>`;
+  if(S.os.a){
+    h+=`<div class="sbody">`;
+    [["Vâta-vent","v",VQ,114],["Pitta-feu","p",PQ,120],["Kapha-terre","k",KQ,120]].forEach(([nm,pfx,qs,max])=>{
+      const tot=pfx==="v"?ayu.v:pfx==="p"?ayu.p:ayu.k;
+      h+=`<p class="sub">${nm} — ${tot}/${max}</p>`;
+      qs.forEach((q,i)=>{const cur=+S.answers[pfx+i]||0;
+        h+=`<div class="sr"><span class="stxt">${q}</span><div class="sgrp">`;
+        [1,2,3,4,5,6].forEach(v=>{const on=cur===v;h+=`<button class="sb${on?" on":""}" onclick="set('${pfx+i}',${v})" style="${on?"background:"+C6[v-1]+";border-color:"+C6[v-1]:""}">${v}</button>`;});
+        h+=`</div></div>`;
+      });
+    });
+    h+=`<div class="sbanner"><span class="spn">Vâta : ${ayu.v}/114</span><span class="spn">Pitta : ${ayu.p}/120</span><span class="spn">Kapha : ${ayu.k}/120</span></div></div>`;
+  }
+  h+=`</div>`;
+
+  /* SEC 3 JULIA ROSS */
+  h+=`<div class="sec"><div class="sh" style="border-left-color:${jrW>0?"#c03030":"#2a7d4f"}" onclick="tog('j')">
+    <div class="sinfo"><div class="sname2">🔬 Julia Ross – 8 classes</div><div class="shint">Symptômes pondérés — seuils par classe</div></div>
+    <span class="ssc${jrW>0?" w":jrA>0?" g":""}">${jrW>0?"⚠ "+jrW+" seuil"+( jrW>1?"s":"")+" dépassé"+( jrW>1?"s":""):jrA+" cochés"}</span>
+    <span class="chv${S.os.j?" o":""}">▾</span>
+  </div>`;
+  if(S.os.j){
+    h+=`<div class="sbody">`;
+    JR.forEach((cls,ci)=>{
+      const sc=jr[ci];
+      h+=`<div class="cbar${sc.ov?" ov":""}"><span class="cbn">${cls.t}</span><span class="cbs${sc.ov?" ov":""}">${sc.t} pts / seuil ${cls.h}${sc.ov?" ⚠":""}</span></div>`;
+      cls.q.forEach((q,i)=>{const on=!!S.answers[cls.id+"_"+i];h+=`<div class="ck" onclick="set('${cls.id+"_"+i}',true)"><div class="ckb${on?" on":""}">${on?"✓":""}</div><span class="ckt">${q.t} <small style="color:#bbb">(${q.w}pts)</small></span></div>`;});
+    });
+    h+=`<div class="sbanner">${jr.map((s,i)=>`<span class="${s.ov?"spw":"spn"}">${i+1}:${s.t}/${JR[i].h}</span>`).join("")}</div></div>`;
+  }
+  h+=`</div>`;
+
+  /* SEC 4 DIATHÈSE */
+  h+=`<div class="sec"><div class="sh" style="border-left-color:#8a5baa" onclick="tog('d')">
+    <div class="sinfo"><div class="sname2">⚗ Diathèse de Ménétrier</div><div class="shint">D1 (vert) · D2 (rouge) — Enfance et aujourd'hui</div></div>
+    <span class="ssc${diaA>0?" g":""}">D1:${dia.c1g+dia.c2g} · D2:${dia.c1r+dia.c2r}</span>
+    <span class="chv${S.os.d?" o":""}">▾</span>
+  </div>`;
+  if(S.os.d){
+    h+=`<div class="sbody">
+      <div style="display:flex;gap:8px;margin-bottom:8px"><span style="font-size:12px;padding:4px 12px;background:#eef7f1;border-radius:8px;color:#1b5934;font-weight:700;border:1px solid #2a7d4f">D1 — côté gauche</span><span style="font-size:12px;padding:4px 12px;background:#fdf0f0;border-radius:8px;color:#8a1a1a;font-weight:700;border:1px solid #c03030">D2 — côté droit</span></div>
+      <p class="sub">Colonne 1 – Enfance (avant 12 ans)</p>`;
+    DC1.forEach(q=>{h+=`<div class="drow"><div class="dtog"><button class="dg${S.answers[q.id]==="g"?" on":""}" onclick="set('${q.id}','g')">${q.g}</button><button class="dr2${S.answers[q.id]==="r"?" on":""}" onclick="set('${q.id}','r')">${q.r}</button></div></div>`;});
+    h+=`<p class="sub">Colonne 2 – Aujourd'hui</p>`;
+    DC2.forEach(q=>{h+=`<div class="drow"><div class="dtog"><button class="dg${S.answers[q.id]==="g"?" on":""}" onclick="set('${q.id}','g')">${q.g}</button><button class="dr2${S.answers[q.id]==="r"?" on":""}" onclick="set('${q.id}','r')">${q.r}</button></div></div>`;});
+    h+=`<div class="sbanner"><span class="spg">Col.1 D1:${dia.c1g}</span><span class="spr">Col.1 D2:${dia.c1r}</span><span class="spg">Col.2 D1:${dia.c2g}</span><span class="spr">Col.2 D2:${dia.c2r}</span></div></div>`;
+  }
+  h+=`</div>`;
+
+  /* SEC 5 HORMONES */
+  h+=`<div class="sec"><div class="sh" style="border-left-color:#c48a00" onclick="tog('h')">
+    <div class="sinfo"><div class="sname2">🧪 Bilan hormonal</div><div class="shint">8 catégories — cochez vos symptômes</div></div>
+    <span class="ssc${horA>0?" g":""}">${horA}/${horT} cochés</span>
+    <span class="chv${S.os.h?" o":""}">▾</span>
+  </div>`;
+  if(S.os.h){
+    h+=`<div class="sbody">`;
+    HC.forEach((cat,ci)=>{
+      const sc=hor[ci];
+      h+=`<div class="cbar"><span class="cbn">${cat.t}</span><span class="cbs">${sc.t}/${cat.m}</span></div>`;
+      cat.q.forEach((q,i)=>{const on=!!S.answers[cat.id+"_"+i];h+=`<div class="ck" onclick="set('${cat.id+"_"+i}',true)"><div class="ckb${on?" on":""}">${on?"✓":""}</div><span class="ckt">${q}</span></div>`;});
+    });
+    h+=`<div class="sbanner">${hor.map((s,i)=>`<span class="spn">${i+1}:${s.t}/${HC[i].m}</span>`).join("")}</div></div>`;
+  }
+  h+=`</div>`;
+
+  /* SEC 6 MENUS */
+  h+=`<div class="sec"><div class="sh" style="border-left-color:#2a6aa8" onclick="tog('menu')">
+    <div class="sinfo"><div class="sname2">📋 Menus 5 jours</div><div class="shint">Saisissez ou importez les menus du client</div></div>
+    <span class="ssc${S.menuText||S.menuFileName?" g":""}">${S.menuFileName?S.menuFileName.substring(0,20)+(S.menuFileName.length>20?"…":""):S.menuText?Math.round(S.menuText.length/5)+" mots env.":"Vide"}</span>
+    <span class="chv${S.os.menu?" o":""}">▾</span>
+  </div>`;
+  if(S.os.menu){
+    h+=`<div class="sbody" style="padding:14px 18px">
+      <div class="menu-tabs">
+        <button class="mtab${S.menuMode==="text"?" on":""}" onclick="sf('menuMode','text')">✏️ Saisir le texte</button>
+        <button class="mtab${S.menuMode==="file"?" on":""}" onclick="sf('menuMode','file')">📎 Importer un fichier</button>
+      </div>`;
+    if(S.menuMode==="text"){
+      h+=`<textarea id="menu-txt" class="menu-area" placeholder="Lundi : petit-déjeuner — ...&#10;Mardi : ...&#10;..." oninput="sfq('menuText',this.value)"></textarea>`;
+    } else {
+      h+=`<div class="upload-zone" onclick="document.getElementById('menu-file-inp').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleFileDrop(event)">
+        <input id="menu-file-inp" type="file" accept=".txt,.doc,.docx,.pdf" style="display:none" onchange="handleFileSelect(this)">
+        <div style="font-size:32px;margin-bottom:8px">📎</div>
+        <div style="font-size:13px;color:#888;margin-bottom:4px">Cliquez ou glissez un fichier ici</div>
+        <div style="font-size:11px;color:#bbb">.txt · .doc · .docx · .pdf</div>
+      </div>`;
+      if(S.menuFileName){
+        h+=`<div class="file-ok">
+          <span>📄 ${S.menuFileName}</span>
+          <button class="btn-del-file" onclick="sf('menuFileName','');sf('menuFile','')">✕ Supprimer</button>
+        </div>`;
+      }
+    }
+    h+=`</div></div>`;
+  }
+  h+=`</div>`;
+
+  if(!isAdmin){h+=`<div style="text-align:center;margin-top:20px"><a href="?admin" style="font-size:11px;color:#ddd;text-decoration:none">⚙</a></div>`;}
+  document.getElementById("app").innerHTML=h;
+  const mt=document.getElementById("menu-txt");if(mt)mt.value=S.menuText||"";
+  const rt=document.getElementById("rgpd-txt");if(rt)rt.value=TH.rgpdText||"";
+  const tn=document.getElementById("th-name");if(tn&&document.activeElement!==tn)tn.value=TH.name||"";
+  const te=document.getElementById("th-email");if(te&&document.activeElement!==te)te.value=TH.email||"";
+  const fi=document.getElementById("fb-url-inp");if(fi&&document.activeElement!==fi)fi.value=CFG.fbUrl||"";
+}
+function handleFileSelect(inp){
+  const file=inp.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{S.menuFile=e.target.result;S.menuFileName=file.name;schedSave();R();};
+  if(file.name.match(/\.txt$/i)){reader.readAsText(file);}
+  else{reader.readAsDataURL(file);}
+}
+function handleFileDrop(e){
+  e.preventDefault();e.currentTarget.classList.remove('drag');
+  const file=e.dataTransfer.files[0];if(!file)return;
+  const inp=document.createElement('input');inp.files=e.dataTransfer.files;
+  handleFileSelect({files:e.dataTransfer.files});
+}
+// ── ADMIN FUNCTIONS ──
+let adminClients=[];
+let modalClientId=null;
+
+async function loadAdminClients(){
+  adminClients=await dbLoadAll();
+  R();
+}
+
+function fmtClientBody(d){
+  const answers=d.answers||{};
+  let a=d.answers||{};
+  let met_a=0,met_b=0;
+  MB.forEach(q=>{if(a[q.id]==="a")met_a++;if(a[q.id]==="b")met_b++;});
+  const met_type=Math.abs(met_a-met_b)>=5?(met_a>met_b?"Cueilleur A":"Chasseur B"):"Mixte";
+  let v=0,p=0,k=0;
+  VQ.forEach((_,i)=>{v+=+a["v"+i]||0;});
+  PQ.forEach((_,i)=>{p+=+a["p"+i]||0;});
+  KQ.forEach((_,i)=>{k+=+a["k"+i]||0;});
+  const jr=JR.map(c=>{let t=0;c.q.forEach((q,i)=>{if(a[c.id+"_"+i])t+=q.w;});return{t,ov:t>c.h};});
+  let c1g=0,c1r=0,c2g=0,c2r=0;
+  DC1.forEach(q=>{if(a[q.id]==="g")c1g++;if(a[q.id]==="r")c1r++;});
+  DC2.forEach(q=>{if(a[q.id]==="g")c2g++;if(a[q.id]==="r")c2r++;});
+  const hor=HC.map(c=>{let t=0;c.q.forEach((_,i)=>{if(a[c.id+"_"+i])t++;});return t;});
+  let body="SUIVI PROFILAGE ALIMENTAIRE\n";
+  body+="=".repeat(40)+"\n";
+  body+=`Prénom    : ${d.prenom||"—"} ${d.nom||""}\n`;
+  body+=`Téléphone : ${d.tel||"—"}\n`;
+  body+=`Email     : ${d.email||"—"}\n`;
+  body+=`Adresse   : ${d.adresse||"—"}\n`;
+  body+=`Groupe    : ${d.bt||"—"}\n`;
+  body+=`Date      : ${d.date||new Date().toLocaleDateString("fr-BE")}\n`;
+  body+="\n1. TYPAGE MÉTABOLIQUE\n";
+  body+=`   Cueilleur A : ${met_a} pts | Chasseur B : ${met_b} pts\n`;
+  body+=`   Profil : ${met_type}\n`;
+  body+="\n2. AYURVEDA\n";
+  body+=`   Vâta : ${v}/114 | Pitta : ${p}/120 | Kapha : ${k}/120\n`;
+  body+="\n3. JULIA ROSS\n";
+  JR.forEach((c,i)=>{body+=`   ${c.t} : ${jr[i].t} pts / seuil ${c.h}${jr[i].ov?" ⚠":""}\n`;});
+  body+="\n4. DIATHÈSE DE MÉNÉTRIER\n";
+  body+=`   Col.1 D1:${c1g} D2:${c1r} | Col.2 D1:${c2g} D2:${c2r}\n`;
+  body+="\n5. BILAN HORMONAL\n";
+  HC.forEach((c,i)=>{body+=`   ${c.t} : ${hor[i]}/${c.m}\n`;});
+  if(d.menuText){body+="\n6. MENUS 5 JOURS\n"+d.menuText+"\n";}
+  return body;
+}
+
+function downloadClient(id){
+  const d=adminClients.find(x=>x.id===id);if(!d)return;
+  const body=fmtClientBody(d);
+  const name=(d.prenom||"client")+"_"+(d.nom||"")+"_"+d.date.replace(/\//g,"-");
+  const blob=new Blob([body],{type:"text/plain;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=name+".txt";a.click();
+}
+
+function downloadAllCSV(){
+  let csv="ID,Prénom,Nom,Téléphone,Email,Adresse,Groupe sanguin,Date,Complétion%,Cueilleur A,Chasseur B,Profil métabo,Vâta,Pitta,Kapha\n";
+  adminClients.forEach(d=>{
+    const a=d.answers||{};
+    let ma=0,mb=0;MB.forEach(q=>{if(a[q.id]==="a")ma++;if(a[q.id]==="b")mb++;});
+    let v=0,p=0,k=0;
+    VQ.forEach((_,i)=>{v+=+a["v"+i]||0;});
+    PQ.forEach((_,i)=>{p+=+a["p"+i]||0;});
+    KQ.forEach((_,i)=>{k+=+a["k"+i]||0;});
+    const mt=Math.abs(ma-mb)>=5?(ma>mb?"Cueilleur A":"Chasseur B"):"Mixte";
+    csv+=`"${d.id}","${d.prenom||""}","${d.nom||""}","${d.tel||""}","${d.email||""}","${d.adresse||""}","${d.bt||""}","${d.date||""}","${d.pct||0}%","${ma}","${mb}","${mt}","${v}","${p}","${k}"\n`;
+  });
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="clients_"+new Date().toLocaleDateString("fr-BE").replace(/\//g,"-")+".csv";
+  a.click();
+}
+
+function openModal(id){
+  modalClientId=id;R();
+  setTimeout(()=>document.getElementById("modal-bg")?.scrollIntoView({block:"start"}),50);
+}
+function closeModal(){modalClientId=null;R();}
+
+async function deleteClient(id){
+  if(!confirm("Supprimer définitivement ce client ?"))return;
+  await delPro(id);
+  adminClients=adminClients.filter(x=>x.id!==id);
+  R();
+}
+
+function newClient(){
+  S.prenom="";S.nom="";S.tel="";S.email="";S.adresse="";S.bt="";
+  S.answers={};S.rgpd=false;S.menuText="";S.menuFile="";S.menuFileName="";S.cid=null;
+  schedSave();
+  window.location.href=window.location.href.replace("?admin","");
+}
+
+window.set=set;window.sf=sf;window.sfq=sfq;window.tog=tog;window.togP=togP;
+window.savePro=savePro;window.loadPro=loadPro;window.delPro=delPro;
+window.sendMail=sendMail;window.S=S;window.schedSave=schedSave;
+window.applySb=applySb;window.resetSb=resetSb;window.toggleCfg=toggleCfg;window.toggleTh=toggleTh;window.saveTH=saveTH;window.TH=TH;window.CFG=CFG;window.testSb=testSb;
+init();
+</script>
+</body>
+</html>
