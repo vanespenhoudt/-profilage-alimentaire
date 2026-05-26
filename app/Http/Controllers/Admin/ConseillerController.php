@@ -6,6 +6,7 @@ use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreConseillerRequest;
 use App\Http\Requests\UpdateConseillerRequest;
+use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,12 +17,14 @@ class ConseillerController extends Controller
 {
     public function index(): View
     {
-        $conseillers = User::conseillers()
+        $conseillers  = User::conseillers()
             ->withCount('clients')
             ->orderBy('name')
             ->paginate(20);
 
-        return view('admin.conseillers.index', compact('conseillers'));
+        $invitations = Invitation::orderByDesc('created_at')->get();
+
+        return view('admin.conseillers.index', compact('conseillers', 'invitations'));
     }
 
     public function create(): View

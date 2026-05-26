@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ConseillerController;
+use App\Http\Controllers\Admin\InvitationController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PublicQuestionnaireController;
@@ -10,6 +11,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
+
+// Inscription conseiller via invitation (sans authentification)
+Route::get('/inscription/{token}', [InvitationController::class, 'show'])->name('invitation.show');
+Route::post('/inscription/{token}', [InvitationController::class, 'register'])->name('invitation.register');
 
 // Routes publiques client (sans authentification)
 Route::get('/q/{token}', [PublicQuestionnaireController::class, 'show'])->name('questionnaire.public.show');
@@ -42,6 +47,10 @@ Route::middleware(['auth', 'role'])->group(function () {
         Route::get('/conseillers/{user}/edit', [ConseillerController::class, 'edit'])->name('conseillers.edit');
         Route::put('/conseillers/{user}', [ConseillerController::class, 'update'])->name('conseillers.update');
         Route::patch('/conseillers/{user}/toggle', [ConseillerController::class, 'toggle'])->name('conseillers.toggle');
+
+        // Invitations
+        Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
+        Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
     });
 });
 
