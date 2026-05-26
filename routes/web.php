@@ -3,12 +3,18 @@
 use App\Http\Controllers\Admin\ConseillerController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PublicQuestionnaireController;
 use App\Http\Controllers\QuestionnaireController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
+
+// Routes publiques client (sans authentification)
+Route::get('/q/{token}', [PublicQuestionnaireController::class, 'show'])->name('questionnaire.public.show');
+Route::post('/q/{token}/save', [PublicQuestionnaireController::class, 'save'])->name('questionnaire.public.save');
+Route::post('/q/{token}/submit', [PublicQuestionnaireController::class, 'submit'])->name('questionnaire.public.submit');
 
 Route::middleware(['auth', 'role'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -22,10 +28,11 @@ Route::middleware(['auth', 'role'])->group(function () {
     Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
-    // Questionnaires
+    // Questionnaires (conseiller)
     Route::get('/clients/{client}/questionnaire', [QuestionnaireController::class, 'show'])->name('questionnaire.show');
     Route::post('/clients/{client}/questionnaire', [QuestionnaireController::class, 'store'])->name('questionnaire.store');
     Route::get('/clients/{client}/bilan', [QuestionnaireController::class, 'bilan'])->name('questionnaire.bilan');
+    Route::post('/clients/{client}/questionnaire/token', [QuestionnaireController::class, 'generateToken'])->name('questionnaire.generate-token');
 
     // Admin - Conseillers
     Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function () {

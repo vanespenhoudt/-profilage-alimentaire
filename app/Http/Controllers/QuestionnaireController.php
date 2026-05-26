@@ -9,6 +9,7 @@ use App\Models\Questionnaire;
 use App\Services\QuestionnaireScorer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class QuestionnaireController extends Controller
@@ -56,6 +57,21 @@ class QuestionnaireController extends Controller
         $data = QuestionnaireData::class;
 
         return view('questionnaire.bilan', compact('client', 'questionnaire', 'data'));
+    }
+
+    public function generateToken(Request $request, Client $client): RedirectResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
+
+        $questionnaire->token      = Str::random(48);
+        $questionnaire->updated_at = now();
+        $questionnaire->save();
+
+        return redirect()
+            ->route('clients.show', $client)
+            ->with('token_generated', route('questionnaire.public.show', $questionnaire->token));
     }
 
     private function authorizeClientAccess(\App\Models\User $user, Client $client): void

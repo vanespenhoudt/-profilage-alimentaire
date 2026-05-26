@@ -14,6 +14,7 @@ class Questionnaire extends Model
 
     protected $fillable = [
         'client_id',
+        'token',
         'answers',
         'scores',
         'menu_text',
@@ -22,10 +23,27 @@ class Questionnaire extends Model
     protected function casts(): array
     {
         return [
-            'answers'    => 'array',
-            'scores'     => 'array',
-            'updated_at' => 'datetime',
+            'answers'      => 'array',
+            'scores'       => 'array',
+            'updated_at'   => 'datetime',
+            'submitted_at' => 'datetime',
         ];
+    }
+
+    public function isSubmitted(): bool
+    {
+        return $this->submitted_at !== null;
+    }
+
+    public function statusLabel(): string
+    {
+        if ($this->isSubmitted()) {
+            return 'Soumis le ' . $this->submitted_at->format('d/m/Y à H:i');
+        }
+        if ($this->answers) {
+            return 'En cours';
+        }
+        return 'En attente';
     }
 
     public function client(): BelongsTo
