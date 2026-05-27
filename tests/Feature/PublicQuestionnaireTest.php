@@ -3,11 +3,14 @@
 namespace Tests\Feature;
 
 use App\Enums\Role;
+use App\Mail\QuestionnaireCompletedClient;
+use App\Mail\QuestionnaireCompletedConseiller;
 use App\Models\Client;
 use App\Models\Questionnaire;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class PublicQuestionnaireTest extends TestCase
@@ -164,5 +167,153 @@ class PublicQuestionnaireTest extends TestCase
             $originalScores['metabolique']['type'],
             $questionnaire->scores['metabolique']['type']
         );
+    }
+
+    // -----------------------------------------------------------------------
+    // GET /q/{token}/validate
+    // -----------------------------------------------------------------------
+
+    public function test_validate_retourne_tableau_vide_quand_toutes_sections_ont_des_reponses(): void
+    {
+        $questionnaire = $this->makeQuestionnaire([
+            'answers' => [
+                'mb1'   => 'a',
+                'v0'    => '3',
+                'jr1_0' => '1',
+                'd1a'   => 'd1',
+                'h1_0'  => '1',
+            ],
+        ]);
+
+        $this->getJson(route('questionnaire.public.validate', $questionnaire->token))
+            ->assertOk()
+            ->assertJson(['suspectes' => []]);
+    }
+
+    public function test_validate_retourne_toutes_sections_suspectes_quand_aucune_reponse(): void
+    {
+        $questionnaire = $this->makeQuestionnaire();
+
+        $response = $this->getJson(route('questionnaire.public.validate', $questionnaire->token));
+
+        $response->assertOk();
+        $data = $response->json('suspectes');
+        $this->assertCount(5, $data);
+        $this->assertContains('Typage Métabolique', $data);
+        $this->assertContains('Ayurveda', $data);
+        $this->assertContains('Julia Ross', $data);
+        $this->assertContains('Diathèse de Ménétrier', $data);
+        $this->assertContains('Bilan Hormonal', $data);
+    }
+
+    public function test_validate_respecte_le_filtre_sections_du_questionnaire(): void
+    {
+        $questionnaire = $this->makeQuestionnaire([
+            'sections' => ['metabolique', 'ayurveda'],
+            'answers'  => ['mb1' => 'a'],
+        ]);
+
+        $response = $this->getJson(route('questionnaire.public.validate', $questionnaire->token));
+
+        $response->assertOk();
+        $suspectes = $response->json('suspectes');
+        // Metabolique OK, Ayurveda vide → 1 suspect
+        $this->assertCount(1, $suspectes);
+        $this->assertContains('Ayurveda', $suspectes);
+        $this->assertNotContains('Julia Ross', $suspectes);
+    }
+
+    public function test_validate_retourne_404_pour_token_invalide(): void
+    {
+        $this->getJson(route('questionnaire.public.validate', 'token-inexistant'))
+            ->assertNotFound();
+    }
+
+    public function test_validate_retourne_tableau_vide_si_questionnaire_deja_soumis(): void
+    {
+        $questionnaire = $this->makeQuestionnaire([
+            'submitted_at' => Carbon::now(),
+        ]);
+
+        $this->getJson(route('questionnaire.public.validate', $questionnaire->token))
+            ->assertOk()
+            ->assertJson(['suspectes' => []]);
+    }
+
+    // -----------------------------------------------------------------------
+    // POST /q/{token}/submit — emails
+    // -----------------------------------------------------------------------
+
+    public function test_submit_envoie_email_au_conseiller(): void
+    {
+        Mail::fake();
+
+        $questionnaire = $this->makeQuestionnaire();
+
+        $this->post(
+            route('questionnaire.public.submit', $questionnaire->token),
+            ['mb1' => 'a']
+        )->assertOk();
+
+        Mail::assertQueued(QuestionnaireCompletedConseiller::class);
+    }
+
+    public function test_submit_envoie_email_au_client_quand_il_a_un_email(): void
+    {
+        Mail::fake();
+
+        $questionnaire = $this->makeQuestionnaire();
+
+        // Le helper makeQuestionnaire crée un client avec un email (ClientFactory)
+        $this->assertNotNull($questionnaire->client->email);
+
+        $this->post(
+            route('questionnaire.public.submit', $questionnaire->token),
+            ['mb1' => 'a']
+        )->assertOk();
+
+        Mail::assertQueued(QuestionnaireCompletedClient::class);
+    }
+
+    public function test_submit_nenvoie_pas_email_client_quand_pas_demail(): void
+    {
+        Mail::fake();
+
+        $conseiller = User::factory()->create([
+            'role'   => Role::Conseiller->value,
+            'active' => true,
+        ]);
+        $client = Client::factory()->create([
+            'conseiller_id' => $conseiller->id,
+            'email'         => null,
+        ]);
+        $questionnaire = Questionnaire::create([
+            'client_id' => $client->id,
+            'token'     => 'token-no-email-' . uniqid(),
+        ]);
+
+        $this->post(
+            route('questionnaire.public.submit', $questionnaire->token),
+            ['mb1' => 'a']
+        )->assertOk();
+
+        Mail::assertNotQueued(QuestionnaireCompletedClient::class);
+        Mail::assertQueued(QuestionnaireCompletedConseiller::class);
+    }
+
+    public function test_submit_nenvoie_aucun_email_si_deja_soumis(): void
+    {
+        Mail::fake();
+
+        $questionnaire = $this->makeQuestionnaire([
+            'submitted_at' => Carbon::now(),
+        ]);
+
+        $this->post(
+            route('questionnaire.public.submit', $questionnaire->token),
+            ['mb1' => 'a']
+        )->assertOk()->assertViewIs('questionnaire.merci');
+
+        Mail::assertNothingQueued();
     }
 }

@@ -34,7 +34,11 @@
 @endsection
 
 @section('content')
-@php use App\Data\QuestionnaireData; @endphp
+@php
+use App\Data\QuestionnaireData;
+$totalJuliaRoss = collect(QuestionnaireData::$julia_ross)->sum(fn($c) => count($c['questions']));
+$totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c['questions']));
+@endphp
 
 <style>
     /* ── Spécifique vue interne questionnaire ──────────────────────── */
@@ -123,7 +127,7 @@
                         data-bs-toggle="collapse" data-bs-target="#s1" aria-expanded="true">
                     <span class="section-icon"><i class="bi bi-activity"></i></span>
                     1. Typage Métabolique
-                    <span class="badge-progress ms-3" id="badge-s1">0 / 37 questions</span>
+                    <span class="badge-progress ms-3" id="badge-s1">0 / 37</span>
                 </button>
             </h2>
             <div id="s1" class="accordion-collapse collapse show" data-bs-parent="#questAccordion">
@@ -191,7 +195,7 @@
                         data-bs-toggle="collapse" data-bs-target="#s2">
                     <span class="section-icon"><i class="bi bi-yin-yang"></i></span>
                     2. Ayurveda
-                    <span class="badge-progress ms-3" id="badge-s2">0 / 59 questions</span>
+                    <span class="badge-progress ms-3" id="badge-s2">0 / 59</span>
                 </button>
             </h2>
             <div id="s2" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
@@ -262,7 +266,7 @@
                         data-bs-toggle="collapse" data-bs-target="#s3">
                     <span class="section-icon"><i class="bi bi-brain"></i></span>
                     3. Julia Ross
-                    <span class="badge-progress ms-3" id="badge-s3">0 cochés</span>
+                    <span class="badge-progress ms-3" id="badge-s3">0 / {{ $totalJuliaRoss }}</span>
                 </button>
             </h2>
             <div id="s3" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
@@ -307,7 +311,7 @@
                         data-bs-toggle="collapse" data-bs-target="#s4">
                     <span class="section-icon"><i class="bi bi-diagram-3"></i></span>
                     4. Diathèse de Ménétrier
-                    <span class="badge-progress ms-3" id="badge-s4">0 / 14 questions</span>
+                    <span class="badge-progress ms-3" id="badge-s4">0 / 14</span>
                 </button>
             </h2>
             <div id="s4" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
@@ -389,7 +393,7 @@
                         data-bs-toggle="collapse" data-bs-target="#s5">
                     <span class="section-icon"><i class="bi bi-droplet-half"></i></span>
                     5. Bilan Hormonal
-                    <span class="badge-progress ms-3" id="badge-s5">0 cochés</span>
+                    <span class="badge-progress ms-3" id="badge-s5">0 / {{ $totalHormones }}</span>
                 </button>
             </h2>
             <div id="s5" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
@@ -438,16 +442,6 @@
 {{-- Barre flottante bas ──────────────────────────────────────────── --}}
 <div class="position-fixed bottom-0 end-0 p-4 zi-1050">
     <div class="d-flex gap-2 align-items-center float-bar">
-
-        {{-- Progression mini --}}
-        <div class="float-bar-inner">
-            <div class="progress on-panel flex-grow-1 w-120">
-                <div class="progress-bar" id="floatBar" style="width:0%;transition:width .4s ease;"></div>
-            </div>
-            <span id="floatStatus" class="float-bar-status">0%</span>
-        </div>
-
-        {{-- Boutons --}}
         @if($questionnaire)
         <a href="{{ route('questionnaire.bilan', $client) }}" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-bar-chart me-1"></i>Voir bilan
@@ -462,12 +456,12 @@
 <script>
 (function () {
     const sections = {
-        s1:      { type: 'radio', total: 37,  badgeId: 'badge-s1',  suffix: ' / 37 questions' },
-        's1-sym':{ type: 'check', total: 11,  badgeId: null,        suffix: '' },
-        s2:      { type: 'radio', total: 59,  badgeId: 'badge-s2',  suffix: ' / 59 questions' },
-        s3:      { type: 'check', total: null, badgeId: 'badge-s3', suffix: ' cochés' },
-        s4:      { type: 'radio', total: 14,  badgeId: 'badge-s4',  suffix: ' / 14 questions' },
-        s5:      { type: 'check', total: null, badgeId: 'badge-s5', suffix: ' cochés' },
+        s1:      { type: 'radio', total: 37,                         badgeId: 'badge-s1' },
+        's1-sym':{ type: 'check', total: 11,                         badgeId: null },
+        s2:      { type: 'radio', total: 59,                         badgeId: 'badge-s2' },
+        s3:      { type: 'check', total: @json($totalJuliaRoss),      badgeId: 'badge-s3' },
+        s4:      { type: 'radio', total: 14,                         badgeId: 'badge-s4' },
+        s5:      { type: 'check', total: @json($totalHormones),       badgeId: 'badge-s5' },
     };
 
     function countSection(key) {
@@ -492,7 +486,7 @@
             const count = countSection(key);
             if (cfg.badgeId) {
                 const badge = document.getElementById(cfg.badgeId);
-                if (badge) badge.textContent = count + cfg.suffix;
+                if (badge) badge.textContent = count + ' / ' + cfg.total;
             }
             if (cfg.type === 'radio') totalAnswered += count;
         });
@@ -500,22 +494,6 @@
         const pct = totalAll > 0 ? Math.round((totalAnswered / totalAll) * 100) : 0;
         document.getElementById('globalBar').style.width = pct + '%';
         document.getElementById('globalLabel').textContent = totalAnswered + ' / ' + totalAll;
-
-        const floatBar = document.getElementById('floatBar');
-        if (floatBar) floatBar.style.width = pct + '%';
-
-        const status = document.getElementById('floatStatus');
-        if (status) {
-            if (pct === 100) {
-                status.textContent = 'Complet';
-                status.style.color = 'var(--color-primary-dark)';
-                status.style.fontWeight = '600';
-            } else {
-                status.textContent = pct + '% complété';
-                status.style.color = 'var(--color-text-muted)';
-                status.style.fontWeight = '';
-            }
-        }
     }
 
     // Auto-save

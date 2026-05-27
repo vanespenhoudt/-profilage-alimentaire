@@ -19,6 +19,7 @@ Route::post('/inscription/{token}', [InvitationController::class, 'register'])->
 // Routes publiques client (sans authentification)
 Route::get('/q/{token}', [PublicQuestionnaireController::class, 'show'])->name('questionnaire.public.show');
 Route::post('/q/{token}/save', [PublicQuestionnaireController::class, 'save'])->name('questionnaire.public.save');
+Route::get('/q/{token}/validate', [PublicQuestionnaireController::class, 'validate'])->name('questionnaire.public.validate');
 Route::post('/q/{token}/submit', [PublicQuestionnaireController::class, 'submit'])->name('questionnaire.public.submit');
 
 Route::middleware(['auth', 'role:super_admin,conseiller'])->group(function () {

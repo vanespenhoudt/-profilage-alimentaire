@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Questionnaire\SubmitQuestionnaireAction;
+use App\Actions\Questionnaire\ValidateQuestionnaireAction;
 use App\Models\Questionnaire;
-use App\Services\QuestionnaireScorer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -48,6 +49,19 @@ class PublicQuestionnaireController extends Controller
         ]);
     }
 
+    public function validate(string $token): JsonResponse
+    {
+        $questionnaire = Questionnaire::where('token', $token)->with('client')->firstOrFail();
+
+        if ($questionnaire->isSubmitted()) {
+            return response()->json(['suspectes' => []]);
+        }
+
+        $suspectes = (new ValidateQuestionnaireAction())->execute($questionnaire);
+
+        return response()->json(['suspectes' => $suspectes]);
+    }
+
     public function submit(Request $request, string $token): View|RedirectResponse
     {
         $questionnaire = Questionnaire::where('token', $token)->with('client')->firstOrFail();
@@ -57,15 +71,8 @@ class PublicQuestionnaireController extends Controller
         }
 
         $answers = $request->except(['_token']);
-        $scores  = (new QuestionnaireScorer())->calculate($answers);
 
-        $questionnaire->answers      = $answers;
-        $questionnaire->scores       = $scores;
-        $questionnaire->submitted_at = now();
-        $questionnaire->updated_at   = now();
-        $questionnaire->save();
-
-        $this->syncIdentityToClient($questionnaire->client, $answers);
+        (new SubmitQuestionnaireAction())->execute($questionnaire, $answers);
 
         return view('questionnaire.merci', compact('questionnaire'));
     }
@@ -74,7 +81,7 @@ class PublicQuestionnaireController extends Controller
     {
         foreach (['nom', 'prenom', 'age', 'sexe', 'taille', 'poids'] as $field) {
             if (array_key_exists("identite_{$field}", $data)) {
-                $value = $data["identite_{$field}"];
+                $value          = $data["identite_{$field}"];
                 $client->$field = ($value !== '' && $value !== null) ? $value : null;
             }
         }

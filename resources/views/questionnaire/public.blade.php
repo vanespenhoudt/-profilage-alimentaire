@@ -436,11 +436,42 @@
     </div>
 </div>
 
+{{-- Modal validation sections incomplètes ──────────────────────── --}}
+<div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content modal-content-rounded">
+            <div class="modal-header modal-header-navy">
+                <h5 class="modal-title modal-title-syne" id="validationModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Sections incomplètes
+                </h5>
+            </div>
+            <div class="modal-body modal-body-card">
+                <p class="fs-13 text-muted-pa mb-2">
+                    Les sections suivantes ne contiennent aucune réponse enregistrée :
+                </p>
+                <ul id="suspectList" class="fs-13 mb-3 ps-3"></ul>
+                <p class="fs-13 text-muted-pa mb-0">
+                    Souhaitez-vous revenir compléter ces sections, ou soumettre quand même ?
+                </p>
+            </div>
+            <div class="modal-footer modal-footer-card">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-arrow-left me-1"></i>Revenir et compléter
+                </button>
+                <button type="button" class="btn btn-primary" id="forceSubmitBtn">
+                    <i class="bi bi-send me-1"></i>Soumettre quand même
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
-    const TOKEN      = @json($token);
-    const SAVE_URL   = '/q/' + TOKEN + '/save';
-    const CSRF       = document.querySelector('meta[name="csrf-token"]').content;
+    const TOKEN        = @json($token);
+    const SAVE_URL     = '/q/' + TOKEN + '/save';
+    const VALIDATE_URL = '/q/' + TOKEN + '/validate';
+    const CSRF         = document.querySelector('meta[name="csrf-token"]').content;
 
     const sectionCfg = {};
     @if(in_array('metabolique', $sections))
@@ -543,25 +574,60 @@
         setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
-    window.submitQuestionnaire = function () {
-        if (!confirm('Êtes-vous sûr de vouloir soumettre votre questionnaire ? Vous ne pourrez plus le modifier.')) return;
-
+    function copyFormAndSubmit() {
         const src = document.getElementById('questForm');
         const dst = document.getElementById('submitForm');
-
         dst.querySelectorAll('.q-field').forEach(el => el.remove());
-
         new FormData(src).forEach((val, key) => {
             if (key === '_token') return;
-            const input   = document.createElement('input');
-            input.type    = 'hidden';
-            input.name    = key;
-            input.value   = val;
+            const input = document.createElement('input');
+            input.type  = 'hidden';
+            input.name  = key;
+            input.value = val;
             input.classList.add('q-field');
             dst.appendChild(input);
         });
-
         dst.submit();
+    }
+
+    window.submitQuestionnaire = async function () {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Vérification…';
+
+        // 1. Sauvegarde synchrone avant validation
+        try {
+            await fetch(SAVE_URL, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': CSRF },
+                body: new FormData(document.getElementById('questForm')),
+            });
+        } catch (_) { /* continue anyway */ }
+
+        // 2. Validation des sections
+        try {
+            const res  = await fetch(VALIDATE_URL);
+            const data = await res.json();
+
+            if (data.suspectes && data.suspectes.length > 0) {
+                document.getElementById('suspectList').innerHTML =
+                    data.suspectes.map(s => `<li>${s}</li>`).join('');
+
+                const modal = new bootstrap.Modal(document.getElementById('validationModal'));
+                modal.show();
+
+                document.getElementById('forceSubmitBtn').onclick = function () {
+                    modal.hide();
+                    copyFormAndSubmit();
+                };
+
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send me-2"></i>Soumettre le questionnaire';
+                return;
+            }
+        } catch (_) { /* en cas d'erreur réseau, on soumet quand même */ }
+
+        copyFormAndSubmit();
     };
 
     document.addEventListener('change',          () => { updateBadges(); scheduleAutoSave(); });

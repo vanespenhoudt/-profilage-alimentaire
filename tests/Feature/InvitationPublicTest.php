@@ -68,8 +68,8 @@ class InvitationPublicTest extends TestCase
 
         $this->post(route('invitation.register', $invitation->token), [
             'name'                  => 'Jean Dupont',
-            'password'              => 'MotDePasse123!',
-            'password_confirmation' => 'MotDePasse123!',
+            'password'              => 'password1234',
+            'password_confirmation' => 'password1234',
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -84,8 +84,8 @@ class InvitationPublicTest extends TestCase
 
         $this->post(route('invitation.register', $invitation->token), [
             'name'                  => 'Marie Martin',
-            'password'              => 'MotDePasse123!',
-            'password_confirmation' => 'MotDePasse123!',
+            'password'              => 'password1234',
+            'password_confirmation' => 'password1234',
         ]);
 
         $this->assertAuthenticated();
@@ -97,8 +97,8 @@ class InvitationPublicTest extends TestCase
 
         $this->post(route('invitation.register', $invitation->token), [
             'name'                  => 'Pierre Conseil',
-            'password'              => 'MotDePasse123!',
-            'password_confirmation' => 'MotDePasse123!',
+            'password'              => 'password1234',
+            'password_confirmation' => 'password1234',
         ]);
 
         $user = User::where('email', 'role-check@example.com')->first();
@@ -114,8 +114,8 @@ class InvitationPublicTest extends TestCase
 
         $this->post(route('invitation.register', $invitation->token), [
             'name'                  => 'Test Used',
-            'password'              => 'MotDePasse123!',
-            'password_confirmation' => 'MotDePasse123!',
+            'password'              => 'password1234',
+            'password_confirmation' => 'password1234',
         ]);
 
         $invitation->refresh();
@@ -128,8 +128,8 @@ class InvitationPublicTest extends TestCase
 
         $response = $this->post(route('invitation.register', $invitation->token), [
             'name'                  => 'Test',
-            'password'              => 'MotDePasse123!',
-            'password_confirmation' => 'MotDePasse123!',
+            'password'              => 'password1234',
+            'password_confirmation' => 'password1234',
         ]);
 
         $response->assertRedirect(route('login'));
@@ -143,8 +143,8 @@ class InvitationPublicTest extends TestCase
 
         $response = $this->post(route('invitation.register', $invitation->token), [
             'name'                  => '',
-            'password'              => 'MotDePasse123!',
-            'password_confirmation' => 'MotDePasse123!',
+            'password'              => 'password1234',
+            'password_confirmation' => 'password1234',
         ]);
 
         $response->assertSessionHasErrors('name');
@@ -171,7 +171,7 @@ class InvitationPublicTest extends TestCase
 
         $response = $this->post(route('invitation.register', $invitation->token), [
             'name'                  => 'Test Mismatch',
-            'password'              => 'MotDePasse123!',
+            'password'              => 'password1234',
             'password_confirmation' => 'AutreMotDePasse456!',
         ]);
 
@@ -185,8 +185,8 @@ class InvitationPublicTest extends TestCase
 
         $response = $this->post(route('invitation.register', $invitation->token), [
             'name'                  => 'Redirect Test',
-            'password'              => 'MotDePasse123!',
-            'password_confirmation' => 'MotDePasse123!',
+            'password'              => 'password1234',
+            'password_confirmation' => 'password1234',
         ]);
 
         $response->assertRedirect(route('dashboard'));

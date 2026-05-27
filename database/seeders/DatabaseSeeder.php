@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         $superAdmin = User::create([
             'name'     => 'Super Admin',
             'email'    => 'admin@profilage.local',
-            'password' => Hash::make('Admin2024!'),
+            'password' => Hash::make('password1234'),
             'role'     => Role::SuperAdmin->value,
             'active'   => true,
         ]);
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $conseiller1 = User::create([
             'name'     => 'Marie Dupont',
             'email'    => 'conseiller1@profilage.local',
-            'password' => Hash::make('Conseil2024!'),
+            'password' => Hash::make('password1234'),
             'role'     => Role::Conseiller->value,
             'code'     => 'CONS-001',
             'active'   => true,
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         $conseiller2 = User::create([
             'name'     => 'Pierre Martin',
             'email'    => 'conseiller2@profilage.local',
-            'password' => Hash::make('Conseil2024!'),
+            'password' => Hash::make('password1234'),
             'role'     => Role::Conseiller->value,
             'code'     => 'CONS-002',
             'active'   => true,
