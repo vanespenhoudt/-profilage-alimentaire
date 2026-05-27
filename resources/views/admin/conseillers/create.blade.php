@@ -12,13 +12,13 @@
     </h1>
 </div>
 
-<div class="card" style="max-width: 600px;">
+<div class="card mw-600">
     <div class="card-body p-4">
         <form method="POST" action="{{ route('admin.conseillers.store') }}">
             @csrf
 
             <div class="mb-3">
-                <label for="name" class="form-label fw-medium">Nom complet <span class="text-danger">*</span></label>
+                <label for="name" class="form-label fw-medium">Nom complet <span class="required-star">*</span></label>
                 <input type="text" name="name" id="name" value="{{ old('name') }}"
                        class="form-control @error('name') is-invalid @enderror"
                        placeholder="Prénom Nom">
@@ -28,7 +28,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label fw-medium">Adresse email <span class="text-danger">*</span></label>
+                <label for="email" class="form-label fw-medium">Adresse email <span class="required-star">*</span></label>
                 <input type="email" name="email" id="email" value="{{ old('email') }}"
                        class="form-control @error('email') is-invalid @enderror"
                        placeholder="conseiller@exemple.com">
@@ -51,7 +51,7 @@
             <hr>
 
             <div class="mb-3">
-                <label for="password" class="form-label fw-medium">Mot de passe <span class="text-danger">*</span></label>
+                <label for="password" class="form-label fw-medium">Mot de passe <span class="required-star">*</span></label>
                 <input type="password" name="password" id="password"
                        class="form-control @error('password') is-invalid @enderror"
                        placeholder="Minimum 8 caractères">
@@ -61,7 +61,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="password_confirmation" class="form-label fw-medium">Confirmer le mot de passe <span class="text-danger">*</span></label>
+                <label for="password_confirmation" class="form-label fw-medium">Confirmer le mot de passe <span class="required-star">*</span></label>
                 <input type="password" name="password_confirmation" id="password_confirmation"
                        class="form-control"
                        placeholder="Répétez le mot de passe">

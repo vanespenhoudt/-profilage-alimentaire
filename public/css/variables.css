@@ -1,0 +1,65 @@
+:root {
+  /* ─── Couleurs principales ─── */
+  --color-primary:          #65CCB8;
+  --color-primary-mid:      #57BA98;
+  --color-primary-dark:     #3B945E;
+  --color-navy:             #182628;
+
+  /* ─── Fonds ─── */
+  --color-bg-page:          #F2F2F2;
+  --color-bg-card:          #FFFFFF;
+  --color-bg-input:         #FAFAFA;
+
+  /* ─── Textes ─── */
+  --color-text-on-green:    #FFFFFF;
+  --color-text-primary:     #182628;
+  --color-text-secondary:   #444444;
+  --color-text-muted:       #BBBBBB;
+  --color-text-placeholder: #CCCCCC;
+
+  /* ─── Bordures ─── */
+  --color-border-light:     #ECECEC;
+  --color-border-card:      #F0F0F0;
+  --color-border-bottom:    #EFEFEF;
+
+  /* ─── Transparences zone verte ─── */
+  --color-white-10:  rgba(255,255,255,0.10);
+  --color-white-15:  rgba(255,255,255,0.15);
+  --color-white-18:  rgba(255,255,255,0.18);
+  --color-white-20:  rgba(255,255,255,0.20);
+  --color-white-30:  rgba(255,255,255,0.30);
+  --color-white-45:  rgba(255,255,255,0.45);
+  --color-white-55:  rgba(255,255,255,0.55);
+  --color-white-65:  rgba(255,255,255,0.65);
+  --color-white-70:  rgba(255,255,255,0.70);
+
+  /* ─── Teintes vertes (fond/bordure sections) ─── */
+  --color-bg-tint:      #E8F7F1;
+  --color-border-tint:  #C8E8D8;
+
+  /* ─── Teintes warning (alertes ambrées) ─── */
+  --color-bg-warning:     #FFF8ED;
+  --color-border-warning: #FCD57A;
+  --color-text-warning:   #92400E;
+
+  /* ─── Accent ─── */
+  --color-accent-orange: #F4A261;
+
+  /* ─── Transparences navy ─── */
+  --color-navy-10: rgba(24,38,40,0.10);
+
+  /* ─── Focus / Glow ─── */
+  --color-focus-ring: rgba(87,186,152,0.15);
+
+  /* ─── Typographie ─── */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Outfit', sans-serif;
+
+  /* ─── Rayons ─── */
+  --radius-card:  10px;
+  --radius-input:  7px;
+  --radius-pill:  20px;
+
+  /* ─── Nav ─── */
+  --nav-h: 54px;
+}

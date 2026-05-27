@@ -49,17 +49,15 @@ class InvitationAdminTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    public function test_conseiller_est_redirige_pour_store_car_pas_super_admin(): void
+    public function test_conseiller_obtient_403_pour_store_car_pas_super_admin(): void
     {
-        // Le middleware CheckRole redirige vers dashboard (pas 403)
-        // quand le rôle requis n'est pas satisfait.
         $conseiller = $this->makeConseiller();
 
         $response = $this->actingAs($conseiller)->post(route('admin.invitations.store'), [
             'email' => 'nouveau@example.com',
         ]);
 
-        $response->assertRedirect(route('dashboard'));
+        $response->assertForbidden();
     }
 
     public function test_super_admin_peut_creer_une_invitation(): void
@@ -123,15 +121,14 @@ class InvitationAdminTest extends TestCase
         $this->assertDatabaseMissing('invitations', ['id' => $invitation->id]);
     }
 
-    public function test_conseiller_ne_peut_pas_supprimer_une_invitation(): void
+    public function test_conseiller_obtient_403_pour_destroy_car_pas_super_admin(): void
     {
         $conseiller = $this->makeConseiller();
         $invitation = $this->makeInvitation();
 
         $response = $this->actingAs($conseiller)->delete(route('admin.invitations.destroy', $invitation));
 
-        // Le middleware CheckRole redirige vers dashboard (pas 403)
-        $response->assertRedirect(route('dashboard'));
+        $response->assertForbidden();
         $this->assertDatabaseHas('invitations', ['id' => $invitation->id]);
     }
 

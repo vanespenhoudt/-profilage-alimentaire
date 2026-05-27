@@ -7,6 +7,7 @@ use App\Enums\Role;
 use App\Models\Client;
 use App\Models\Questionnaire;
 use App\Services\QuestionnaireScorer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -24,6 +25,25 @@ class QuestionnaireController extends Controller
         return view('questionnaire.show', compact('client', 'questionnaire', 'answers'));
     }
 
+    public function autosave(Request $request, Client $client): JsonResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $answers = $request->except(['_token']);
+
+        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
+        $questionnaire->answers    = $answers;
+        $questionnaire->updated_at = now();
+        $questionnaire->save();
+
+        $this->syncIdentityToClient($client, $answers);
+
+        return response()->json([
+            'saved' => true,
+            'time'  => now()->format('H:i:s'),
+        ]);
+    }
+
     public function store(Request $request, Client $client): RedirectResponse
     {
         $this->authorizeClientAccess($request->user(), $client);
@@ -37,9 +57,22 @@ class QuestionnaireController extends Controller
         $questionnaire->updated_at = now();
         $questionnaire->save();
 
+        $this->syncIdentityToClient($client, $answers);
+
         return redirect()
             ->route('questionnaire.bilan', $client)
             ->with('success', 'Questionnaire enregistré avec succès.');
+    }
+
+    private function syncIdentityToClient(Client $client, array $data): void
+    {
+        foreach (['nom', 'prenom', 'age', 'sexe', 'taille', 'poids', 'sentinelles'] as $field) {
+            if (array_key_exists("identite_{$field}", $data)) {
+                $value = $data["identite_{$field}"];
+                $client->$field = ($value !== '' && $value !== null) ? $value : null;
+            }
+        }
+        $client->save();
     }
 
     public function bilan(Request $request, Client $client): View|RedirectResponse
@@ -63,9 +96,14 @@ class QuestionnaireController extends Controller
     {
         $this->authorizeClientAccess($request->user(), $client);
 
-        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
+        $validated = $request->validate([
+            'sections'   => 'nullable|array|min:1',
+            'sections.*' => 'in:metabolique,ayurveda,julia_ross,diathese,hormones',
+        ]);
 
+        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
         $questionnaire->token      = Str::random(48);
+        $questionnaire->sections   = $validated['sections'] ?? null;
         $questionnaire->updated_at = now();
         $questionnaire->save();
 

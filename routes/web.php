@@ -21,7 +21,7 @@ Route::get('/q/{token}', [PublicQuestionnaireController::class, 'show'])->name('
 Route::post('/q/{token}/save', [PublicQuestionnaireController::class, 'save'])->name('questionnaire.public.save');
 Route::post('/q/{token}/submit', [PublicQuestionnaireController::class, 'submit'])->name('questionnaire.public.submit');
 
-Route::middleware(['auth', 'role'])->group(function () {
+Route::middleware(['auth', 'role:super_admin,conseiller'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Clients
@@ -35,6 +35,7 @@ Route::middleware(['auth', 'role'])->group(function () {
 
     // Questionnaires (conseiller)
     Route::get('/clients/{client}/questionnaire', [QuestionnaireController::class, 'show'])->name('questionnaire.show');
+    Route::post('/clients/{client}/questionnaire/save', [QuestionnaireController::class, 'autosave'])->name('questionnaire.autosave');
     Route::post('/clients/{client}/questionnaire', [QuestionnaireController::class, 'store'])->name('questionnaire.store');
     Route::get('/clients/{client}/bilan', [QuestionnaireController::class, 'bilan'])->name('questionnaire.bilan');
     Route::post('/clients/{client}/questionnaire/token', [QuestionnaireController::class, 'generateToken'])->name('questionnaire.generate-token');

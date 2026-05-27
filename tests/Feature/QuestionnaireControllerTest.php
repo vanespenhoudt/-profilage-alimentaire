@@ -213,4 +213,30 @@ class QuestionnaireControllerTest extends TestCase
             ->get(route('questionnaire.bilan', $client))
             ->assertRedirect(route('questionnaire.show', $client));
     }
+
+    // -----------------------------------------------------------------------
+    // Rôle client — accès interdit aux routes conseiller
+    // -----------------------------------------------------------------------
+
+    public function test_user_avec_role_client_obtient_403_sur_routes_conseiller(): void
+    {
+        $userClient = User::factory()->create([
+            'role'   => Role::Client->value,
+            'active' => true,
+        ]);
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        $this->actingAs($userClient)
+            ->get(route('dashboard'))
+            ->assertForbidden();
+
+        $this->actingAs($userClient)
+            ->get(route('clients.index'))
+            ->assertForbidden();
+
+        $this->actingAs($userClient)
+            ->get(route('questionnaire.show', $client))
+            ->assertForbidden();
+    }
 }

@@ -19,7 +19,7 @@
 
             @if($isSuperAdmin)
             <div class="mb-3">
-                <label for="conseiller_id" class="form-label fw-medium">Conseiller <span class="text-danger">*</span></label>
+                <label for="conseiller_id" class="form-label fw-medium">Conseiller <span class="required-star">*</span></label>
                 <select name="conseiller_id" id="conseiller_id" class="form-select @error('conseiller_id') is-invalid @enderror">
                     <option value="">-- Sélectionner un conseiller --</option>
                     @foreach($conseillers as $conseiller)
@@ -37,7 +37,7 @@
 
             <div class="row g-3 mb-3">
                 <div class="col-md-6">
-                    <label for="prenom" class="form-label fw-medium">Prénom <span class="text-danger">*</span></label>
+                    <label for="prenom" class="form-label fw-medium">Prénom <span class="required-star">*</span></label>
                     <input type="text" name="prenom" id="prenom" value="{{ old('prenom') }}"
                            class="form-control @error('prenom') is-invalid @enderror"
                            placeholder="Prénom du client">
@@ -46,7 +46,7 @@
                     @enderror
                 </div>
                 <div class="col-md-6">
-                    <label for="nom" class="form-label fw-medium">Nom <span class="text-danger">*</span></label>
+                    <label for="nom" class="form-label fw-medium">Nom <span class="required-star">*</span></label>
                     <input type="text" name="nom" id="nom" value="{{ old('nom') }}"
                            class="form-control @error('nom') is-invalid @enderror"
                            placeholder="Nom de famille">
@@ -58,7 +58,7 @@
 
             <div class="row g-3 mb-3">
                 <div class="col-md-6">
-                    <label for="tel" class="form-label fw-medium">Téléphone <span class="text-danger">*</span></label>
+                    <label for="tel" class="form-label fw-medium">Téléphone <span class="required-star">*</span></label>
                     <input type="text" name="tel" id="tel" value="{{ old('tel') }}"
                            class="form-control @error('tel') is-invalid @enderror"
                            placeholder="+32 xxx xx xx xx">
@@ -115,7 +115,7 @@
                     <label class="form-check-label" for="rgpd">
                         Le client consent au traitement de ses données personnelles conformément au RGPD.
                         Les données collectées sont utilisées exclusivement dans le cadre du suivi alimentaire.
-                        <span class="text-danger">*</span>
+                        <span class="required-star">*</span>
                     </label>
                     @error('rgpd')
                         <div class="invalid-feedback">{{ $message }}</div>

@@ -13,18 +13,18 @@
     @if($user->active)
         <span class="badge text-bg-success ms-2">Actif</span>
     @else
-        <span class="badge text-bg-danger ms-2">Inactif</span>
+        <span class="badge badge-inactif ms-2">Inactif</span>
     @endif
 </div>
 
-<div class="card" style="max-width: 600px;">
+<div class="card mw-600">
     <div class="card-body p-4">
         <form method="POST" action="{{ route('admin.conseillers.update', $user) }}">
             @csrf
             @method('PUT')
 
             <div class="mb-3">
-                <label for="name" class="form-label fw-medium">Nom complet <span class="text-danger">*</span></label>
+                <label for="name" class="form-label fw-medium">Nom complet <span class="required-star">*</span></label>
                 <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}"
                        class="form-control @error('name') is-invalid @enderror">
                 @error('name')
@@ -33,7 +33,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label fw-medium">Adresse email <span class="text-danger">*</span></label>
+                <label for="email" class="form-label fw-medium">Adresse email <span class="required-star">*</span></label>
                 <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}"
                        class="form-control @error('email') is-invalid @enderror">
                 @error('email')

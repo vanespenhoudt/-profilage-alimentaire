@@ -20,8 +20,8 @@
 {{-- Modal invitation --}}
 <div class="modal fade" id="inviteModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header" style="background:var(--primary);color:#fff">
+        <div class="modal-content modal-content-rounded">
+            <div class="modal-header modal-header-navy">
                 <h5 class="modal-title"><i class="bi bi-envelope-plus me-2"></i>Inviter un conseiller</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -58,7 +58,7 @@
 {{-- Panel invitations --}}
 @if($invitations->isNotEmpty())
 <div class="card mb-4">
-    <div class="card-header d-flex align-items-center gap-2 py-2" style="background:var(--primary)">
+    <div class="card-header d-flex align-items-center gap-2 py-2 modal-header-navy">
         <i class="bi bi-envelope-check text-white"></i>
         <span class="fw-semibold text-white">Invitations</span>
         <span class="badge bg-light text-dark ms-auto">{{ $invitations->count() }}</span>
@@ -93,7 +93,7 @@
                         <td class="small text-muted">{{ $invitation->created_at->format('d/m/Y à H:i') }}</td>
                         <td>
                             @if($invitation->isPending())
-                                <div class="input-group input-group-sm" style="max-width:320px">
+                                <div class="input-group input-group-sm mw-320">
                                     <input type="text" class="form-control font-monospace"
                                            value="{{ route('invitation.show', $invitation->token) }}"
                                            readonly id="inv-{{ $invitation->id }}">
@@ -112,7 +112,7 @@
                                   onsubmit="return confirm('Supprimer cette invitation ?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary btn-danger-outline">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card-body p-0">
         @if($conseillers->isEmpty())
             <div class="text-center text-muted py-5">
-                <i class="bi bi-person-badge" style="font-size:2rem;"></i>
+                <i class="bi bi-person-badge fs-2"></i>
                 <p class="mt-2">Aucun conseiller enregistré.</p>
             </div>
         @else
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 @if($conseiller->active)
                                     <span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Actif</span>
                                 @else
-                                    <span class="badge text-bg-danger"><i class="bi bi-x-circle me-1"></i>Inactif</span>
+                                    <span class="badge badge-inactif"><i class="bi bi-x-circle me-1"></i>Inactif</span>
                                 @endif
                             </td>
                             <td>

@@ -15,6 +15,7 @@ class Questionnaire extends Model
     protected $fillable = [
         'client_id',
         'token',
+        'sections',
         'answers',
         'scores',
         'menu_text',
@@ -23,6 +24,7 @@ class Questionnaire extends Model
     protected function casts(): array
     {
         return [
+            'sections'     => 'array',
             'answers'      => 'array',
             'scores'       => 'array',
             'updated_at'   => 'datetime',

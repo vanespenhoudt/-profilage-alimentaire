@@ -31,8 +31,7 @@ class CheckRole
             : $user->role;
 
         if (!empty($roles) && !in_array($userRole, $roles, true)) {
-            return redirect()->route('dashboard')
-                ->with('error', 'Accès non autorisé.');
+            abort(403, 'Accès non autorisé.');
         }
 
         return $next($request);

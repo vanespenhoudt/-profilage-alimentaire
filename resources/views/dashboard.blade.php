@@ -11,13 +11,12 @@
     <div class="col-md-4">
         <div class="card stat-card p-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:48px;height:48px;background:rgba(26,47,94,.1)">
-                    <i class="bi bi-people-fill" style="font-size:1.4rem;color:#1a2f5e;"></i>
+                <div class="rounded-circle d-flex align-items-center justify-content-center stat-icon-wrap">
+                    <i class="bi bi-people-fill fs-icon-stat text-navy"></i>
                 </div>
                 <div>
                     <div class="text-muted small">Mes clients</div>
-                    <div class="fw-bold fs-4" style="color:#1a2f5e;">{{ $totalClients }}</div>
+                    <div class="fw-bold fs-4 text-navy">{{ $totalClients }}</div>
                 </div>
             </div>
         </div>
@@ -27,13 +26,12 @@
     <div class="col-md-4">
         <div class="card stat-card p-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:48px;height:48px;background:rgba(26,47,94,.1)">
-                    <i class="bi bi-person-badge-fill" style="font-size:1.4rem;color:#1a2f5e;"></i>
+                <div class="rounded-circle d-flex align-items-center justify-content-center stat-icon-wrap">
+                    <i class="bi bi-person-badge-fill fs-icon-stat text-navy"></i>
                 </div>
                 <div>
                     <div class="text-muted small">Conseillers actifs</div>
-                    <div class="fw-bold fs-4" style="color:#1a2f5e;">{{ $totalConseillers }}</div>
+                    <div class="fw-bold fs-4 text-navy">{{ $totalConseillers }}</div>
                 </div>
             </div>
         </div>
@@ -49,7 +47,7 @@
     <div class="card-body p-0">
         @if($clientsRecents->isEmpty())
             <div class="text-center text-muted py-5">
-                <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                <i class="bi bi-inbox fs-2"></i>
                 <p class="mt-2">Aucun client pour le moment.</p>
                 <a href="{{ route('clients.create') }}" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus-lg me-1"></i>Ajouter un client

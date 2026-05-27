@@ -19,9 +19,8 @@
                 type="text"
                 name="search"
                 value="{{ $search }}"
-                class="form-control"
+                class="form-control input-search"
                 placeholder="Rechercher par nom, prénom ou code..."
-                style="max-width: 350px;"
             >
             <button type="submit" class="btn btn-primary">
                 <i class="bi bi-search me-1"></i>Rechercher
@@ -38,9 +37,9 @@
 <div class="card">
     <div class="card-body p-0">
         @if($clients->isEmpty())
-            <div class="text-center text-muted py-5">
-                <i class="bi bi-inbox" style="font-size:2rem;"></i>
-                <p class="mt-2">
+            <div class="text-center py-5 text-muted-pa">
+                <i class="bi bi-inbox fs-2"></i>
+                <p class="mt-2 fs-13 text-muted-pa">
                     @if($search)
                         Aucun client trouvé pour "{{ $search }}".
                     @else
@@ -51,7 +50,7 @@
         @else
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="bg-light">
+                    <thead>
                         <tr>
                             <th class="ps-3">Code</th>
                             <th>Prénom</th>
@@ -69,24 +68,24 @@
                         @foreach($clients as $client)
                         <tr>
                             <td class="ps-3">
-                                <span class="badge text-bg-secondary">{{ $client->code }}</span>
+                                <span class="chip-code">{{ $client->code }}</span>
                             </td>
                             <td>{{ $client->prenom }}</td>
                             <td class="fw-medium">{{ $client->nom }}</td>
                             <td>{{ $client->tel }}</td>
-                            <td class="text-muted small">{{ $client->email ?? '-' }}</td>
+                            <td class="text-muted-pa fs-12">{{ $client->email ?? '-' }}</td>
                             @if($isSuperAdmin)
-                            <td class="small">{{ $client->conseiller?->name ?? '-' }}</td>
+                            <td class="fs-12">{{ $client->conseiller?->name ?? '-' }}</td>
                             @endif
                             <td>
                                 @if($client->rgpd)
-                                    <span class="badge text-bg-success">Accepté</span>
+                                    <span class="badge-rgpd-ok">Accepté</span>
                                 @else
-                                    <span class="badge text-bg-warning text-dark">En attente</span>
+                                    <span class="badge-rgpd-wait">En attente</span>
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('clients.show', $client) }}" class="btn btn-sm btn-outline-primary me-1">
+                                <a href="{{ route('clients.show', $client) }}" class="btn btn-sm btn-outline-secondary me-1">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="{{ route('clients.edit', $client) }}" class="btn btn-sm btn-outline-secondary me-1">
@@ -96,7 +95,7 @@
                                       onsubmit="return confirm('Supprimer ce client ?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary btn-delete">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>

@@ -5,64 +5,139 @@
 @section('content')
 @php use App\Data\QuestionnaireData; @endphp
 
-{{-- En-tête --}}
+<style>
+    /* ── Spécifique vue publique questionnaire ──────────────────── */
+    .section-icon {
+        width: 28px; height: 28px; background: var(--color-bg-tint);
+        border-radius: 6px; display: inline-flex; align-items: center;
+        justify-content: center; color: var(--color-primary-dark);
+        font-size: .9rem; flex-shrink: 0; margin-right: 10px;
+    }
+    .accordion-button:not(.collapsed) .section-icon { background: rgba(59,148,94,0.15); }
+    .q-num   { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: 4px; }
+    .q-label { font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--color-navy); margin-bottom: 8px; }
+    .quest-public-title { color: var(--color-navy); font-family: 'Syne', sans-serif; font-weight: 700; }
+    /* Boutons Diathèse D2 — sélection = navy */
+    .btn-check:checked + .btn-outline-secondary {
+        background: var(--color-navy); border-color: var(--color-navy); color: var(--color-text-on-green); font-weight: 600;
+    }
+    .btn-outline-primary, .btn-outline-chasseur { text-align: left; }
+    .subsection-card { border: none !important; border-radius: var(--radius-card); overflow: hidden; }
+    .subsection-card .card-header { display: flex; justify-content: space-between; align-items: center; }
+</style>
+
+{{-- En-tête ─────────────────────────────────────────────────────── --}}
 <div class="text-center mb-4">
-    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
-         style="width:64px;height:64px;background:#eef1f8">
-        <i class="bi bi-clipboard2-pulse fs-2" style="color:var(--primary)"></i>
+    <div class="d-inline-flex align-items-center justify-content-center rounded mb-3 q-intro-icon">
+        <i class="bi bi-clipboard2-pulse fs-2 text-green-dark"></i>
     </div>
-    <h1 class="h3 fw-bold mb-1" style="color:var(--primary)">Questionnaire nutritionnel</h1>
-    <p class="text-muted mb-0">Répondez à votre rythme — vos réponses sont sauvegardées automatiquement.</p>
-    <p class="text-muted small mt-1">Cliquez sur <strong>Soumettre</strong> quand vous avez terminé.</p>
+    <h1 class="h3 fw-bold mb-1 quest-public-title">Questionnaire nutritionnel</h1>
+    <p class="text-muted-pa mb-0">Répondez à votre rythme — vos réponses sont sauvegardées automatiquement.</p>
+    <p class="text-muted-pa fs-13 mt-1">Cliquez sur <strong>Soumettre</strong> quand vous avez terminé.</p>
 </div>
 
-{{-- Progression globale --}}
-<div class="card mb-4">
-    <div class="card-body py-2 d-flex align-items-center gap-3">
-        <span class="small fw-semibold text-muted text-nowrap">Ma progression</span>
-        <div class="progress flex-grow-1" style="height:10px">
-            <div class="progress-bar" id="globalBar" role="progressbar" style="width:0%;background:var(--primary)"></div>
+{{-- Progression globale ─────────────────────────────────────────── --}}
+<div class="card mb-3">
+    <div class="card-body py-3 d-flex align-items-center gap-3">
+        <span class="text-nowrap fs-12 text-muted-pa fw-medium">
+            <i class="bi bi-check2-circle me-1 text-green-dark"></i>Ma progression
+        </span>
+        <div class="progress on-panel flex-grow-1">
+            <div class="progress-bar" id="globalBar" role="progressbar" style="width:0%;"></div>
         </div>
-        <span class="small fw-semibold text-nowrap" id="globalLabel">0 / 0</span>
+        <span class="text-nowrap fw-semibold pub-progress-lbl" id="globalLabel">0 / 0</span>
     </div>
 </div>
 
-{{-- Statut sauvegarde --}}
+{{-- Statut sauvegarde ───────────────────────────────────────────── --}}
 <div class="d-flex align-items-center gap-2 mb-3">
-    <span class="small text-muted" id="saveStatus">
+    <span class="pub-save-status" id="saveStatus">
         @if($questionnaire->updated_at)
+            <i class="bi bi-cloud-check me-1 text-green-dark"></i>
             Dernière sauvegarde : {{ $questionnaire->updated_at->format('d/m/Y à H:i') }}
         @else
-            Pas encore sauvegardé
+            <i class="bi bi-cloud me-1"></i>Pas encore sauvegardé
         @endif
     </span>
-    <span class="spinner-border spinner-border-sm text-muted d-none" id="saveSpinner" role="status"></span>
+    <span class="spinner-border spinner-border-sm d-none text-green-dark" id="saveSpinner" role="status"></span>
 </div>
 
 <form id="questForm">
     @csrf
 
-    <div class="accordion" id="questAccordion">
+    @php $sNum = 0; @endphp
 
-        {{-- SECTION 1 — TYPAGE MÉTABOLIQUE --}}
-        <div class="accordion-item mb-2 border rounded shadow-sm">
+    {{-- FICHE D'IDENTITÉ ──────────────────────────────────────────── --}}
+    <div class="mb-3">
+        <h2 class="sub-header">
+            <i class="bi bi-person-vcard me-2"></i>Fiche d'identité
+        </h2>
+        <p class="fs-12 text-muted-pa mb-3">Renseignez les informations de la personne.</p>
+        <div class="card">
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="identite_nom">Nom</label>
+                        <input type="text" name="identite_nom" id="identite_nom" class="form-control"
+                               value="{{ $answers['identite_nom'] ?? $questionnaire->client->nom ?? '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="identite_prenom">Prénom</label>
+                        <input type="text" name="identite_prenom" id="identite_prenom" class="form-control"
+                               value="{{ $answers['identite_prenom'] ?? $questionnaire->client->prenom ?? '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="identite_age">Âge</label>
+                        <input type="number" name="identite_age" id="identite_age" class="form-control"
+                               min="0" max="120"
+                               value="{{ $answers['identite_age'] ?? $questionnaire->client->age ?? '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="identite_sexe">Sexe</label>
+                        <input type="text" name="identite_sexe" id="identite_sexe" class="form-control"
+                               value="{{ $answers['identite_sexe'] ?? $questionnaire->client->sexe ?? '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="identite_taille">Taille (cm)</label>
+                        <input type="number" name="identite_taille" id="identite_taille" class="form-control"
+                               min="0" max="300"
+                               value="{{ $answers['identite_taille'] ?? $questionnaire->client->taille ?? '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="identite_poids">Poids (kg)</label>
+                        <input type="number" name="identite_poids" id="identite_poids" class="form-control"
+                               step="0.1" min="0"
+                               value="{{ $answers['identite_poids'] ?? $questionnaire->client->poids ?? '' }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion d-flex flex-column gap-2" id="questAccordion">
+
+        {{-- SECTION 1 — TYPAGE MÉTABOLIQUE ──────────────────────── --}}
+        @if(in_array('metabolique', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button fw-semibold" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s1" aria-expanded="true">
-                    <i class="bi bi-activity me-2" style="color:var(--primary)"></i>
-                    1. Typage Métabolique
-                    <span class="badge ms-3 bg-secondary" id="badge-s1">0 / 37 questions</span>
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s1" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-activity"></i></span>
+                    {{ $sNum }}. Typage Métabolique
+                    <span class="badge-progress ms-3" id="badge-s1">0 / 37 questions</span>
                 </button>
             </h2>
-            <div id="s1" class="accordion-collapse collapse show" data-bs-parent="#questAccordion">
-                <div class="accordion-body">
-                    <div class="alert alert-light border mb-3 py-2 small">
+            <div id="s1" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
                         <strong>A = Cueilleur</strong> · <strong>B = Chasseur</strong> · Laissez vide si aucune option ne vous correspond.
                     </div>
 
                     @foreach(QuestionnaireData::$metabolique_binaire as $q)
-                    <div class="mb-3 p-3 rounded" style="background:#f8f9fc">
-                        <div class="small fw-semibold text-muted mb-2">{{ $loop->iteration }}. {{ $q['label'] }}</div>
+                    <div class="q-row">
+                        <div class="q-num">{{ $loop->iteration }}.</div>
+                        <div class="q-label mb-2">{{ $q['label'] }}</div>
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="a"
@@ -76,7 +151,7 @@
                                 <input type="radio" name="{{ $q['id'] }}" value="b"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_b" data-section="s1"
                                        @checked(($answers[$q['id']] ?? '') === 'b')>
-                                <label class="btn btn-outline-danger btn-sm w-100 text-start" for="{{ $q['id'] }}_b">
+                                <label class="btn btn-outline-chasseur btn-sm w-100 text-start" for="{{ $q['id'] }}_b">
                                     <strong class="me-1">B</strong>{{ $q['b'] }}
                                 </label>
                             </div>
@@ -84,16 +159,18 @@
                     </div>
                     @endforeach
 
-                    <hr class="my-4">
-                    <p class="fw-semibold mb-3"><i class="bi bi-check2-square me-2"></i>Symptômes — cochez ce qui vous correspond</p>
+                    <hr class="my-4 hr-section">
+                    <p class="fw-semibold mb-3 sub-header">
+                        <i class="bi bi-check2-square me-2"></i>Symptômes — cochez ce qui vous correspond
+                    </p>
                     <div class="row g-2">
                         @foreach(QuestionnaireData::$metabolique_symptomes as $q)
                         <div class="col-md-6">
-                            <div class="form-check p-3 rounded" style="background:#f8f9fc">
+                            <div class="form-check check-item">
                                 <input class="form-check-input" type="checkbox" name="{{ $q['id'] }}" value="1"
                                        id="{{ $q['id'] }}" data-section="s1-sym"
                                        @checked(!empty($answers[$q['id']]))>
-                                <label class="form-check-label small" for="{{ $q['id'] }}">{{ $q['label'] }}</label>
+                                <label class="form-check-label form-check-label-navy" for="{{ $q['id'] }}">{{ $q['label'] }}</label>
                             </div>
                         </div>
                         @endforeach
@@ -101,28 +178,31 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        {{-- SECTION 2 — AYURVEDA --}}
-        <div class="accordion-item mb-2 border rounded shadow-sm">
+        {{-- SECTION 2 — AYURVEDA ─────────────────────────────────── --}}
+        @if(in_array('ayurveda', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button collapsed fw-semibold" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s2">
-                    <i class="bi bi-yin-yang me-2" style="color:var(--primary)"></i>
-                    2. Ayurveda
-                    <span class="badge ms-3 bg-secondary" id="badge-s2">0 / 59 questions</span>
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s2" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-yin-yang"></i></span>
+                    {{ $sNum }}. Ayurveda
+                    <span class="badge-progress ms-3" id="badge-s2">0 / 59 questions</span>
                 </button>
             </h2>
-            <div id="s2" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
-                <div class="accordion-body">
-                    <div class="alert alert-light border mb-3 py-2 small">
+            <div id="s2" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
                         Évaluez chaque affirmation de <strong>1</strong> (pas du tout) à <strong>6</strong> (totalement vrai pour moi).
                     </div>
 
-                    <h6 class="fw-bold mb-3" style="color:var(--primary)">Vâta <small class="text-muted fw-normal">(19 questions)</small></h6>
+                    <h6 class="sub-header"><i class="bi bi-water me-1"></i>Vâta <small class="sub-hint">(19 questions)</small></h6>
                     @foreach(QuestionnaireData::$vata as $i => $label)
-                    <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded" style="background:#f8f9fc">
-                        <span class="small flex-grow-1">{{ $i + 1 }}. {{ $label }}</span>
-                        <div class="btn-group btn-group-sm flex-shrink-0" role="group">
+                    <div class="q-row">
+                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
+                        <div class="btn-group btn-group-sm" role="group">
                             @for($v = 1; $v <= 6; $v++)
                             <input type="radio" class="btn-check radio-q" name="v{{ $i }}" value="{{ $v }}"
                                    id="v{{ $i }}_{{ $v }}" data-section="s2"
@@ -133,33 +213,33 @@
                     </div>
                     @endforeach
 
-                    <hr class="my-4">
-                    <h6 class="fw-bold mb-3" style="color:var(--primary)">Pitta <small class="text-muted fw-normal">(20 questions)</small></h6>
+                    <hr class="my-4 hr-section">
+                    <h6 class="sub-header"><i class="bi bi-fire me-1"></i>Pitta <small class="sub-hint">(20 questions)</small></h6>
                     @foreach(QuestionnaireData::$pitta as $i => $label)
-                    <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded" style="background:#f8f9fc">
-                        <span class="small flex-grow-1">{{ $i + 1 }}. {{ $label }}</span>
-                        <div class="btn-group btn-group-sm flex-shrink-0" role="group">
+                    <div class="q-row">
+                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
+                        <div class="btn-group btn-group-sm" role="group">
                             @for($v = 1; $v <= 6; $v++)
                             <input type="radio" class="btn-check radio-q" name="p{{ $i }}" value="{{ $v }}"
                                    id="p{{ $i }}_{{ $v }}" data-section="s2"
                                    @checked(($answers['p'.$i] ?? '') == $v)>
-                            <label class="btn btn-outline-warning" for="p{{ $i }}_{{ $v }}">{{ $v }}</label>
+                            <label class="btn btn-outline-pitta" for="p{{ $i }}_{{ $v }}">{{ $v }}</label>
                             @endfor
                         </div>
                     </div>
                     @endforeach
 
-                    <hr class="my-4">
-                    <h6 class="fw-bold mb-3" style="color:var(--primary)">Kapha <small class="text-muted fw-normal">(20 questions)</small></h6>
+                    <hr class="my-4 hr-section">
+                    <h6 class="sub-header"><i class="bi bi-cloud me-1"></i>Kapha <small class="sub-hint">(20 questions)</small></h6>
                     @foreach(QuestionnaireData::$kapha as $i => $label)
-                    <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded" style="background:#f8f9fc">
-                        <span class="small flex-grow-1">{{ $i + 1 }}. {{ $label }}</span>
-                        <div class="btn-group btn-group-sm flex-shrink-0" role="group">
+                    <div class="q-row">
+                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
+                        <div class="btn-group btn-group-sm" role="group">
                             @for($v = 1; $v <= 6; $v++)
                             <input type="radio" class="btn-check radio-q" name="k{{ $i }}" value="{{ $v }}"
                                    id="k{{ $i }}_{{ $v }}" data-section="s2"
                                    @checked(($answers['k'.$i] ?? '') == $v)>
-                            <label class="btn btn-outline-success" for="k{{ $i }}_{{ $v }}">{{ $v }}</label>
+                            <label class="btn btn-outline-teal" for="k{{ $i }}_{{ $v }}">{{ $v }}</label>
                             @endfor
                         </div>
                     </div>
@@ -167,35 +247,38 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        {{-- SECTION 3 — JULIA ROSS --}}
-        <div class="accordion-item mb-2 border rounded shadow-sm">
+        {{-- SECTION 3 — JULIA ROSS ───────────────────────────────── --}}
+        @if(in_array('julia_ross', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button collapsed fw-semibold" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s3">
-                    <i class="bi bi-brain me-2" style="color:var(--primary)"></i>
-                    3. Julia Ross
-                    <span class="badge ms-3 bg-secondary" id="badge-s3">0 cochés</span>
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s3" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-brain"></i></span>
+                    {{ $sNum }}. Julia Ross
+                    <span class="badge-progress ms-3" id="badge-s3">0 cochés</span>
                 </button>
             </h2>
-            <div id="s3" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
-                <div class="accordion-body">
-                    <div class="alert alert-light border mb-3 py-2 small">
+            <div id="s3" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
                         Cochez les affirmations qui vous correspondent.
                     </div>
                     @foreach(QuestionnaireData::$julia_ross as $classe)
-                    <div class="card mb-3 border">
-                        <div class="card-header py-2" style="background:#eef1f8">
-                            <span class="fw-semibold small" style="color:var(--primary)">{{ $classe['titre'] }}</span>
+                    <div class="card mb-3 subsection-card">
+                        <div class="card-header">
+                            <span>{{ $classe['titre'] }}</span>
                         </div>
-                        <div class="card-body py-2">
+                        <div class="card-body py-2 px-3">
                             @foreach($classe['questions'] as $qi => $q)
                             <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
                                 <input class="form-check-input" type="checkbox"
                                        name="{{ $classe['id'] }}_{{ $qi }}" value="1"
                                        id="{{ $classe['id'] }}_{{ $qi }}" data-section="s3"
                                        @checked(!empty($answers[$classe['id'].'_'.$qi]))>
-                                <label class="form-check-label small d-flex justify-content-between" for="{{ $classe['id'] }}_{{ $qi }}">
+                                <label class="form-check-label form-check-label-navy d-flex justify-content-between" for="{{ $classe['id'] }}_{{ $qi }}">
                                     <span>{{ $q['t'] }}</span>
                                 </label>
                             </div>
@@ -206,34 +289,37 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        {{-- SECTION 4 — DIATHÈSE --}}
-        <div class="accordion-item mb-2 border rounded shadow-sm">
+        {{-- SECTION 4 — DIATHÈSE ─────────────────────────────────── --}}
+        @if(in_array('diathese', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button collapsed fw-semibold" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s4">
-                    <i class="bi bi-diagram-3 me-2" style="color:var(--primary)"></i>
-                    4. Diathèse de Ménétrier
-                    <span class="badge ms-3 bg-secondary" id="badge-s4">0 / 14 questions</span>
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s4" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-diagram-3"></i></span>
+                    {{ $sNum }}. Diathèse de Ménétrier
+                    <span class="badge-progress ms-3" id="badge-s4">0 / 14 questions</span>
                 </button>
             </h2>
-            <div id="s4" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
-                <div class="accordion-body">
-                    <div class="alert alert-light border mb-3 py-2 small">
+            <div id="s4" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
                         Pour chaque paire, choisissez l'option qui vous correspond le mieux. Laissez vide si aucune ne s'applique clairement.
                     </div>
 
-                    <h6 class="fw-bold mb-3" style="color:var(--primary)">Période enfance (avant 12–15 ans)</h6>
+                    <h6 class="sub-header">Période enfance (avant 12–15 ans)</h6>
                     @foreach(QuestionnaireData::$diathese_col1 as $q)
-                    <div class="mb-3 p-3 rounded" style="background:#f8f9fc">
-                        <div class="small text-muted fw-semibold mb-2">Question {{ $loop->iteration }}</div>
+                    <div class="q-row">
+                        <div class="q-num mb-2">Question {{ $loop->iteration }}</div>
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d1"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_d1" data-section="s4"
                                        @checked(($answers[$q['id']] ?? '') === 'd1')>
                                 <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
-                                    <strong class="d-block mb-1 text-primary" style="font-size:.7rem">D1</strong>{{ $q['d1'] }}
+                                    <strong class="d1-label">D1</strong>{{ $q['d1'] }}
                                 </label>
                             </div>
                             <div class="col-md-6">
@@ -241,25 +327,25 @@
                                        class="btn-check radio-q" id="{{ $q['id'] }}_d2" data-section="s4"
                                        @checked(($answers[$q['id']] ?? '') === 'd2')>
                                 <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
-                                    <strong class="d-block mb-1 text-secondary" style="font-size:.7rem">D2</strong>{{ $q['d2'] }}
+                                    <strong class="d1-label">D2</strong>{{ $q['d2'] }}
                                 </label>
                             </div>
                         </div>
                     </div>
                     @endforeach
 
-                    <hr class="my-4">
-                    <h6 class="fw-bold mb-3" style="color:var(--primary)">Période adulte (aujourd'hui)</h6>
+                    <hr class="my-4 hr-section">
+                    <h6 class="sub-header">Période adulte (aujourd'hui)</h6>
                     @foreach(QuestionnaireData::$diathese_col2 as $q)
-                    <div class="mb-3 p-3 rounded" style="background:#f8f9fc">
-                        <div class="small text-muted fw-semibold mb-2">Question {{ $loop->iteration }}</div>
+                    <div class="q-row">
+                        <div class="q-num mb-2">Question {{ $loop->iteration }}</div>
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d1"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_d1" data-section="s4"
                                        @checked(($answers[$q['id']] ?? '') === 'd1')>
                                 <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
-                                    <strong class="d-block mb-1 text-primary" style="font-size:.7rem">D1</strong>{{ $q['d1'] }}
+                                    <strong class="d1-label">D1</strong>{{ $q['d1'] }}
                                 </label>
                             </div>
                             <div class="col-md-6">
@@ -267,7 +353,7 @@
                                        class="btn-check radio-q" id="{{ $q['id'] }}_d2" data-section="s4"
                                        @checked(($answers[$q['id']] ?? '') === 'd2')>
                                 <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
-                                    <strong class="d-block mb-1 text-secondary" style="font-size:.7rem">D2</strong>{{ $q['d2'] }}
+                                    <strong class="d1-label">D2</strong>{{ $q['d2'] }}
                                 </label>
                             </div>
                         </div>
@@ -276,37 +362,40 @@
                 </div>
             </div>
         </div>
+        @endif
 
-        {{-- SECTION 5 — BILAN HORMONAL --}}
-        <div class="accordion-item mb-2 border rounded shadow-sm">
+        {{-- SECTION 5 — BILAN HORMONAL ──────────────────────────── --}}
+        @if(in_array('hormones', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
             <h2 class="accordion-header">
-                <button class="accordion-button collapsed fw-semibold" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s5">
-                    <i class="bi bi-droplet-half me-2" style="color:var(--primary)"></i>
-                    5. Bilan Hormonal
-                    <span class="badge ms-3 bg-secondary" id="badge-s5">0 cochés</span>
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s5" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-droplet-half"></i></span>
+                    {{ $sNum }}. Bilan Hormonal
+                    <span class="badge-progress ms-3" id="badge-s5">0 cochés</span>
                 </button>
             </h2>
-            <div id="s5" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
-                <div class="accordion-body">
-                    <div class="alert alert-light border mb-3 py-2 small">
+            <div id="s5" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
                         Cochez les affirmations qui vous correspondent actuellement.
                     </div>
                     <div class="row g-3">
                         @foreach(QuestionnaireData::$hormones as $cat)
                         <div class="col-md-6">
-                            <div class="card h-100 border">
-                                <div class="card-header py-2" style="background:#eef1f8">
-                                    <span class="fw-semibold small" style="color:var(--primary)">{{ $cat['titre'] }}</span>
+                            <div class="card h-100 subsection-card">
+                                <div class="card-header">
+                                    <span>{{ $cat['titre'] }}</span>
                                 </div>
-                                <div class="card-body py-2">
+                                <div class="card-body py-2 px-3">
                                     @foreach($cat['questions'] as $qi => $question)
                                     <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
                                         <input class="form-check-input" type="checkbox"
                                                name="{{ $cat['id'] }}_{{ $qi }}" value="1"
                                                id="{{ $cat['id'] }}_{{ $qi }}" data-section="s5"
                                                @checked(!empty($answers[$cat['id'].'_'.$qi]))>
-                                        <label class="form-check-label small" for="{{ $cat['id'] }}_{{ $qi }}">{{ $question }}</label>
+                                        <label class="form-check-label form-check-label-navy" for="{{ $cat['id'] }}_{{ $qi }}">{{ $question }}</label>
                                     </div>
                                     @endforeach
                                 </div>
@@ -317,45 +406,66 @@
                 </div>
             </div>
         </div>
+        @endif
 
     </div>{{-- /accordion --}}
 </form>
 
-{{-- Bouton flottant Soumettre --}}
-<div class="position-fixed bottom-0 start-0 end-0 p-3" style="z-index:1050;background:rgba(240,242,248,.95);border-top:1px solid #dee2e6;backdrop-filter:blur(4px)">
-    <div class="d-flex align-items-center justify-content-between" style="max-width:860px;margin:0 auto">
-        <div>
-            <span class="small text-muted" id="floatStatus">Répondez aux questions puis soumettez.</span>
+{{-- Barre de soumission flottante ─────────────────────────────── --}}
+<div class="position-fixed bottom-0 start-0 end-0 submit-bar">
+    <div class="submit-bar-inner d-flex align-items-center justify-content-between">
+
+        {{-- Gauche : barre de progression + pourcentage --}}
+        <div class="submit-bar-progress">
+            <div class="progress on-panel flex-grow-1 w-140">
+                <div class="progress-bar" id="floatBar" style="width:0%;transition:width .4s ease;"></div>
+            </div>
+            <span id="floatStatus" class="submit-bar-status">0% complété</span>
         </div>
-        <form method="POST" action="{{ route('questionnaire.public.submit', $token) }}" id="submitForm">
-            @csrf
-        </form>
-        <button type="button" class="btn btn-primary px-5 fw-semibold" id="submitBtn"
-                onclick="submitQuestionnaire()">
-            <i class="bi bi-send me-2"></i>Soumettre le questionnaire
-        </button>
+
+        {{-- Droite : bouton soumettre --}}
+        <div class="d-flex gap-2">
+            <form method="POST" action="{{ route('questionnaire.public.submit', $token) }}" id="submitForm">
+                @csrf
+            </form>
+            <button type="button" class="btn btn-primary fw-semibold px-4" id="submitBtn"
+                    onclick="submitQuestionnaire()">
+                <i class="bi bi-send me-2"></i>Soumettre le questionnaire
+            </button>
+        </div>
     </div>
 </div>
 
 <script>
 (function () {
-    const TOKEN  = @json($token);
+    const TOKEN      = @json($token);
     const SAVE_URL   = '/q/' + TOKEN + '/save';
-    const SUBMIT_URL = '/q/' + TOKEN + '/submit';
-    const CSRF   = document.querySelector('meta[name="csrf-token"]').content;
+    const CSRF       = document.querySelector('meta[name="csrf-token"]').content;
 
-    const sections = {
-        s1:      { type: 'radio', total: 37,   badgeId: 'badge-s1', suffix: ' / 37 questions' },
-        's1-sym':{ type: 'check', total: null,  badgeId: null,       suffix: '' },
-        s2:      { type: 'radio', total: 59,   badgeId: 'badge-s2', suffix: ' / 59 questions' },
-        s3:      { type: 'check', total: null,  badgeId: 'badge-s3', suffix: ' cochés' },
-        s4:      { type: 'radio', total: 14,   badgeId: 'badge-s4', suffix: ' / 14 questions' },
-        s5:      { type: 'check', total: null,  badgeId: 'badge-s5', suffix: ' cochés' },
-    };
+    const sectionCfg = {};
+    @if(in_array('metabolique', $sections))
+    sectionCfg.s1        = { type: 'radio', total: 37,   badgeId: 'badge-s1', suffix: ' / 37 questions' };
+    sectionCfg['s1-sym'] = { type: 'check', total: null, badgeId: null,        suffix: '' };
+    @endif
+    @if(in_array('ayurveda', $sections))
+    sectionCfg.s2 = { type: 'radio', total: 59,   badgeId: 'badge-s2', suffix: ' / 59 questions' };
+    @endif
+    @if(in_array('julia_ross', $sections))
+    sectionCfg.s3 = { type: 'check', total: null, badgeId: 'badge-s3', suffix: ' cochés' };
+    @endif
+    @if(in_array('diathese', $sections))
+    sectionCfg.s4 = { type: 'radio', total: 14,   badgeId: 'badge-s4', suffix: ' / 14 questions' };
+    @endif
+    @if(in_array('hormones', $sections))
+    sectionCfg.s5 = { type: 'check', total: null, badgeId: 'badge-s5', suffix: ' cochés' };
+    @endif
+
+    const TOTAL_RADIO = Object.values(sectionCfg)
+        .reduce((sum, c) => sum + (c.type === 'radio' && c.total ? c.total : 0), 0);
 
     function countSection(key) {
         const inputs = document.querySelectorAll(`[data-section="${key}"]`);
-        if (sections[key].type === 'radio') {
+        if (sectionCfg[key].type === 'radio') {
             const groups = {};
             inputs.forEach(el => {
                 if (!groups[el.name]) groups[el.name] = false;
@@ -367,8 +477,8 @@
     }
 
     function updateBadges() {
-        let answered = 0, total = 37 + 59 + 14;
-        Object.entries(sections).forEach(([key, cfg]) => {
+        let answered = 0;
+        Object.entries(sectionCfg).forEach(([key, cfg]) => {
             const count = countSection(key);
             if (cfg.badgeId) {
                 const badge = document.getElementById(cfg.badgeId);
@@ -376,13 +486,24 @@
             }
             if (cfg.type === 'radio') answered += count;
         });
-        const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+        const pct = TOTAL_RADIO > 0 ? Math.round((answered / TOTAL_RADIO) * 100) : 0;
         document.getElementById('globalBar').style.width = pct + '%';
-        document.getElementById('globalLabel').textContent = answered + ' / ' + total;
+        document.getElementById('globalLabel').textContent =
+            TOTAL_RADIO > 0 ? answered + ' / ' + TOTAL_RADIO : '—';
+
+        const floatBar = document.getElementById('floatBar');
+        if (floatBar) floatBar.style.width = pct + '%';
+
         const status = document.getElementById('floatStatus');
-        status.textContent = pct === 100
-            ? '✓ Questionnaire complet — vous pouvez soumettre !'
-            : pct + '% complété — continuez à répondre.';
+        if (TOTAL_RADIO > 0 && pct === 100) {
+            status.textContent = 'Complet — vous pouvez soumettre !';
+            status.style.color = 'var(--color-primary-dark)';
+            status.style.fontWeight = '600';
+        } else {
+            status.textContent = pct + '% complété';
+            status.style.color  = 'var(--color-text-muted)';
+            status.style.fontWeight = '';
+        }
     }
 
     // Auto-sauvegarde AJAX (debounce 2s)
@@ -397,18 +518,16 @@
         const status  = document.getElementById('saveStatus');
         spinner.classList.remove('d-none');
 
-        const data = new FormData(document.getElementById('questForm'));
-
         fetch(SAVE_URL, {
             method: 'POST',
             headers: { 'X-CSRF-TOKEN': CSRF },
-            body: data,
+            body: new FormData(document.getElementById('questForm')),
         })
         .then(r => r.json())
         .then(d => {
             spinner.classList.add('d-none');
             if (d.saved) {
-                status.textContent = 'Dernière sauvegarde : ' + d.time;
+                status.innerHTML = '<i class="bi bi-cloud-check me-1" style="color:var(--color-primary-dark);"></i>Dernière sauvegarde : ' + d.time;
                 showToast();
             }
         })
@@ -424,24 +543,20 @@
         setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
-    // Soumission finale
     window.submitQuestionnaire = function () {
         if (!confirm('Êtes-vous sûr de vouloir soumettre votre questionnaire ? Vous ne pourrez plus le modifier.')) return;
 
-        // Copier les réponses dans le form de soumission caché et soumettre
         const src = document.getElementById('questForm');
         const dst = document.getElementById('submitForm');
 
-        // Ajouter tous les champs du questForm dans submitForm
-        const existing = dst.querySelectorAll('.q-field');
-        existing.forEach(el => el.remove());
+        dst.querySelectorAll('.q-field').forEach(el => el.remove());
 
         new FormData(src).forEach((val, key) => {
             if (key === '_token') return;
-            const input = document.createElement('input');
-            input.type  = 'hidden';
-            input.name  = key;
-            input.value = val;
+            const input   = document.createElement('input');
+            input.type    = 'hidden';
+            input.name    = key;
+            input.value   = val;
             input.classList.add('q-field');
             dst.appendChild(input);
         });
@@ -449,11 +564,7 @@
         dst.submit();
     };
 
-    document.addEventListener('change', function(e) {
-        updateBadges();
-        scheduleAutoSave();
-    });
-
+    document.addEventListener('change',          () => { updateBadges(); scheduleAutoSave(); });
     document.addEventListener('DOMContentLoaded', updateBadges);
 })();
 </script>

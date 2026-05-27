@@ -6,79 +6,121 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Profilage Alimentaire')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Outfit:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/global.css">
     <style>
-        :root {
-            --primary: #1a2f5e;
-            --primary-light: #2a4a8e;
-            --bg: #f0f2f8;
+        /* ── Layout spécifique app ─────────────────────────────────── */
+        :root { --nav-h: 54px; }
+
+        .green-zone   { background: var(--color-primary); }
+        .app-nav      { height: var(--nav-h); display: flex; align-items: center; }
+        .app-nav-inner {
+            max-width: 1100px; margin: 0 auto; width: 100%;
+            padding: 0 20px; display: flex; align-items: center; gap: 24px;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); }
-        .navbar { background: var(--primary) !important; }
-        .sidebar { background: var(--primary); min-height: calc(100vh - 56px); }
-        .sidebar .nav-link { color: rgba(255,255,255,0.75); padding: .6rem 1rem; border-radius: 6px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { background: rgba(255,255,255,0.15); color: #fff; }
-        .sidebar .nav-link i { width: 20px; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(26,47,94,.08); }
-        .btn-primary { background: var(--primary); border-color: var(--primary); }
-        .btn-primary:hover { background: var(--primary-light); border-color: var(--primary-light); }
-        .badge-role { background: var(--primary); }
-        .stat-card { border-left: 4px solid var(--primary); }
-        .table th { font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; color: #6c757d; }
-        .page-title { font-size: 1.5rem; font-weight: 600; color: var(--primary); margin-bottom: 1.5rem; }
+        .nav-brand {
+            color: var(--color-text-on-green); font-family: 'Syne', sans-serif;
+            font-weight: 700; font-size: 15px; text-decoration: none;
+            display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+        }
+        .nav-brand:hover { color: var(--color-text-on-green); text-decoration: none; }
+        .brand-icon {
+            width: 30px; height: 30px; background: var(--color-white-20);
+            border-radius: 9px; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+        .nav-links    { display: flex; gap: 4px; margin-left: 16px; }
+        .nav-user-pill {
+            margin-left: auto; background: var(--color-white-15);
+            border-radius: var(--radius-pill); padding: 5px 14px;
+            font-family: 'Outfit', sans-serif; font-size: 13px;
+            color: var(--color-text-on-green); display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        }
+        .content-panel {
+            background: var(--color-bg-page);
+            min-height: calc(100vh - var(--nav-h));
+            padding: 20px; max-width: 1100px; margin: 0 auto;
+        }
+        .card-header {
+            border-radius: var(--radius-card) var(--radius-card) 0 0 !important;
+            border-bottom: 1px solid var(--color-border-card);
+            background: var(--color-bg-card);
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{{ route('dashboard') }}">
-                <i class="bi bi-heart-pulse me-2"></i>Profilage Alimentaire
-            </a>
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-white-50 small">{{ auth()->user()->name }}</span>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="btn btn-sm btn-outline-light">Déconnexion</button>
-                </form>
-            </div>
-        </div>
-    </nav>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2 sidebar py-3">
-                <nav class="nav flex-column gap-1">
-                    <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}">
-                        <i class="bi bi-speedometer2 me-2"></i>Dashboard
+
+    <!-- Zone verte (nav + slot dynamique) -->
+    <div class="green-zone">
+
+        <!-- Navbar horizontale -->
+        <nav class="app-nav">
+            <div class="app-nav-inner">
+                <a class="nav-brand" href="{{ route('dashboard') }}">
+                    <span class="brand-icon"><i class="bi bi-heart-pulse"></i></span>
+                    Profilage Alimentaire
+                </a>
+
+                <div class="nav-links">
+                    <a href="{{ route('dashboard') }}"
+                       class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}">
+                        Tableau de bord
                     </a>
-                    <a href="{{ route('clients.index') }}" class="nav-link {{ request()->is('clients*') ? 'active' : '' }}">
-                        <i class="bi bi-people me-2"></i>Clients
+                    <a href="{{ route('clients.index') }}"
+                       class="nav-link {{ request()->is('clients*') ? 'active' : '' }}">
+                        Clients
                     </a>
                     @if(auth()->user()->isSuperAdmin())
-                    <hr style="border-color:rgba(255,255,255,.2)">
-                    <a href="{{ route('admin.conseillers.index') }}" class="nav-link {{ request()->is('admin/conseillers*') ? 'active' : '' }}">
-                        <i class="bi bi-person-badge me-2"></i>Conseillers
+                    <a href="{{ route('admin.conseillers.index') }}"
+                       class="nav-link {{ request()->is('admin/conseillers*') ? 'active' : '' }}">
+                        Conseillers
                     </a>
                     @endif
-                </nav>
+                </div>
+
+                <div class="nav-user-pill">
+                    <i class="bi bi-person-circle"></i>{{ auth()->user()->name }}
+                </div>
+
+                <form method="POST" action="{{ route('logout') }}" class="mb-0">
+                    @csrf
+                    <button class="btn-topbar-logout">
+                        <i class="bi bi-box-arrow-right me-1"></i>Déconnexion
+                    </button>
+                </form>
             </div>
-            <div class="col-md-10 py-4 px-4">
-                @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
-                @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
-                @yield('content')
+        </nav>
+
+        <!-- Slot zone verte : breadcrumb, titre client, barre de progression -->
+        <div id="green-slot">@yield('green-header')</div>
+
+    </div><!-- /green-zone -->
+
+    <!-- Panel contenu principal -->
+    <div class="content-panel">
+
+        @if(session('success'))
+            <div class="alert alert-success-soft alert-dismissible fade show mb-4" role="alert">
+                <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        </div>
-    </div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-warning-soft alert-dismissible fade show mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @yield('content')
+
+    </div><!-- /content-panel -->
+
+    <!-- Barre bas fixe (optionnelle par vue) -->
+    <div id="bottom-bar">@yield('bottom-bar')</div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
