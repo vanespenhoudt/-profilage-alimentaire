@@ -10,7 +10,7 @@
         <i class="bi bi-check-circle-fill fs-1 text-green-dark"></i>
     </div>
 
-    <h1 class="h2 fw-bold mb-2 text-navy">Merci !</h1>
+    <h1 class="h2 fw-bold mb-2 text-navy">Merci :)</h1>
     <p class="lead text-muted mb-1">Votre questionnaire a bien été soumis.</p>
     <p class="text-muted small">
         Soumis le {{ $questionnaire->submitted_at->format('d/m/Y à H:i') }}
