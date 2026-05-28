@@ -1,0 +1,38 @@
+name: Deploy to one.com
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ssh.c9nzzvn7q.service.one
+          username: c9nzzvn7q_ssh
+          key: ${{ secrets.ONE_COM_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            cd /customers/b/8/f/c9nzzvn7q/webroots/a44183bb/laravel_app
+
+            echo "▶ git pull"
+            git pull origin main
+
+            echo "▶ composer install"
+            php8.2 /usr/local/bin/composer install --no-dev --optimize-autoloader --quiet
+
+            echo "▶ migrations"
+            php8.2 artisan migrate --force
+
+            echo "▶ cache"
+            php8.2 artisan config:cache
+            php8.2 artisan route:cache
+            php8.2 artisan view:cache
+
+            echo "✓ Deploy terminé $(date)"

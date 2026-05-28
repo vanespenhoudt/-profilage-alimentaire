@@ -1,0 +1,29 @@
+APP_NAME="Profilage Alimentaire"
+APP_ENV=production
+APP_KEY=                    # générer avec: php artisan key:generate --show
+APP_DEBUG=false
+APP_URL=https://mve-nutrition.be/profilage
+
+LOG_CHANNEL=stack
+LOG_LEVEL=error
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1           # ou l'host MySQL one.com (vérifier dans leur panel)
+DB_PORT=3306
+DB_DATABASE=TON_DB_NAME
+DB_USERNAME=TON_DB_USER
+DB_PASSWORD=TON_DB_PASSWORD
+
+CACHE_STORE=file
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+MAIL_MAILER=smtp
+MAIL_HOST=send.one.com      # SMTP one.com
+MAIL_PORT=465
+MAIL_USERNAME=ton@email.com
+MAIL_PASSWORD=TON_MOT_DE_PASSE
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS=ton@email.com
+MAIL_FROM_NAME="Profilage Alimentaire"

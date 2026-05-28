@@ -17,9 +17,27 @@
     .q-num   { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: 4px; }
     .q-label { font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--color-navy); margin-bottom: 8px; }
     .quest-public-title { color: var(--color-navy); font-family: 'Syne', sans-serif; font-weight: 700; }
-    /* Boutons Diathèse D2 — sélection = navy */
-    .btn-check:checked + .btn-outline-secondary {
-        background: var(--color-navy); border-color: var(--color-navy); color: var(--color-text-on-green); font-weight: 600;
+    /* Boutons pleine largeur — texte long autorisé à wrapper */
+    .btn.w-100 {
+        white-space: normal;
+        height: auto !important;
+        min-height: 30px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        line-height: 1.45;
+        align-items: flex-start;
+        display: flex;
+    }
+    /* Boutons Diathèse D2 — bordure visible (override global.css #ECECEC trop clair) */
+    .btn-outline-secondary.w-100 {
+        border-color: var(--color-primary) !important;
+        color: var(--color-navy);
+    }
+    .btn-check:checked + .btn-outline-secondary.w-100 {
+        background: var(--color-primary-dark) !important;
+        border-color: var(--color-primary-dark) !important;
+        color: var(--color-text-on-green) !important;
+        font-weight: 600;
     }
     .btn-outline-primary, .btn-outline-chasseur { text-align: left; }
     .subsection-card { border: none !important; border-radius: var(--radius-card); overflow: hidden; }
