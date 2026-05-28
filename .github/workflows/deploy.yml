@@ -25,14 +25,14 @@ jobs:
             git pull origin main
 
             echo "▶ composer install"
-            php8.2 /usr/local/bin/composer install --no-dev --optimize-autoloader --quiet
+            php /usr/local/bin/composer install --no-dev --optimize-autoloader --quiet
 
             echo "▶ migrations"
-            php8.2 artisan migrate --force
+            php artisan migrate --force
 
             echo "▶ cache"
-            php8.2 artisan config:cache
-            php8.2 artisan route:cache
-            php8.2 artisan view:cache
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
 
             echo "✓ Deploy terminé $(date)"
