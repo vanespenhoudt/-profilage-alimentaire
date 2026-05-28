@@ -13,10 +13,10 @@ WEB_ROOT="/customers/b/8/f/c9nzzvn7q/webroots/a44183bb/httpdocs"
 
 echo "── 1. Composer install ──────────────────────────────────"
 cd "$APP_DIR"
-php8.2 /usr/local/bin/composer install --no-dev --optimize-autoloader
+php /usr/local/bin/composer install --no-dev --optimize-autoloader
 
 echo "── 2. Migrations ────────────────────────────────────────"
-php8.2 artisan migrate --force
+php artisan migrate --force
 
 echo "── 3. Permissions storage ───────────────────────────────"
 chmod -R 775 storage bootstrap/cache
@@ -34,9 +34,9 @@ echo "   → public/.htaccess   [skip-worktree ✓]"
 echo "   → public/index.php   [skip-worktree ✓]"
 
 echo "── 6. Cache de production ───────────────────────────────"
-php8.2 artisan config:cache
-php8.2 artisan route:cache
-php8.2 artisan view:cache
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 echo ""
 echo "✓ Initialisation terminée."

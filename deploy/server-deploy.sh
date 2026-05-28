@@ -10,10 +10,10 @@ set -e
 cd /customers/b/8/f/c9nzzvn7q/webroots/a44183bb/laravel_app
 
 git pull origin main
-php8.2 /usr/local/bin/composer install --no-dev --optimize-autoloader --quiet
-php8.2 artisan migrate --force
-php8.2 artisan config:cache
-php8.2 artisan route:cache
-php8.2 artisan view:cache
+php /usr/local/bin/composer install --no-dev --optimize-autoloader --quiet
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 echo "✓ Deploy terminé $(date)"
