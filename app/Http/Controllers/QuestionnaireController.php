@@ -138,6 +138,7 @@ class QuestionnaireController extends Controller
         $questionnaire->token               = Str::random(48);
         $questionnaire->sections            = $validated['sections'] ?? null;
         $questionnaire->menu_visible_client = $request->boolean('menu_visible_client');
+        $questionnaire->submitted_at        = null;
         $questionnaire->updated_at          = now();
         $questionnaire->save();
 
