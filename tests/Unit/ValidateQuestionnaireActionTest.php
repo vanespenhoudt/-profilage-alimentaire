@@ -25,15 +25,16 @@ class ValidateQuestionnaireActionTest extends TestCase
         return $q;
     }
 
-    // Réponses minimales couvrant les 5 sections (score > 0 dans chaque)
+    // Réponses minimales couvrant les 6 sections (score > 0 dans chaque)
     private function answersAllSections(): array
     {
         return [
-            'mb1'   => 'a',  // Typage Métabolique
-            'v0'    => '3',  // Ayurveda — Vâta
-            'jr1_0' => '1',  // Julia Ross
-            'd1a'   => 'd1', // Diathèse
-            'h1_0'  => '1',  // Hormones
+            'mb1'            => 'a',  // Métaboltyping
+            'v0'             => '3',  // Ayurveda
+            'jr1_0'          => '1',  // Julia Ross — Neurotransmetteurs
+            'd1a'            => 'd1', // Diathèse
+            'groupe_sanguin' => 'O',  // Groupe sanguin
+            'h1_0'           => '1',  // Bilan Hormonal
         ];
     }
 
@@ -47,11 +48,12 @@ class ValidateQuestionnaireActionTest extends TestCase
 
         $result = $this->action->execute($q);
 
-        $this->assertCount(5, $result);
-        $this->assertContains('Typage Métabolique', $result);
+        $this->assertCount(6, $result);
+        $this->assertContains('Métaboltyping', $result);
         $this->assertContains('Ayurveda', $result);
-        $this->assertContains('Julia Ross', $result);
-        $this->assertContains('Diathèse de Ménétrier', $result);
+        $this->assertContains('Julia Ross — Neurotransmetteurs', $result);
+        $this->assertContains('Diathèses', $result);
+        $this->assertContains('Groupe sanguin', $result);
         $this->assertContains('Bilan Hormonal', $result);
     }
 
@@ -76,10 +78,11 @@ class ValidateQuestionnaireActionTest extends TestCase
     {
         // Toutes les sections sauf Ayurveda
         $answers = [
-            'mb1'   => 'a',
-            'jr1_0' => '1',
-            'd1a'   => 'd1',
-            'h1_0'  => '1',
+            'mb1'            => 'a',
+            'jr1_0'          => '1',
+            'd1a'            => 'd1',
+            'groupe_sanguin' => 'A',
+            'h1_0'           => '1',
         ];
 
         $q      = $this->makeQuestionnaire($answers);
@@ -87,7 +90,7 @@ class ValidateQuestionnaireActionTest extends TestCase
 
         $this->assertCount(1, $result);
         $this->assertContains('Ayurveda', $result);
-        $this->assertNotContains('Typage Métabolique', $result);
+        $this->assertNotContains('Métaboltyping', $result);
     }
 
     // -----------------------------------------------------------------------
@@ -107,9 +110,9 @@ class ValidateQuestionnaireActionTest extends TestCase
         // metabolique a une réponse → pas suspect
         // diathese n'en a pas → suspect
         $this->assertCount(1, $result);
-        $this->assertContains('Diathèse de Ménétrier', $result);
+        $this->assertContains('Diathèses', $result);
         $this->assertNotContains('Ayurveda', $result);
-        $this->assertNotContains('Julia Ross', $result);
+        $this->assertNotContains('Julia Ross — Neurotransmetteurs', $result);
         $this->assertNotContains('Bilan Hormonal', $result);
     }
 
@@ -136,7 +139,7 @@ class ValidateQuestionnaireActionTest extends TestCase
 
         $result = $this->action->execute($q);
 
-        $this->assertContains('Typage Métabolique', $result);
+        $this->assertContains('Métaboltyping', $result);
     }
 
     public function test_ayurveda_non_suspect_quand_un_score_vata_non_zero(): void
@@ -160,6 +163,6 @@ class ValidateQuestionnaireActionTest extends TestCase
 
         $result = $this->action->execute($q);
 
-        $this->assertContains('Diathèse de Ménétrier', $result);
+        $this->assertContains('Diathèses', $result);
     }
 }

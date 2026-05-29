@@ -19,16 +19,20 @@ class Questionnaire extends Model
         'answers',
         'scores',
         'menu_text',
+        'menu_file',
+        'menu_file_name',
+        'menu_visible_client',
     ];
 
     protected function casts(): array
     {
         return [
-            'sections'     => 'array',
-            'answers'      => 'array',
-            'scores'       => 'array',
-            'updated_at'   => 'datetime',
-            'submitted_at' => 'datetime',
+            'sections'             => 'array',
+            'answers'              => 'array',
+            'scores'               => 'array',
+            'menu_visible_client'  => 'boolean',
+            'updated_at'           => 'datetime',
+            'submitted_at'         => 'datetime',
         ];
     }
 

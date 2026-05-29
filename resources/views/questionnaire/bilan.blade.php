@@ -19,7 +19,7 @@ $scores = $questionnaire->scores;
     .bar-pitta     { background: var(--color-primary-mid) !important; }
     .bar-kapha     { background: var(--color-primary-dark) !important; }
     .bar-normal    { background: var(--color-primary-dark) !important; }
-    .bar-alerte    { background: var(--color-primary-mid) !important; }
+    .bar-alerte    { background: #dc3545 !important; }
 
     /* ── Couleurs texte ─────────────────────────────────────────────── */
     .text-cueilleur { color: var(--color-navy) !important; }
@@ -27,7 +27,7 @@ $scores = $questionnaire->scores;
     .text-vata      { color: var(--color-primary) !important; }
     .text-pitta     { color: var(--color-primary-mid) !important; }
     .text-kapha     { color: var(--color-primary-dark) !important; }
-    .text-alerte    { color: var(--color-primary-mid) !important; }
+    .text-alerte    { color: #dc3545 !important; }
     .text-normal    { color: var(--color-primary-dark) !important; }
 
     /* ── En-tête de section ─────────────────────────────────────────── */
@@ -76,8 +76,8 @@ $scores = $questionnaire->scores;
 
     /* ── Badge Dépassé / Normal ─────────────────────────────────────── */
     .badge-depasse {
-        background: var(--color-primary-mid);
-        color: var(--color-text-on-green);
+        background: #dc3545;
+        color: #fff;
         border-radius: 6px;
         padding: 3px 10px;
         font-family: 'Outfit', sans-serif;
@@ -96,9 +96,9 @@ $scores = $questionnaire->scores;
 
     /* ── Ligne tableau alerte ───────────────────────────────────────── */
     .row-alerte {
-        background: var(--color-bg-tint) !important;
+        background: #fff5f5 !important;
     }
-    .row-alerte td { color: var(--color-primary-dark); }
+    .row-alerte td { color: #dc3545; }
 
     /* ── Card dosha dominant ────────────────────────────────────────── */
     .card-dosha-dominant {
@@ -502,23 +502,25 @@ $scores = $questionnaire->scores;
                             <td class="fs-4 fw-bold td-d1">{{ $di['c2_d1'] }}</td>
                             <td class="fs-4 fw-bold td-d2">{{ $di['c2_d2'] }}</td>
                         </tr>
+                        @php
+                            $totalD1 = $di['c1_d1'] + $di['c2_d1'];
+                            $totalD2 = $di['c1_d2'] + $di['c2_d2'];
+                        @endphp
                         <tr class="tr-total">
                             <td class="text-start fw-semibold td-label">Total</td>
-                            <td class="fw-bold td-d1">{{ $di['c1_d1'] + $di['c2_d1'] }}</td>
-                            <td class="fw-bold td-d2">{{ $di['c1_d2'] + $di['c2_d2'] }}</td>
+                            <td class="fs-4 fw-bold td-d1 {{ $totalD1 > $totalD2 ? 'text-green-dark' : '' }}">{{ $totalD1 }}</td>
+                            <td class="fs-4 fw-bold td-d2 {{ $totalD2 > $totalD1 ? 'text-green-dark' : '' }}">{{ $totalD2 }}</td>
                         </tr>
                     </tbody>
                 </table>
                 @php
-                    $totalD1   = $di['c1_d1'] + $di['c2_d1'];
-                    $totalD2   = $di['c1_d2'] + $di['c2_d2'];
                     $diagTotal = $totalD1 + $totalD2;
                     $diagPct   = $diagTotal > 0 ? round(($totalD1 / $diagTotal) * 100) : 50;
                 @endphp
                 <div class="mt-4">
                     <div class="d-flex justify-content-between mb-1 diag-label-row">
-                        <span class="fw-semibold text-green-dark">D1 ({{ $diagPct }}%)</span>
-                        <span class="fw-semibold text-muted-pa">D2 ({{ 100 - $diagPct }}%)</span>
+                        <span class="fw-semibold {{ $totalD1 >= $totalD2 ? 'text-green-dark' : 'text-muted-pa' }}">D1 ({{ $diagPct }}%)</span>
+                        <span class="fw-semibold {{ $totalD2 > $totalD1 ? 'text-green-dark' : 'text-muted-pa' }}">D2 ({{ 100 - $diagPct }}%)</span>
                     </div>
                     <div class="progress progress-10">
                         <div class="progress-bar bar-cueilleur" style="width:{{ $diagPct }}%;"></div>
@@ -586,29 +588,44 @@ $scores = $questionnaire->scores;
                 <span>Menu 5 jours</span>
             </div>
             <div class="card-body p-4">
-                @if($questionnaire->menu_text)
-                    <p class="mb-4 menu-text">{{ $questionnaire->menu_text }}</p>
-                @else
-                    <p class="mb-4 text-muted-pa fs-13">Aucun menu renseigné.</p>
-                @endif
-                <form method="POST" action="{{ route('questionnaire.store', $client) }}">
-                    @csrf
-                    {{-- Réinjecter toutes les réponses existantes --}}
-                    @foreach($questionnaire->answers ?? [] as $key => $val)
-                        @if(is_array($val))
-                            @foreach($val as $vk => $vv)
-                            <input type="hidden" name="{{ $key }}[{{ $vk }}]" value="{{ $vv }}">
-                            @endforeach
-                        @else
-                        <input type="hidden" name="{{ $key }}" value="{{ $val }}">
-                        @endif
-                    @endforeach
-                    <div class="mb-3">
-                        <label for="menu_text" class="form-label">Saisir / modifier le menu</label>
-                        <textarea name="menu_text" id="menu_text" class="form-control" rows="6"
-                                  placeholder="Ex : Lundi – Petit-déjeuner : …">{{ $questionnaire->menu_text }}</textarea>
+
+                {{-- Fichier attaché --}}
+                @if($questionnaire->menu_file)
+                <div class="d-flex align-items-center gap-3 mb-4 p-3 rounded" style="background:var(--color-bg-tint);">
+                    <i class="bi bi-file-earmark-text fs-4 text-green-dark"></i>
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold fs-13">{{ $questionnaire->menu_file_name }}</div>
+                        <div class="fs-12 text-muted-pa">Fichier attaché</div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-sm">
+                    <a href="{{ Storage::disk('public')->url($questionnaire->menu_file) }}"
+                       target="_blank" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-download me-1"></i>Télécharger
+                    </a>
+                </div>
+                @endif
+
+                <form method="POST" action="{{ route('questionnaire.menu.save', $client) }}"
+                      enctype="multipart/form-data">
+                    @csrf
+
+                    {{-- Éditeur riche --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Menu / Plan alimentaire</label>
+                        <x-tiptap-editor name="menu_text" :value="$questionnaire->menu_text ?? ''" />
+                    </div>
+
+                    {{-- Upload fichier --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Joindre un fichier
+                            <span class="text-muted-pa fw-normal fs-12 ms-1">(PDF, TXT, DOC, DOCX — max 10 Mo)</span>
+                        </label>
+                        <input type="file" name="menu_file" id="menu_file"
+                               class="form-control form-control-sm"
+                               accept=".pdf,.txt,.doc,.docx">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm" id="saveMenuBtn">
                         <i class="bi bi-save me-1"></i>Enregistrer le menu
                     </button>
                 </form>
@@ -617,5 +634,7 @@ $scores = $questionnaire->scores;
     </div>
 
 </div>{{-- /row --}}
+
+@vite('resources/js/tiptap-editor.js')
 
 @endsection

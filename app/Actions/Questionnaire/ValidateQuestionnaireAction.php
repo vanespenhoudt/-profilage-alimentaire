@@ -8,11 +8,12 @@ use App\Services\QuestionnaireScorer;
 final class ValidateQuestionnaireAction
 {
     private const LABELS = [
-        'metabolique' => 'Typage Métabolique',
-        'ayurveda'    => 'Ayurveda',
-        'julia_ross'  => 'Julia Ross',
-        'diathese'    => 'Diathèse de Ménétrier',
-        'hormones'    => 'Bilan Hormonal',
+        'julia_ross'     => 'Julia Ross — Neurotransmetteurs',
+        'metabolique'    => 'Métaboltyping',
+        'diathese'       => 'Diathèses',
+        'ayurveda'       => 'Ayurveda',
+        'groupe_sanguin' => 'Groupe sanguin',
+        'hormones'       => 'Bilan Hormonal',
     ];
 
     /**
@@ -23,7 +24,7 @@ final class ValidateQuestionnaireAction
     public function execute(Questionnaire $questionnaire): array
     {
         $answers  = $questionnaire->answers ?? [];
-        $allSects = ['metabolique', 'ayurveda', 'julia_ross', 'diathese', 'hormones'];
+        $allSects = ['julia_ross', 'metabolique', 'diathese', 'ayurveda', 'groupe_sanguin', 'hormones'];
         $sections = $questionnaire->sections ?? $allSects;
 
         if (empty($answers)) {
@@ -34,7 +35,7 @@ final class ValidateQuestionnaireAction
         $suspicious = [];
 
         foreach ($sections as $section) {
-            if ($this->sectionIsEmpty($section, $scores)) {
+            if ($this->sectionIsEmpty($section, $scores, $answers)) {
                 $suspicious[] = self::LABELS[$section] ?? $section;
             }
         }
@@ -42,15 +43,16 @@ final class ValidateQuestionnaireAction
         return $suspicious;
     }
 
-    private function sectionIsEmpty(string $section, array $scores): bool
+    private function sectionIsEmpty(string $section, array $scores, array $answers = []): bool
     {
         return match($section) {
-            'metabolique' => ($scores['metabolique']['a'] + $scores['metabolique']['b']) === 0,
-            'ayurveda'    => ($scores['ayurveda']['vata'] + $scores['ayurveda']['pitta'] + $scores['ayurveda']['kapha']) === 0,
-            'julia_ross'  => array_sum(array_column(array_values($scores['julia_ross']), 'total')) === 0,
-            'diathese'    => array_sum($scores['diathese']) === 0,
-            'hormones'    => array_sum(array_column(array_values($scores['hormones']), 'total')) === 0,
-            default       => false,
+            'metabolique'    => ($scores['metabolique']['a'] + $scores['metabolique']['b']) === 0,
+            'ayurveda'       => ($scores['ayurveda']['vata'] + $scores['ayurveda']['pitta'] + $scores['ayurveda']['kapha']) === 0,
+            'julia_ross'     => array_sum(array_column(array_values($scores['julia_ross']), 'total')) === 0,
+            'diathese'       => array_sum($scores['diathese']) === 0,
+            'hormones'       => array_sum(array_column(array_values($scores['hormones']), 'total')) === 0,
+            'groupe_sanguin' => empty($answers['groupe_sanguin']),
+            default          => false,
         };
     }
 }

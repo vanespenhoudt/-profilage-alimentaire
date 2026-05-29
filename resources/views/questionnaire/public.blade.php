@@ -134,19 +134,61 @@
 
     <div class="accordion d-flex flex-column gap-2" id="questAccordion">
 
-        {{-- SECTION 1 — TYPAGE MÉTABOLIQUE ──────────────────────── --}}
-        @if(in_array('metabolique', $sections))
+        {{-- SECTION 1 — JULIA ROSS — NEUROTRANSMETTEURS ─────────── --}}
+        @if(in_array('julia_ross', $sections))
         @php $sNum++; @endphp
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
                         data-bs-toggle="collapse" data-bs-target="#s1" @if($sNum === 1) aria-expanded="true" @endif>
-                    <span class="section-icon"><i class="bi bi-activity"></i></span>
-                    {{ $sNum }}. Typage Métabolique
-                    <span class="badge-progress ms-3" id="badge-s1">0 / 37 questions</span>
+                    <span class="section-icon"><i class="bi bi-brain"></i></span>
+                    {{ $sNum }}. Julia Ross — Neurotransmetteurs
+                    <span class="badge-progress ms-3" id="badge-s1">0 cochés</span>
                 </button>
             </h2>
             <div id="s1" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
+                        Cochez les affirmations qui vous correspondent.
+                    </div>
+                    @foreach(QuestionnaireData::$julia_ross as $classe)
+                    <div class="card mb-3 subsection-card">
+                        <div class="card-header">
+                            <span>{{ $classe['titre'] }}</span>
+                        </div>
+                        <div class="card-body py-2 px-3">
+                            @foreach($classe['questions'] as $qi => $q)
+                            <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
+                                <input class="form-check-input" type="checkbox"
+                                       name="{{ $classe['id'] }}_{{ $qi }}" value="1"
+                                       id="{{ $classe['id'] }}_{{ $qi }}" data-section="s1"
+                                       @checked(!empty($answers[$classe['id'].'_'.$qi]))>
+                                <label class="form-check-label form-check-label-navy d-flex justify-content-between" for="{{ $classe['id'] }}_{{ $qi }}">
+                                    <span>{{ $q['t'] }}</span>
+                                </label>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- SECTION 2 — MÉTABOLTYPING ───────────────────────────── --}}
+        @if(in_array('metabolique', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s2" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-activity"></i></span>
+                    {{ $sNum }}. Métaboltyping
+                    <span class="badge-progress ms-3" id="badge-s2">0 / 37</span>
+                </button>
+            </h2>
+            <div id="s2" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
                         <strong>A = Cueilleur</strong> · <strong>B = Chasseur</strong> · Laissez vide si aucune option ne vous correspond.
@@ -159,7 +201,7 @@
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="a"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_a" data-section="s1"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_a" data-section="s2"
                                        @checked(($answers[$q['id']] ?? '') === 'a')>
                                 <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_a">
                                     <strong class="me-1">A</strong>{{ $q['a'] }}
@@ -167,7 +209,7 @@
                             </div>
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="b"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_b" data-section="s1"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_b" data-section="s2"
                                        @checked(($answers[$q['id']] ?? '') === 'b')>
                                 <label class="btn btn-outline-chasseur btn-sm w-100 text-start" for="{{ $q['id'] }}_b">
                                     <strong class="me-1">B</strong>{{ $q['b'] }}
@@ -186,7 +228,7 @@
                         <div class="col-md-6">
                             <div class="form-check check-item">
                                 <input class="form-check-input" type="checkbox" name="{{ $q['id'] }}" value="1"
-                                       id="{{ $q['id'] }}" data-section="s1-sym"
+                                       id="{{ $q['id'] }}" data-section="s2-sym"
                                        @checked(!empty($answers[$q['id']]))>
                                 <label class="form-check-label form-check-label-navy" for="{{ $q['id'] }}">{{ $q['label'] }}</label>
                             </div>
@@ -198,130 +240,19 @@
         </div>
         @endif
 
-        {{-- SECTION 2 — AYURVEDA ─────────────────────────────────── --}}
-        @if(in_array('ayurveda', $sections))
-        @php $sNum++; @endphp
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s2" @if($sNum === 1) aria-expanded="true" @endif>
-                    <span class="section-icon"><i class="bi bi-yin-yang"></i></span>
-                    {{ $sNum }}. Ayurveda
-                    <span class="badge-progress ms-3" id="badge-s2">0 / 59 questions</span>
-                </button>
-            </h2>
-            <div id="s2" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
-                <div class="accordion-body pt-2 pb-4">
-                    <div class="alert-section-info mb-3">
-                        Évaluez chaque affirmation de <strong>1</strong> (pas du tout) à <strong>6</strong> (totalement vrai pour moi).
-                    </div>
-
-                    <h6 class="sub-header"><i class="bi bi-water me-1"></i>Vâta <small class="sub-hint">(19 questions)</small></h6>
-                    @foreach(QuestionnaireData::$vata as $i => $label)
-                    <div class="q-row">
-                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
-                        <div class="btn-group btn-group-sm" role="group">
-                            @for($v = 1; $v <= 6; $v++)
-                            <input type="radio" class="btn-check radio-q" name="v{{ $i }}" value="{{ $v }}"
-                                   id="v{{ $i }}_{{ $v }}" data-section="s2"
-                                   @checked(($answers['v'.$i] ?? '') == $v)>
-                            <label class="btn btn-outline-primary" for="v{{ $i }}_{{ $v }}">{{ $v }}</label>
-                            @endfor
-                        </div>
-                    </div>
-                    @endforeach
-
-                    <hr class="my-4 hr-section">
-                    <h6 class="sub-header"><i class="bi bi-fire me-1"></i>Pitta <small class="sub-hint">(20 questions)</small></h6>
-                    @foreach(QuestionnaireData::$pitta as $i => $label)
-                    <div class="q-row">
-                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
-                        <div class="btn-group btn-group-sm" role="group">
-                            @for($v = 1; $v <= 6; $v++)
-                            <input type="radio" class="btn-check radio-q" name="p{{ $i }}" value="{{ $v }}"
-                                   id="p{{ $i }}_{{ $v }}" data-section="s2"
-                                   @checked(($answers['p'.$i] ?? '') == $v)>
-                            <label class="btn btn-outline-pitta" for="p{{ $i }}_{{ $v }}">{{ $v }}</label>
-                            @endfor
-                        </div>
-                    </div>
-                    @endforeach
-
-                    <hr class="my-4 hr-section">
-                    <h6 class="sub-header"><i class="bi bi-cloud me-1"></i>Kapha <small class="sub-hint">(20 questions)</small></h6>
-                    @foreach(QuestionnaireData::$kapha as $i => $label)
-                    <div class="q-row">
-                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
-                        <div class="btn-group btn-group-sm" role="group">
-                            @for($v = 1; $v <= 6; $v++)
-                            <input type="radio" class="btn-check radio-q" name="k{{ $i }}" value="{{ $v }}"
-                                   id="k{{ $i }}_{{ $v }}" data-section="s2"
-                                   @checked(($answers['k'.$i] ?? '') == $v)>
-                            <label class="btn btn-outline-teal" for="k{{ $i }}_{{ $v }}">{{ $v }}</label>
-                            @endfor
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-
-        {{-- SECTION 3 — JULIA ROSS ───────────────────────────────── --}}
-        @if(in_array('julia_ross', $sections))
-        @php $sNum++; @endphp
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s3" @if($sNum === 1) aria-expanded="true" @endif>
-                    <span class="section-icon"><i class="bi bi-brain"></i></span>
-                    {{ $sNum }}. Julia Ross
-                    <span class="badge-progress ms-3" id="badge-s3">0 cochés</span>
-                </button>
-            </h2>
-            <div id="s3" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
-                <div class="accordion-body pt-2 pb-4">
-                    <div class="alert-section-info mb-3">
-                        Cochez les affirmations qui vous correspondent.
-                    </div>
-                    @foreach(QuestionnaireData::$julia_ross as $classe)
-                    <div class="card mb-3 subsection-card">
-                        <div class="card-header">
-                            <span>{{ $classe['titre'] }}</span>
-                        </div>
-                        <div class="card-body py-2 px-3">
-                            @foreach($classe['questions'] as $qi => $q)
-                            <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
-                                <input class="form-check-input" type="checkbox"
-                                       name="{{ $classe['id'] }}_{{ $qi }}" value="1"
-                                       id="{{ $classe['id'] }}_{{ $qi }}" data-section="s3"
-                                       @checked(!empty($answers[$classe['id'].'_'.$qi]))>
-                                <label class="form-check-label form-check-label-navy d-flex justify-content-between" for="{{ $classe['id'] }}_{{ $qi }}">
-                                    <span>{{ $q['t'] }}</span>
-                                </label>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-
-        {{-- SECTION 4 — DIATHÈSE ─────────────────────────────────── --}}
+        {{-- SECTION 3 — DIATHÈSES ──────────────────────────────── --}}
         @if(in_array('diathese', $sections))
         @php $sNum++; @endphp
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s4" @if($sNum === 1) aria-expanded="true" @endif>
+                        data-bs-toggle="collapse" data-bs-target="#s3" @if($sNum === 1) aria-expanded="true" @endif>
                     <span class="section-icon"><i class="bi bi-diagram-3"></i></span>
-                    {{ $sNum }}. Diathèse de Ménétrier
-                    <span class="badge-progress ms-3" id="badge-s4">0 / 14 questions</span>
+                    {{ $sNum }}. Diathèses
+                    <span class="badge-progress ms-3" id="badge-s3">0 / 14</span>
                 </button>
             </h2>
-            <div id="s4" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+            <div id="s3" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
                         Pour chaque paire, choisissez l'option qui vous correspond le mieux. Laissez vide si aucune ne s'applique clairement.
@@ -334,7 +265,7 @@
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d1"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_d1" data-section="s4"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_d1" data-section="s3"
                                        @checked(($answers[$q['id']] ?? '') === 'd1')>
                                 <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
                                     <strong class="d1-label">D1</strong>{{ $q['d1'] }}
@@ -342,7 +273,7 @@
                             </div>
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d2"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_d2" data-section="s4"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_d2" data-section="s3"
                                        @checked(($answers[$q['id']] ?? '') === 'd2')>
                                 <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
                                     <strong class="d1-label">D2</strong>{{ $q['d2'] }}
@@ -360,7 +291,7 @@
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d1"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_d1" data-section="s4"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_d1" data-section="s3"
                                        @checked(($answers[$q['id']] ?? '') === 'd1')>
                                 <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
                                     <strong class="d1-label">D1</strong>{{ $q['d1'] }}
@@ -368,7 +299,7 @@
                             </div>
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d2"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_d2" data-section="s4"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_d2" data-section="s3"
                                        @checked(($answers[$q['id']] ?? '') === 'd2')>
                                 <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
                                     <strong class="d1-label">D2</strong>{{ $q['d2'] }}
@@ -382,19 +313,118 @@
         </div>
         @endif
 
-        {{-- SECTION 5 — BILAN HORMONAL ──────────────────────────── --}}
-        @if(in_array('hormones', $sections))
+        {{-- SECTION 4 — AYURVEDA ────────────────────────────────── --}}
+        @if(in_array('ayurveda', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s4" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-yin-yang"></i></span>
+                    {{ $sNum }}. Ayurveda
+                    <span class="badge-progress ms-3" id="badge-s4">0 / 59</span>
+                </button>
+            </h2>
+            <div id="s4" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
+                        Évaluez chaque affirmation de <strong>1</strong> (pas du tout) à <strong>6</strong> (totalement vrai pour moi).
+                    </div>
+
+                    <h6 class="sub-header"><i class="bi bi-water me-1"></i>Vâta <small class="sub-hint">(19 questions)</small></h6>
+                    @foreach(QuestionnaireData::$vata as $i => $label)
+                    <div class="q-row">
+                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
+                        <div class="btn-group btn-group-sm" role="group">
+                            @for($v = 1; $v <= 6; $v++)
+                            <input type="radio" class="btn-check radio-q" name="v{{ $i }}" value="{{ $v }}"
+                                   id="v{{ $i }}_{{ $v }}" data-section="s4"
+                                   @checked(($answers['v'.$i] ?? '') == $v)>
+                            <label class="btn btn-outline-primary" for="v{{ $i }}_{{ $v }}">{{ $v }}</label>
+                            @endfor
+                        </div>
+                    </div>
+                    @endforeach
+
+                    <hr class="my-4 hr-section">
+                    <h6 class="sub-header"><i class="bi bi-fire me-1"></i>Pitta <small class="sub-hint">(20 questions)</small></h6>
+                    @foreach(QuestionnaireData::$pitta as $i => $label)
+                    <div class="q-row">
+                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
+                        <div class="btn-group btn-group-sm" role="group">
+                            @for($v = 1; $v <= 6; $v++)
+                            <input type="radio" class="btn-check radio-q" name="p{{ $i }}" value="{{ $v }}"
+                                   id="p{{ $i }}_{{ $v }}" data-section="s4"
+                                   @checked(($answers['p'.$i] ?? '') == $v)>
+                            <label class="btn btn-outline-pitta" for="p{{ $i }}_{{ $v }}">{{ $v }}</label>
+                            @endfor
+                        </div>
+                    </div>
+                    @endforeach
+
+                    <hr class="my-4 hr-section">
+                    <h6 class="sub-header"><i class="bi bi-cloud me-1"></i>Kapha <small class="sub-hint">(20 questions)</small></h6>
+                    @foreach(QuestionnaireData::$kapha as $i => $label)
+                    <div class="q-row">
+                        <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
+                        <div class="btn-group btn-group-sm" role="group">
+                            @for($v = 1; $v <= 6; $v++)
+                            <input type="radio" class="btn-check radio-q" name="k{{ $i }}" value="{{ $v }}"
+                                   id="k{{ $i }}_{{ $v }}" data-section="s4"
+                                   @checked(($answers['k'.$i] ?? '') == $v)>
+                            <label class="btn btn-outline-teal" for="k{{ $i }}_{{ $v }}">{{ $v }}</label>
+                            @endfor
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- SECTION 5 — GROUPE SANGUIN ──────────────────────────── --}}
+        @if(in_array('groupe_sanguin', $sections))
         @php $sNum++; @endphp
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
                         data-bs-toggle="collapse" data-bs-target="#s5" @if($sNum === 1) aria-expanded="true" @endif>
                     <span class="section-icon"><i class="bi bi-droplet-half"></i></span>
-                    {{ $sNum }}. Bilan Hormonal
-                    <span class="badge-progress ms-3" id="badge-s5">0 cochés</span>
+                    {{ $sNum }}. Groupe sanguin
+                    <span class="badge-progress ms-3" id="badge-s5">0 / 1</span>
                 </button>
             </h2>
             <div id="s5" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
+                        Sélectionnez votre groupe sanguin.
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach(['O', 'A', 'B', 'AB', 'Je ne sais pas'] as $gs)
+                        <input type="radio" name="groupe_sanguin" value="{{ $gs }}"
+                               class="btn-check radio-q" id="gs_{{ $loop->index }}" data-section="s5"
+                               @checked(($answers['groupe_sanguin'] ?? '') === $gs)>
+                        <label class="btn btn-outline-primary btn-sm" for="gs_{{ $loop->index }}">{{ $gs }}</label>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- SECTION 6 — BILAN HORMONAL ──────────────────────────── --}}
+        @if(in_array('hormones', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s6" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-heart-pulse"></i></span>
+                    {{ $sNum }}. Bilan Hormonal
+                    <span class="badge-progress ms-3" id="badge-s6">0 cochés</span>
+                </button>
+            </h2>
+            <div id="s6" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
                         Cochez les affirmations qui vous correspondent actuellement.
@@ -411,7 +441,7 @@
                                     <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
                                         <input class="form-check-input" type="checkbox"
                                                name="{{ $cat['id'] }}_{{ $qi }}" value="1"
-                                               id="{{ $cat['id'] }}_{{ $qi }}" data-section="s5"
+                                               id="{{ $cat['id'] }}_{{ $qi }}" data-section="s6"
                                                @checked(!empty($answers[$cat['id'].'_'.$qi]))>
                                         <label class="form-check-label form-check-label-navy" for="{{ $cat['id'] }}_{{ $qi }}">{{ $question }}</label>
                                     </div>
@@ -492,21 +522,24 @@
     const CSRF         = document.querySelector('meta[name="csrf-token"]').content;
 
     const sectionCfg = {};
-    @if(in_array('metabolique', $sections))
-    sectionCfg.s1        = { type: 'radio', total: 37,   badgeId: 'badge-s1', suffix: ' / 37 questions' };
-    sectionCfg['s1-sym'] = { type: 'check', total: null, badgeId: null,        suffix: '' };
-    @endif
-    @if(in_array('ayurveda', $sections))
-    sectionCfg.s2 = { type: 'radio', total: 59,   badgeId: 'badge-s2', suffix: ' / 59 questions' };
-    @endif
     @if(in_array('julia_ross', $sections))
-    sectionCfg.s3 = { type: 'check', total: null, badgeId: 'badge-s3', suffix: ' cochés' };
+    sectionCfg.s1 = { type: 'check', total: null, badgeId: 'badge-s1', suffix: ' cochés' };
+    @endif
+    @if(in_array('metabolique', $sections))
+    sectionCfg.s2        = { type: 'radio', total: 37,   badgeId: 'badge-s2', suffix: ' / 37' };
+    sectionCfg['s2-sym'] = { type: 'check', total: null, badgeId: null,        suffix: '' };
     @endif
     @if(in_array('diathese', $sections))
-    sectionCfg.s4 = { type: 'radio', total: 14,   badgeId: 'badge-s4', suffix: ' / 14 questions' };
+    sectionCfg.s3 = { type: 'radio', total: 14,   badgeId: 'badge-s3', suffix: ' / 14' };
+    @endif
+    @if(in_array('ayurveda', $sections))
+    sectionCfg.s4 = { type: 'radio', total: 59,   badgeId: 'badge-s4', suffix: ' / 59' };
+    @endif
+    @if(in_array('groupe_sanguin', $sections))
+    sectionCfg.s5 = { type: 'radio', total: 1,    badgeId: 'badge-s5', suffix: ' / 1' };
     @endif
     @if(in_array('hormones', $sections))
-    sectionCfg.s5 = { type: 'check', total: null, badgeId: 'badge-s5', suffix: ' cochés' };
+    sectionCfg.s6 = { type: 'check', total: null, badgeId: 'badge-s6', suffix: ' cochés' };
     @endif
 
     const TOTAL_RADIO = Object.values(sectionCfg)

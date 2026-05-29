@@ -67,11 +67,12 @@
     @php
         $q = $client->questionnaire;
         $allSects = [
-            'metabolique' => 'Typage Métabolique',
-            'ayurveda'    => 'Ayurveda (Vata / Pitta / Kapha)',
-            'julia_ross'  => 'Julia Ross',
-            'diathese'    => 'Diathèse de Ménétrier',
-            'hormones'    => 'Bilan Hormonal',
+            'julia_ross'     => 'Julia Ross — Neurotransmetteurs',
+            'metabolique'    => 'Métaboltyping',
+            'diathese'       => 'Diathèses',
+            'ayurveda'       => 'Ayurveda',
+            'groupe_sanguin' => 'Groupe sanguin',
+            'hormones'       => 'Bilan Hormonal',
         ];
         $selectedSects = $q?->sections ?? array_keys($allSects);
     @endphp
@@ -106,6 +107,21 @@
                             <label class="form-check-label form-check-label-navy" for="sect_{{ $key }}">{{ $label }}</label>
                         </div>
                         @endforeach
+
+                        <hr class="my-3">
+                        <div class="d-flex align-items-start gap-3 p-3 rounded" style="background:var(--color-bg-tint);">
+                            <div class="form-check form-switch mb-0 mt-1">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                       name="menu_visible_client" id="menuVisibleClient" value="1"
+                                       @checked($q?->menu_visible_client)>
+                            </div>
+                            <label class="form-check-label" for="menuVisibleClient">
+                                <span class="fw-semibold fs-13">Partager le menu avec le client</span>
+                                <span class="d-block fs-12 text-muted-pa mt-1">
+                                    Si activé, le plan alimentaire rédigé dans le questionnaire sera visible par le client après soumission.
+                                </span>
+                            </label>
+                        </div>
                     </div>
                     <div class="modal-footer modal-footer-card">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>

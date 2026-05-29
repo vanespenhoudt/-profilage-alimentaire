@@ -10,6 +10,7 @@ use App\Services\QuestionnaireScorer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -92,19 +93,52 @@ class QuestionnaireController extends Controller
         return view('questionnaire.bilan', compact('client', 'questionnaire', 'data'));
     }
 
+    public function saveMenu(Request $request, Client $client): RedirectResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $request->validate([
+            'menu_text'            => 'nullable|string',
+            'menu_file'            => 'nullable|file|mimes:pdf,txt,doc,docx|max:10240',
+            'menu_visible_client'  => 'nullable|boolean',
+        ]);
+
+        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
+        $questionnaire->menu_text           = $request->input('menu_text');
+        $questionnaire->menu_visible_client = $request->boolean('menu_visible_client');
+        $questionnaire->updated_at          = now();
+
+        if ($request->hasFile('menu_file') && $request->file('menu_file')->isValid()) {
+            if ($questionnaire->menu_file) {
+                Storage::disk('public')->delete($questionnaire->menu_file);
+            }
+            $file = $request->file('menu_file');
+            $questionnaire->menu_file      = $file->store('menus', 'public');
+            $questionnaire->menu_file_name = $file->getClientOriginalName();
+        }
+
+        $questionnaire->save();
+
+        return redirect()
+            ->route('questionnaire.bilan', $client)
+            ->with('success', 'Menu enregistré.');
+    }
+
     public function generateToken(Request $request, Client $client): RedirectResponse
     {
         $this->authorizeClientAccess($request->user(), $client);
 
         $validated = $request->validate([
-            'sections'   => 'nullable|array|min:1',
-            'sections.*' => 'in:metabolique,ayurveda,julia_ross,diathese,hormones',
+            'sections'            => 'nullable|array|min:1',
+            'sections.*'          => 'in:julia_ross,metabolique,diathese,ayurveda,groupe_sanguin,hormones',
+            'menu_visible_client' => 'nullable|boolean',
         ]);
 
         $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
-        $questionnaire->token      = Str::random(48);
-        $questionnaire->sections   = $validated['sections'] ?? null;
-        $questionnaire->updated_at = now();
+        $questionnaire->token               = Str::random(48);
+        $questionnaire->sections            = $validated['sections'] ?? null;
+        $questionnaire->menu_visible_client = $request->boolean('menu_visible_client');
+        $questionnaire->updated_at          = now();
         $questionnaire->save();
 
         return redirect()

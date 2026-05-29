@@ -21,7 +21,7 @@ class PublicQuestionnaireController extends Controller
         }
 
         $answers  = $questionnaire->answers ?? [];
-        $allSects = ['metabolique', 'ayurveda', 'julia_ross', 'diathese', 'hormones'];
+        $allSects = ['julia_ross', 'metabolique', 'diathese', 'ayurveda', 'groupe_sanguin', 'hormones'];
         $sections = $questionnaire->sections ?? $allSects;
 
         return view('questionnaire.public', compact('questionnaire', 'token', 'answers', 'sections'));

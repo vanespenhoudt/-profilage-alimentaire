@@ -120,17 +120,62 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
     {{-- ACCORDÉON ──────────────────────────────────────────────────── --}}
     <div class="accordion d-flex flex-column gap-2" id="questAccordion">
 
-        {{-- ══ SECTION 1 — TYPAGE MÉTABOLIQUE ══ --}}
+        {{-- ══ SECTION 1 — JULIA ROSS — NEUROTRANSMETTEURS ══ --}}
         <div class="accordion-item" id="wrap-s1">
             <h2 class="accordion-header">
                 <button class="accordion-button" type="button"
                         data-bs-toggle="collapse" data-bs-target="#s1" aria-expanded="true">
-                    <span class="section-icon"><i class="bi bi-activity"></i></span>
-                    1. Typage Métabolique
-                    <span class="badge-progress ms-3" id="badge-s1">0 / 37</span>
+                    <span class="section-icon"><i class="bi bi-brain"></i></span>
+                    1. Julia Ross — Neurotransmetteurs
+                    <span class="badge-progress ms-3" id="badge-s1">0 / {{ $totalJuliaRoss }}</span>
                 </button>
             </h2>
             <div id="s1" class="accordion-collapse collapse show" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+
+                    <div class="alert-section-info mb-3">
+                        Cochez les affirmations qui vous correspondent. Chaque réponse positive contribue au score pondéré de sa classe.
+                    </div>
+
+                    @foreach(QuestionnaireData::$julia_ross as $classe)
+                    <div class="card mb-3 subsection-card">
+                        <div class="card-header">
+                            <span>{{ $classe['titre'] }}</span>
+                            <span class="badge-tint">Seuil : {{ $classe['seuil'] }}</span>
+                        </div>
+                        <div class="card-body py-2 px-3">
+                            @foreach($classe['questions'] as $qi => $q)
+                            <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
+                                <input class="form-check-input" type="checkbox"
+                                       name="{{ $classe['id'] }}_{{ $qi }}" value="1"
+                                       id="{{ $classe['id'] }}_{{ $qi }}"
+                                       data-section="s1"
+                                       @checked(!empty($answers[$classe['id'].'_'.$qi]))>
+                                <label class="form-check-label form-check-label-navy d-flex justify-content-between" for="{{ $classe['id'] }}_{{ $qi }}">
+                                    <span>{{ $q['t'] }}</span>
+                                    <span class="badge-tint-bordered">+{{ $q['w'] }}</span>
+                                </label>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endforeach
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ══ SECTION 2 — MÉTABOLTYPING ══ --}}
+        <div class="accordion-item" id="wrap-s2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s2">
+                    <span class="section-icon"><i class="bi bi-activity"></i></span>
+                    2. Métaboltyping
+                    <span class="badge-progress ms-3" id="badge-s2">0 / 37</span>
+                </button>
+            </h2>
+            <div id="s2" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
 
                     <div class="alert-section-info mb-3">
@@ -145,7 +190,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="a"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_a"
-                                       data-section="s1"
+                                       data-section="s2"
                                        @checked(($answers[$q['id']] ?? '') === 'a')>
                                 <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_a">
                                     <strong class="me-1">A</strong>{{ $q['a'] }}
@@ -154,7 +199,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="b"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_b"
-                                       data-section="s1"
+                                       data-section="s2"
                                        @checked(($answers[$q['id']] ?? '') === 'b')>
                                 <label class="btn btn-outline-chasseur btn-sm w-100 text-start" for="{{ $q['id'] }}_b">
                                     <strong class="me-1">B</strong>{{ $q['b'] }}
@@ -176,7 +221,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
                                 <input class="form-check-input" type="checkbox"
                                        name="{{ $q['id'] }}" value="1"
                                        id="{{ $q['id'] }}"
-                                       data-section="s1-sym"
+                                       data-section="s2-sym"
                                        @checked(!empty($answers[$q['id']])) >
                                 <label class="form-check-label form-check-label-navy" for="{{ $q['id'] }}">{{ $q['label'] }}</label>
                             </div>
@@ -188,17 +233,97 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
             </div>
         </div>
 
-        {{-- ══ SECTION 2 — AYURVEDA ══ --}}
-        <div class="accordion-item" id="wrap-s2">
+        {{-- ══ SECTION 3 — DIATHÈSES ══ --}}
+        <div class="accordion-item" id="wrap-s3">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s2">
-                    <span class="section-icon"><i class="bi bi-yin-yang"></i></span>
-                    2. Ayurveda
-                    <span class="badge-progress ms-3" id="badge-s2">0 / 59</span>
+                        data-bs-toggle="collapse" data-bs-target="#s3">
+                    <span class="section-icon"><i class="bi bi-diagram-3"></i></span>
+                    3. Diathèses
+                    <span class="badge-progress ms-3" id="badge-s3">0 / 14</span>
                 </button>
             </h2>
-            <div id="s2" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
+            <div id="s3" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+
+                    <div class="alert-section-info mb-3">
+                        Pour chaque paire, choisissez l'option qui vous correspond le mieux. Laissez vide si aucune des deux ne s'applique clairement.
+                    </div>
+
+                    <h6 class="sub-header"><i class="bi bi-person-standing me-1"></i>Période enfance (avant 12–15 ans)</h6>
+                    @foreach(QuestionnaireData::$diathese_col1 as $q)
+                    <div class="q-row">
+                        <div class="q-num mb-2">Question {{ $loop->iteration }}</div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input type="radio" name="{{ $q['id'] }}" value="d1"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_d1"
+                                       data-section="s3"
+                                       @checked(($answers[$q['id']] ?? '') === 'd1')>
+                                <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
+                                    <strong class="d1-label">D1</strong>
+                                    {{ $q['d1'] }}
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="radio" name="{{ $q['id'] }}" value="d2"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_d2"
+                                       data-section="s3"
+                                       @checked(($answers[$q['id']] ?? '') === 'd2')>
+                                <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
+                                    <strong class="d1-label">D2</strong>
+                                    {{ $q['d2'] }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+
+                    <hr class="my-4 hr-section">
+                    <h6 class="sub-header"><i class="bi bi-person me-1"></i>Période adulte (aujourd'hui)</h6>
+                    @foreach(QuestionnaireData::$diathese_col2 as $q)
+                    <div class="q-row">
+                        <div class="q-num mb-2">Question {{ $loop->iteration }}</div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <input type="radio" name="{{ $q['id'] }}" value="d1"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_d1"
+                                       data-section="s3"
+                                       @checked(($answers[$q['id']] ?? '') === 'd1')>
+                                <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
+                                    <strong class="d1-label">D1</strong>
+                                    {{ $q['d1'] }}
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="radio" name="{{ $q['id'] }}" value="d2"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_d2"
+                                       data-section="s3"
+                                       @checked(($answers[$q['id']] ?? '') === 'd2')>
+                                <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
+                                    <strong class="d1-label">D2</strong>
+                                    {{ $q['d2'] }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ══ SECTION 4 — AYURVEDA ══ --}}
+        <div class="accordion-item" id="wrap-s4">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s4">
+                    <span class="section-icon"><i class="bi bi-yin-yang"></i></span>
+                    4. Ayurveda
+                    <span class="badge-progress ms-3" id="badge-s4">0 / 59</span>
+                </button>
+            </h2>
+            <div id="s4" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
 
                     <div class="alert-section-info mb-3">
@@ -213,7 +338,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
                         <div class="btn-group btn-group-sm" role="group">
                             @for($v = 1; $v <= 6; $v++)
                             <input type="radio" class="btn-check radio-q" name="v{{ $i }}" value="{{ $v }}"
-                                   id="v{{ $i }}_{{ $v }}" data-section="s2"
+                                   id="v{{ $i }}_{{ $v }}" data-section="s4"
                                    @checked(($answers['v'.$i] ?? '') == $v)>
                             <label class="btn btn-outline-primary" for="v{{ $i }}_{{ $v }}">{{ $v }}</label>
                             @endfor
@@ -230,7 +355,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
                         <div class="btn-group btn-group-sm" role="group">
                             @for($v = 1; $v <= 6; $v++)
                             <input type="radio" class="btn-check radio-q" name="p{{ $i }}" value="{{ $v }}"
-                                   id="p{{ $i }}_{{ $v }}" data-section="s2"
+                                   id="p{{ $i }}_{{ $v }}" data-section="s4"
                                    @checked(($answers['p'.$i] ?? '') == $v)>
                             <label class="btn btn-outline-pitta" for="p{{ $i }}_{{ $v }}">{{ $v }}</label>
                             @endfor
@@ -247,7 +372,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
                         <div class="btn-group btn-group-sm" role="group">
                             @for($v = 1; $v <= 6; $v++)
                             <input type="radio" class="btn-check radio-q" name="k{{ $i }}" value="{{ $v }}"
-                                   id="k{{ $i }}_{{ $v }}" data-section="s2"
+                                   id="k{{ $i }}_{{ $v }}" data-section="s4"
                                    @checked(($answers['k'.$i] ?? '') == $v)>
                             <label class="btn btn-outline-teal" for="k{{ $i }}_{{ $v }}">{{ $v }}</label>
                             @endfor
@@ -259,144 +384,48 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
             </div>
         </div>
 
-        {{-- ══ SECTION 3 — JULIA ROSS ══ --}}
-        <div class="accordion-item" id="wrap-s3">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s3">
-                    <span class="section-icon"><i class="bi bi-brain"></i></span>
-                    3. Julia Ross
-                    <span class="badge-progress ms-3" id="badge-s3">0 / {{ $totalJuliaRoss }}</span>
-                </button>
-            </h2>
-            <div id="s3" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
-                <div class="accordion-body pt-2 pb-4">
-
-                    <div class="alert-section-info mb-3">
-                        Cochez les affirmations qui vous correspondent. Chaque réponse positive contribue au score pondéré de sa classe.
-                    </div>
-
-                    @foreach(QuestionnaireData::$julia_ross as $classe)
-                    <div class="card mb-3 subsection-card">
-                        <div class="card-header">
-                            <span>{{ $classe['titre'] }}</span>
-                            <span class="badge-tint">Seuil : {{ $classe['seuil'] }}</span>
-                        </div>
-                        <div class="card-body py-2 px-3">
-                            @foreach($classe['questions'] as $qi => $q)
-                            <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
-                                <input class="form-check-input" type="checkbox"
-                                       name="{{ $classe['id'] }}_{{ $qi }}" value="1"
-                                       id="{{ $classe['id'] }}_{{ $qi }}"
-                                       data-section="s3"
-                                       @checked(!empty($answers[$classe['id'].'_'.$qi]))>
-                                <label class="form-check-label form-check-label-navy d-flex justify-content-between" for="{{ $classe['id'] }}_{{ $qi }}">
-                                    <span>{{ $q['t'] }}</span>
-                                    <span class="badge-tint-bordered">+{{ $q['w'] }}</span>
-                                </label>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endforeach
-
-                </div>
-            </div>
-        </div>
-
-        {{-- ══ SECTION 4 — DIATHÈSE DE MÉNÉTRIER ══ --}}
-        <div class="accordion-item" id="wrap-s4">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s4">
-                    <span class="section-icon"><i class="bi bi-diagram-3"></i></span>
-                    4. Diathèse de Ménétrier
-                    <span class="badge-progress ms-3" id="badge-s4">0 / 14</span>
-                </button>
-            </h2>
-            <div id="s4" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
-                <div class="accordion-body pt-2 pb-4">
-
-                    <div class="alert-section-info mb-3">
-                        Pour chaque paire, choisissez l'option qui vous correspond le mieux. Laissez vide si aucune des deux ne s'applique clairement.
-                    </div>
-
-                    {{-- Colonne 1 --}}
-                    <h6 class="sub-header"><i class="bi bi-person-standing me-1"></i>Période enfance (avant 12–15 ans)</h6>
-                    @foreach(QuestionnaireData::$diathese_col1 as $q)
-                    <div class="q-row">
-                        <div class="q-num mb-2">Question {{ $loop->iteration }}</div>
-                        <div class="row g-2">
-                            <div class="col-md-6">
-                                <input type="radio" name="{{ $q['id'] }}" value="d1"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_d1"
-                                       data-section="s4"
-                                       @checked(($answers[$q['id']] ?? '') === 'd1')>
-                                <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
-                                    <strong class="d1-label">D1</strong>
-                                    {{ $q['d1'] }}
-                                </label>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="radio" name="{{ $q['id'] }}" value="d2"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_d2"
-                                       data-section="s4"
-                                       @checked(($answers[$q['id']] ?? '') === 'd2')>
-                                <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
-                                    <strong class="d1-label">D2</strong>
-                                    {{ $q['d2'] }}
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-
-                    <hr class="my-4 hr-section">
-                    {{-- Colonne 2 --}}
-                    <h6 class="sub-header"><i class="bi bi-person me-1"></i>Période adulte (aujourd'hui)</h6>
-                    @foreach(QuestionnaireData::$diathese_col2 as $q)
-                    <div class="q-row">
-                        <div class="q-num mb-2">Question {{ $loop->iteration }}</div>
-                        <div class="row g-2">
-                            <div class="col-md-6">
-                                <input type="radio" name="{{ $q['id'] }}" value="d1"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_d1"
-                                       data-section="s4"
-                                       @checked(($answers[$q['id']] ?? '') === 'd1')>
-                                <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
-                                    <strong class="d1-label">D1</strong>
-                                    {{ $q['d1'] }}
-                                </label>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="radio" name="{{ $q['id'] }}" value="d2"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_d2"
-                                       data-section="s4"
-                                       @checked(($answers[$q['id']] ?? '') === 'd2')>
-                                <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
-                                    <strong class="d1-label">D2</strong>
-                                    {{ $q['d2'] }}
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-
-                </div>
-            </div>
-        </div>
-
-        {{-- ══ SECTION 5 — BILAN HORMONAL ══ --}}
+        {{-- ══ SECTION 5 — GROUPE SANGUIN ══ --}}
         <div class="accordion-item" id="wrap-s5">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#s5">
                     <span class="section-icon"><i class="bi bi-droplet-half"></i></span>
-                    5. Bilan Hormonal
-                    <span class="badge-progress ms-3" id="badge-s5">0 / {{ $totalHormones }}</span>
+                    5. Groupe sanguin
+                    <span class="badge-progress ms-3" id="badge-s5">0 / 1</span>
                 </button>
             </h2>
             <div id="s5" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+
+                    <div class="alert-section-info mb-3">
+                        Sélectionnez le groupe sanguin du client.
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach(['O', 'A', 'B', 'AB', 'Je ne sais pas'] as $gs)
+                        <input type="radio" name="groupe_sanguin" value="{{ $gs }}"
+                               class="btn-check radio-q" id="gs_{{ $loop->index }}"
+                               data-section="s5"
+                               @checked(($answers['groupe_sanguin'] ?? '') === $gs)>
+                        <label class="btn btn-outline-primary btn-sm" for="gs_{{ $loop->index }}">{{ $gs }}</label>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ══ SECTION 6 — BILAN HORMONAL ══ --}}
+        <div class="accordion-item" id="wrap-s6">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s6">
+                    <span class="section-icon"><i class="bi bi-heart-pulse"></i></span>
+                    6. Bilan Hormonal
+                    <span class="badge-progress ms-3" id="badge-s6">0 / {{ $totalHormones }}</span>
+                </button>
+            </h2>
+            <div id="s6" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
 
                     <div class="alert-section-info mb-3">
@@ -417,7 +446,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
                                         <input class="form-check-input" type="checkbox"
                                                name="{{ $cat['id'] }}_{{ $qi }}" value="1"
                                                id="{{ $cat['id'] }}_{{ $qi }}"
-                                               data-section="s5"
+                                               data-section="s6"
                                                @checked(!empty($answers[$cat['id'].'_'.$qi]))>
                                         <label class="form-check-label form-check-label-navy" for="{{ $cat['id'] }}_{{ $qi }}">
                                             {{ $question }}
@@ -439,6 +468,55 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
     <div class="spacer-bottom"></div>
 </form>
 
+{{-- MENU 5 JOURS ──────────────────────────────────────────────── --}}
+<div class="mt-3 mb-3">
+    <div class="card">
+        <div class="section-header">
+            <i class="bi bi-journal-richtext"></i>
+            <span>Menu 5 jours</span>
+        </div>
+        <div class="card-body p-4">
+
+            @if($questionnaire?->menu_file)
+            <div class="d-flex align-items-center gap-3 mb-4 p-3 rounded" style="background:var(--color-bg-tint);">
+                <i class="bi bi-file-earmark-text fs-4 text-green-dark"></i>
+                <div class="flex-grow-1">
+                    <div class="fw-semibold fs-13">{{ $questionnaire->menu_file_name }}</div>
+                    <div class="fs-12 text-muted-pa">Fichier attaché</div>
+                </div>
+                <a href="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($questionnaire->menu_file) }}"
+                   target="_blank" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-download me-1"></i>Télécharger
+                </a>
+            </div>
+            @endif
+
+            <form method="POST" action="{{ route('questionnaire.menu.save', $client) }}"
+                  enctype="multipart/form-data" id="menuForm">
+                @csrf
+
+                <div class="mb-3">
+                    <label class="form-label">Menu / Plan alimentaire</label>
+                    <x-tiptap-editor name="menu_text" :value="$questionnaire?->menu_text ?? ''" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Joindre un fichier
+                        <span class="text-muted-pa fw-normal fs-12 ms-1">(PDF, TXT, DOC, DOCX — max 10 Mo)</span>
+                    </label>
+                    <input type="file" name="menu_file" class="form-control form-control-sm"
+                           accept=".pdf,.txt,.doc,.docx">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-save me-1"></i>Enregistrer le menu
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 {{-- Barre flottante bas ──────────────────────────────────────────── --}}
 <div class="position-fixed bottom-0 end-0 p-4 zi-1050">
     <div class="d-flex gap-2 align-items-center float-bar">
@@ -456,12 +534,13 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
 <script>
 (function () {
     const sections = {
-        s1:      { type: 'radio', total: 37,                         badgeId: 'badge-s1' },
-        's1-sym':{ type: 'check', total: 11,                         badgeId: null },
-        s2:      { type: 'radio', total: 59,                         badgeId: 'badge-s2' },
-        s3:      { type: 'check', total: @json($totalJuliaRoss),      badgeId: 'badge-s3' },
-        s4:      { type: 'radio', total: 14,                         badgeId: 'badge-s4' },
-        s5:      { type: 'check', total: @json($totalHormones),       badgeId: 'badge-s5' },
+        s1:      { type: 'check', total: @json($totalJuliaRoss),      badgeId: 'badge-s1' },
+        s2:      { type: 'radio', total: 37,                          badgeId: 'badge-s2' },
+        's2-sym':{ type: 'check', total: 11,                          badgeId: null },
+        s3:      { type: 'radio', total: 14,                          badgeId: 'badge-s3' },
+        s4:      { type: 'radio', total: 59,                          badgeId: 'badge-s4' },
+        s5:      { type: 'radio', total: 1,                           badgeId: 'badge-s5' },
+        s6:      { type: 'check', total: @json($totalHormones),        badgeId: 'badge-s6' },
     };
 
     function countSection(key) {
@@ -480,7 +559,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
 
     function updateBadges() {
         let totalAnswered = 0;
-        const totalAll   = 37 + 59 + 14;
+        const totalAll   = 37 + 59 + 14 + 1;
 
         Object.entries(sections).forEach(([key, cfg]) => {
             const count = countSection(key);
@@ -536,5 +615,7 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
     document.addEventListener('DOMContentLoaded', updateBadges);
 })();
 </script>
+
+@vite('resources/js/tiptap-editor.js')
 
 @endsection

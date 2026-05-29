@@ -40,6 +40,7 @@ Route::middleware(['auth', 'role:super_admin,conseiller'])->group(function () {
     Route::post('/clients/{client}/questionnaire', [QuestionnaireController::class, 'store'])->name('questionnaire.store');
     Route::get('/clients/{client}/bilan', [QuestionnaireController::class, 'bilan'])->name('questionnaire.bilan');
     Route::post('/clients/{client}/questionnaire/token', [QuestionnaireController::class, 'generateToken'])->name('questionnaire.generate-token');
+    Route::post('/clients/{client}/menu', [QuestionnaireController::class, 'saveMenu'])->name('questionnaire.menu.save');
 
     // Admin - Conseillers
     Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function () {

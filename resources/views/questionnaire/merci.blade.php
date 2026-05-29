@@ -26,4 +26,25 @@
     <p class="text-muted small mt-4">Vous pouvez fermer cette page.</p>
 </div>
 
+@if($questionnaire->menu_visible_client && $questionnaire->menu_text)
+<div class="card mx-auto mt-4" style="max-width:680px;">
+    <div class="card-body p-4">
+        <h5 class="fw-bold text-navy mb-3">
+            <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Votre plan alimentaire
+        </h5>
+        <div class="menu-text">{!! $questionnaire->menu_text !!}</div>
+
+        @if($questionnaire->menu_file)
+        <div class="mt-3 pt-3 border-top d-flex align-items-center gap-2">
+            <i class="bi bi-file-earmark-text text-green-dark"></i>
+            <a href="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($questionnaire->menu_file) }}"
+               target="_blank" class="fw-semibold fs-13">
+                {{ $questionnaire->menu_file_name }}
+            </a>
+        </div>
+        @endif
+    </div>
+</div>
+@endif
+
 @endsection

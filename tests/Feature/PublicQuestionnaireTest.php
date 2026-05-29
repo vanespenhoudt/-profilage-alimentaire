@@ -198,11 +198,12 @@ class PublicQuestionnaireTest extends TestCase
 
         $response->assertOk();
         $data = $response->json('suspectes');
-        $this->assertCount(5, $data);
-        $this->assertContains('Typage Métabolique', $data);
+        $this->assertCount(6, $data);
+        $this->assertContains('Métaboltyping', $data);
         $this->assertContains('Ayurveda', $data);
-        $this->assertContains('Julia Ross', $data);
-        $this->assertContains('Diathèse de Ménétrier', $data);
+        $this->assertContains('Julia Ross — Neurotransmetteurs', $data);
+        $this->assertContains('Diathèses', $data);
+        $this->assertContains('Groupe sanguin', $data);
         $this->assertContains('Bilan Hormonal', $data);
     }
 
@@ -220,7 +221,7 @@ class PublicQuestionnaireTest extends TestCase
         // Metabolique OK, Ayurveda vide → 1 suspect
         $this->assertCount(1, $suspectes);
         $this->assertContains('Ayurveda', $suspectes);
-        $this->assertNotContains('Julia Ross', $suspectes);
+        $this->assertNotContains('Julia Ross — Neurotransmetteurs', $suspectes);
     }
 
     public function test_validate_retourne_404_pour_token_invalide(): void
