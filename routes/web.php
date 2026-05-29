@@ -8,6 +8,8 @@ use App\Http\Controllers\PublicQuestionnaireController;
 use App\Http\Controllers\QuestionnaireController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', fn () => redirect()->route('login'));
+
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
