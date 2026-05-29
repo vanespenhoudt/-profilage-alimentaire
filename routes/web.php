@@ -4,15 +4,12 @@ use App\Http\Controllers\Admin\ConseillerController;
 use App\Http\Controllers\Admin\InvitationController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PublicQuestionnaireController;
 use App\Http\Controllers\QuestionnaireController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => redirect()->route('login'));
-
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
+Route::get('/', HomeController::class);
 
 // Inscription conseiller via invitation (sans authentification)
 Route::get('/inscription/{token}', [InvitationController::class, 'show'])->name('invitation.show');
