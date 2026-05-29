@@ -1,0 +1,23 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-6PbARsGy.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DO2nEFzp.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/tiptap-editor.js": {
+    "file": "assets/tiptap-editor-BuUbRK1l.js",
+    "name": "tiptap-editor",
+    "src": "resources/js/tiptap-editor.js",
+    "isEntry": true
+  }
+}
