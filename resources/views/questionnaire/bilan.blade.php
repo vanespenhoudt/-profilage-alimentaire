@@ -111,10 +111,48 @@ $ayTips = [
 
 /* ── Tips Diathèse ────────────────────────────────────────────── */
 $diathTips = [
-    1 => ['Terrain réactif mais encore adaptatif.', 'Travail préventif principalement.'],
-    2 => ['Début de fatigue fonctionnelle.', 'Soutenir les capacités d\'adaptation.'],
-    3 => ['Fatigue installée.', 'Besoin de récupération et de reconstruction.'],
-    4 => ['Terrain de blocage chronique.', 'Approche progressive et prudente.'],
+    1 => [
+        ['section' => 'Terrain', 'items' => [
+            'Bonne vitalité générale.',
+            'Forte capacité d\'adaptation.',
+            'Réactions vives mais récupération rapide.',
+            'Terrain encore dynamique.',
+        ]],
+        ['section' => 'Conseils', 'items' => [
+            'Peut entreprendre directement une cure alimentaire.',
+            'Supporte généralement bien les changements alimentaires.',
+            'Peut suivre une cure plus intensive si nécessaire.',
+            'Prévention avant tout.',
+        ]],
+        ['section' => 'Objectif', 'items' => [
+            'Corriger les excès avant qu\'ils ne s\'installent.',
+        ]],
+    ],
+    2 => [
+        ['section' => 'Terrain', 'items' => [
+            'Début d\'épuisement des capacités d\'adaptation.',
+            'Fatigue plus fréquente.',
+            'Récupération moins rapide.',
+            'Sensibilité au stress.',
+        ]],
+        ['section' => 'Conseils', 'items' => [
+            'Préparer le terrain avant une cure intensive.',
+            'Soutien des minéraux, vitamines et protéines.',
+            'Réduction progressive des excitants.',
+            'Éviter les cures trop radicales d\'emblée.',
+        ]],
+        ['section' => 'Objectif', 'items' => [
+            'Recharger les batteries avant de mobiliser les capacités d\'élimination.',
+        ]],
+    ],
+    3 => [
+        ['section' => 'Terrain', 'items' => ['Fatigue installée.']],
+        ['section' => 'Conseils', 'items' => ['Besoin de récupération et de reconstruction.']],
+    ],
+    4 => [
+        ['section' => 'Terrain', 'items' => ['Terrain de blocage chronique.']],
+        ['section' => 'Conseils', 'items' => ['Approche progressive et prudente.']],
+    ],
 ];
 @endphp
 
@@ -416,6 +454,17 @@ $diathTips = [
         color: var(--color-navy);
     }
     .tip-list li { margin-bottom: 3px; line-height: 1.5; }
+    .tip-section-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--color-navy);
+        opacity: .6;
+        margin: 10px 0 4px;
+    }
+    .tip-section-title:first-child { margin-top: 0; }
 
     /* Julia Ross : une puce par classe dépassée */
     .tip-jr-block + .tip-jr-block { margin-top: 10px; }
@@ -844,11 +893,14 @@ $diathTips = [
                     <div class="tip-title">
                         <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — Diathèse {{ $diathNum }}
                     </div>
+                    @foreach($diathTips[$diathNum] as $bloc)
+                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
                     <ul class="tip-list">
-                        @foreach($diathTips[$diathNum] as $line)
+                        @foreach($bloc['items'] as $line)
                         <li>{{ $line }}</li>
                         @endforeach
                     </ul>
+                    @endforeach
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
                     <textarea name="notes[diathese]" form="notesForm"
