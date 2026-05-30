@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Questionnaire\SubmitQuestionnaireAction;
 use App\Actions\Questionnaire\ValidateQuestionnaireAction;
+use App\Data\QuestionnaireData;
 use App\Models\Questionnaire;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -73,6 +74,13 @@ class PublicQuestionnaireController extends Controller
         $answers = $request->except(['_token']);
 
         (new SubmitQuestionnaireAction())->execute($questionnaire, $answers);
+
+        if ($questionnaire->bilan_visible_client && $questionnaire->scores) {
+            $client     = $questionnaire->client;
+            $data       = QuestionnaireData::class;
+            $clientView = true;
+            return view('questionnaire.bilan', compact('questionnaire', 'client', 'data', 'clientView'));
+        }
 
         return view('questionnaire.merci', compact('questionnaire'));
     }

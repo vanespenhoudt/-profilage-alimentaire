@@ -26,6 +26,17 @@
     <p class="text-muted small mt-4">Vous pouvez fermer cette page.</p>
 </div>
 
+@if($questionnaire->menu_visible_client && $questionnaire->aliments_text)
+<div class="card mx-auto mt-4" style="max-width:680px;">
+    <div class="card-body p-4">
+        <h5 class="fw-bold text-navy mb-3">
+            <i class="bi bi-heart me-2 text-green-dark"></i>Vos 10 aliments préférés
+        </h5>
+        <div style="white-space: pre-wrap; font-size: 14px; color: var(--color-navy);">{{ $questionnaire->aliments_text }}</div>
+    </div>
+</div>
+@endif
+
 @if($questionnaire->menu_visible_client && $questionnaire->menu_text)
 <div class="card mx-auto mt-4" style="max-width:680px;">
     <div class="card-body p-4">

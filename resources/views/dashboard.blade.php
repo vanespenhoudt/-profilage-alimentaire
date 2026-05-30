@@ -21,22 +21,6 @@
             </div>
         </div>
     </div>
-
-    @isset($totalConseillers)
-    <div class="col-md-4">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center stat-icon-wrap">
-                    <i class="bi bi-person-badge-fill fs-icon-stat text-navy"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">Conseillers actifs</div>
-                    <div class="fw-bold fs-4 text-navy">{{ $totalConseillers }}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endisset
 </div>
 
 <div class="card">
@@ -61,9 +45,6 @@
                             <th class="ps-3">Code</th>
                             <th>Nom complet</th>
                             <th>Téléphone</th>
-                            @isset($totalConseillers)
-                            <th>Conseiller</th>
-                            @endisset
                             <th>Date création</th>
                             <th>Actions</th>
                         </tr>
@@ -76,9 +57,6 @@
                             </td>
                             <td class="fw-medium">{{ $client->nom_complet }}</td>
                             <td>{{ $client->tel }}</td>
-                            @isset($totalConseillers)
-                            <td>{{ $client->conseiller?->name ?? '-' }}</td>
-                            @endisset
                             <td class="text-muted small">{{ $client->created_at->format('d/m/Y') }}</td>
                             <td>
                                 <a href="{{ route('clients.show', $client) }}" class="btn btn-sm btn-outline-primary me-1">
@@ -93,6 +71,91 @@
                     </tbody>
                 </table>
             </div>
+        @endif
+    </div>
+</div>
+
+{{-- Section invitation conseiller --}}
+<div class="card mt-4">
+    <div class="card-header modal-header-navy d-flex align-items-center gap-2 py-2">
+        <i class="bi bi-envelope-plus text-white"></i>
+        <span class="fw-semibold text-white">Inviter un collègue conseiller</span>
+    </div>
+    <div class="card-body">
+        @if(session('success') && str_contains(session('success'), 'Invitation'))
+            <div class="alert alert-success-soft alert-dismissible fade show py-2 d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-check-circle-fill me-1" style="font-size:1rem;flex-shrink:0;"></i>
+                <span class="fw-medium">{{ session('success') }}</span>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('invitations.store') }}" class="row g-2 align-items-end mb-4">
+            @csrf
+            <div class="col-sm-8">
+                <label class="form-label fw-semibold small" for="invite_email_dash">Adresse email du nouveau conseiller</label>
+                <input type="email" name="email" id="invite_email_dash"
+                       class="form-control @error('email') is-invalid @enderror"
+                       placeholder="conseiller@exemple.be"
+                       value="{{ old('email') }}" required>
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="col-sm-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-send me-1"></i>Envoyer l'invitation
+                </button>
+            </div>
+        </form>
+
+        @if($myInvitations->isNotEmpty())
+        <h6 class="text-muted small fw-semibold mb-2 text-uppercase">Mes invitations</h6>
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Email</th>
+                        <th>Statut</th>
+                        <th>Envoyée le</th>
+                        <th>Expire le</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($myInvitations as $inv)
+                    <tr class="{{ $inv->isUsed() || $inv->isExpired() ? 'text-muted' : '' }}">
+                        <td class="fw-medium">{{ $inv->email }}</td>
+                        <td>
+                            @if($inv->isUsed())
+                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Utilisée</span>
+                            @elseif($inv->isExpired())
+                                <span class="badge bg-secondary"><i class="bi bi-clock-history me-1"></i>Expirée</span>
+                            @else
+                                <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>En attente</span>
+                            @endif
+                        </td>
+                        <td class="small">{{ $inv->created_at->format('d/m/Y') }}</td>
+                        <td class="small">{{ $inv->expires_at?->format('d/m/Y') ?? '—' }}</td>
+                        <td>
+                            @if($inv->isPending())
+                            <form method="POST" action="{{ route('invitations.destroy', $inv) }}"
+                                  onsubmit="return confirm('Révoquer cette invitation ?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @else
+            <p class="text-muted small mb-0">Aucune invitation envoyée pour le moment.</p>
         @endif
     </div>
 </div>

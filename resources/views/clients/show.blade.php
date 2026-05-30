@@ -79,7 +79,7 @@
 
     {{-- Modal choix des questionnaires --}}
     <div class="modal fade" id="tokenModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content modal-content-rounded">
                 <div class="modal-header modal-header-navy">
                     <h5 class="modal-title modal-title-syne">
@@ -109,7 +109,7 @@
                         @endforeach
 
                         <hr class="my-3">
-                        <div class="d-flex align-items-start gap-3 p-3 rounded" style="background:var(--color-bg-tint);">
+                        <div class="d-flex align-items-start gap-3 p-3 rounded mb-2" style="background:var(--color-bg-tint);">
                             <div class="form-check form-switch mb-0 mt-1">
                                 <input class="form-check-input" type="checkbox" role="switch"
                                        name="menu_visible_client" id="menuVisibleClient" value="1"
@@ -119,6 +119,19 @@
                                 <span class="fw-semibold fs-13">Partager le menu avec le client</span>
                                 <span class="d-block fs-12 text-muted-pa mt-1">
                                     Si activé, le plan alimentaire rédigé dans le questionnaire sera visible par le client après soumission.
+                                </span>
+                            </label>
+                        </div>
+                        <div class="d-flex align-items-start gap-3 p-3 rounded mb-2" style="background:var(--color-bg-tint);">
+                            <div class="form-check form-switch mb-0 mt-1">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                       name="bilan_visible_client" id="bilanVisibleClient" value="1"
+                                       @checked($q?->bilan_visible_client)>
+                            </div>
+                            <label class="form-check-label" for="bilanVisibleClient">
+                                <span class="fw-semibold fs-13">Partager le bilan avec le client</span>
+                                <span class="d-block fs-12 text-muted-pa mt-1">
+                                    Si activé, le bilan nutritionnel sera affiché au client après soumission de son questionnaire.
                                 </span>
                             </label>
                         </div>

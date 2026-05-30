@@ -44,20 +44,22 @@ class InvitationPublicTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_show_retourne_404_si_token_inexistant(): void
+    public function test_show_affiche_erreur_si_token_inexistant(): void
     {
         $response = $this->get(route('invitation.show', 'token-qui-nexiste-pas'));
 
-        $response->assertNotFound();
+        $response->assertOk()->assertViewIs('auth.invitation-error')
+            ->assertViewHas('reason', 'invalid');
     }
 
-    public function test_show_redirige_vers_login_si_token_deja_utilise(): void
+    public function test_show_affiche_erreur_si_token_deja_utilise(): void
     {
         $invitation = $this->makeUsedInvitation();
 
         $response = $this->get(route('invitation.show', $invitation->token));
 
-        $response->assertRedirect(route('login'));
+        $response->assertOk()->assertViewIs('auth.invitation-error')
+            ->assertViewHas('reason', 'used');
     }
 
     // ── POST /inscription/{token} — register ─────────────────────────────────

@@ -49,13 +49,13 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 .nav          { height: 50px; display: flex; align-items: center; padding: 0 24px; gap: 18px; background: var(--green); }
 .nav-logo     { font-family: var(--font-title); font-size: 13px; font-weight: 700; color: var(--color-text-on-green); letter-spacing: -0.02em; text-decoration: none; }
 .nav-sep      { width: 1px; height: 16px; background: var(--color-white-20); }
-.nav-link     { font-family: var(--font-body); font-size: 12px; color: var(--color-white-55); cursor: pointer; text-decoration: none; padding: 6px 10px; border-radius: var(--r-input); transition: background .15s, color .15s; }
-.nav-link:hover,
-.nav-link.active { color: var(--color-text-on-green); background: var(--color-white-15); }
+.nav-link     { font-family: var(--font-body); font-size: 12px; color: #FFFFFF; background: rgba(0,0,0,0.20); cursor: pointer; text-decoration: none; padding: 6px 10px; border-radius: var(--r-input); transition: background .15s, color .15s; }
+.nav-link:hover  { color: #FFFFFF; background: rgba(0,0,0,0.35); }
+.nav-link.active { color: #FFFFFF; background: rgba(0,0,0,0.20); }
 .nav-right    { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .nav-avatar   { width: 26px; height: 26px; background: var(--color-white-20); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 9px; font-weight: 700; color: var(--color-text-on-green); }
-.nav-user-name { font-family: var(--font-body); font-size: 12px; color: var(--color-white-65); }
-.nav-logout   { background: transparent; border: 1.5px solid var(--color-white-45); border-radius: 8px; color: var(--color-text-on-green); font-family: var(--font-body); font-size: 12px; padding: 4px 12px; cursor: pointer; transition: background .15s; }
+.nav-user-name { font-family: var(--font-body); font-size: 12px; color: #FFFFFF; }
+.nav-logout   { background: transparent; border: 1.5px solid #FFFFFF; border-radius: 8px; color: var(--color-text-on-green); font-family: var(--font-body); font-size: 12px; padding: 4px 12px; cursor: pointer; transition: background .15s; }
 .nav-logout:hover { background: var(--color-white-15); }
 
 
@@ -160,18 +160,18 @@ textarea.form-control, .field-textarea { height: auto; min-height: 60px; padding
 
 
 /* ─── BOUTONS ─────────────────────────────────────────────── */
-.btn-primary     { background: var(--navy); border-color: var(--navy); color: var(--green); font-family: var(--font-title); font-weight: 700; font-size: 13px; height: 36px; padding: 0 16px; border-radius: 8px; }
+.btn-primary     { background: var(--navy); border-color: var(--navy); color: var(--green); font-family: var(--font-title); font-weight: 700; font-size: 13px; height: 36px; padding: 0 16px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-primary:hover, .btn-primary:focus { background: var(--green-dark); border-color: var(--green-dark); color: var(--color-text-on-green); }
-.btn-outline-secondary { background: transparent; border: 1.5px solid var(--border); color: var(--navy); font-family: var(--font-body); font-size: 13px; height: 36px; padding: 0 14px; border-radius: 8px; }
+.btn-outline-secondary { background: transparent; border: 1.5px solid var(--border); color: var(--navy); font-family: var(--font-body); font-size: 13px; height: 36px; padding: 0 14px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-outline-secondary:hover, .btn-outline-secondary:focus { border-color: var(--green-mid); color: var(--green-dark); background: transparent; }
-.btn-outline-primary { color: var(--navy); border: 1.5px solid var(--navy); background: transparent; font-family: var(--font-body); font-size: 13px; height: 36px; padding: 0 14px; border-radius: 8px; }
+.btn-outline-primary { color: var(--navy); border: 1.5px solid var(--navy); background: transparent; font-family: var(--font-body); font-size: 13px; height: 36px; padding: 0 14px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-outline-primary:hover, .btn-outline-primary:focus { background: var(--navy); border-color: var(--navy); color: var(--color-text-on-green); }
-.btn-outline-chasseur { color: var(--green-dark); border: 1.5px solid var(--green); background: transparent; font-family: var(--font-body); font-size: 13px; border-radius: 8px; }
+.btn-outline-chasseur { color: var(--green-dark); border: 1.5px solid var(--green); background: transparent; font-family: var(--font-body); font-size: 13px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-outline-chasseur:hover, .btn-check:checked + .btn-outline-chasseur { background: var(--green); border-color: var(--green); color: var(--color-text-on-green); font-weight: 600; }
 .btn-sm          { height: 30px; font-size: 12px; padding: 0 10px; }
 .btn-back        { width: 26px; height: 26px; padding: 0; border: 1.5px solid var(--color-white-30); border-radius: var(--r-input); background: transparent; color: var(--color-text-on-green); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.btn-topbar-logout { background: transparent; border: 1.5px solid var(--color-white-45); border-radius: 8px; color: var(--color-text-on-green); font-family: var(--font-body); font-size: 13px; padding: 4px 12px; cursor: pointer; transition: background .15s; }
-.btn-topbar-logout:hover { background: var(--color-white-15); }
+.btn-topbar-logout { background: rgba(0,0,0,0.20); border: none; border-radius: var(--r-pill); color: #FFFFFF; font-family: var(--font-body); font-size: 13px; padding: 5px 14px; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; justify-content: center; }
+.btn-topbar-logout:hover { background: rgba(0,0,0,0.35); }
 
 
 /* ─── QUESTION ROW ───────────────────────────────────────── */
@@ -180,7 +180,7 @@ textarea.form-control, .field-textarea { height: auto; min-height: 60px; padding
 
 
 /* ─── ALERTES / MESSAGES ─────────────────────────────────── */
-.alert-success-soft { background: var(--color-bg-tint); border: 1px solid var(--color-border-tint); color: var(--green-dark); border-radius: var(--r-card); font-family: var(--font-body); font-size: 13px; }
+.alert-success-soft { background: #ffffff; border: 1.5px solid var(--color-primary-dark); color: var(--color-primary-dark); border-radius: var(--r-card); font-family: var(--font-body); font-size: 13px; }
 .alert-warning-soft { background: var(--color-bg-warning); border: 1px solid var(--color-border-warning); color: var(--color-text-warning); border-radius: var(--r-card); font-family: var(--font-body); font-size: 13px; }
 .alert-danger       { background: #f7ecea !important; border-color: #e8c4bf !important; color: var(--navy) !important; }
 .alert-section-info { background: var(--color-bg-tint); border: 1px solid var(--color-border-tint); color: var(--navy); border-radius: 8px; font-family: var(--font-body); font-size: 13px; padding: 10px 14px; }

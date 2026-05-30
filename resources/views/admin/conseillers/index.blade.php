@@ -29,7 +29,7 @@
                 @csrf
                 <div class="modal-body">
                     <p class="text-muted small mb-3">
-                        Un lien d'inscription unique sera généré. Copiez-le et envoyez-le au conseiller par email ou message.
+                        Un email d'invitation sera envoyé automatiquement au conseiller avec un lien valable 7 jours.
                     </p>
                     <label class="form-label fw-semibold" for="invite_email">Adresse email du conseiller</label>
                     <input type="email" name="email" id="invite_email"
@@ -43,7 +43,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-link-45deg me-1"></i>Générer le lien
+                        <i class="bi bi-send me-1"></i>Envoyer l'invitation
                     </button>
                 </div>
             </form>
@@ -69,20 +69,27 @@
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-3">Email invité</th>
+                        <th>Invité par</th>
                         <th>Statut</th>
                         <th>Créée le</th>
-                        <th>Lien à envoyer</th>
+                        <th>Expire le</th>
+                        <th>Lien de secours</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($invitations as $invitation)
-                    <tr class="{{ $invitation->isUsed() ? 'table-light text-muted' : '' }}">
+                    <tr class="{{ $invitation->isUsed() || $invitation->isExpired() ? 'table-light text-muted' : '' }}">
                         <td class="ps-3 fw-medium">{{ $invitation->email }}</td>
+                        <td class="small text-muted">{{ $invitation->invitedBy?->name ?? '—' }}</td>
                         <td>
                             @if($invitation->isUsed())
                                 <span class="badge bg-success">
                                     <i class="bi bi-check-circle me-1"></i>Utilisée le {{ $invitation->used_at->format('d/m/Y') }}
+                                </span>
+                            @elseif($invitation->isExpired())
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-clock-history me-1"></i>Expirée
                                 </span>
                             @else
                                 <span class="badge bg-warning text-dark">
@@ -90,7 +97,8 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="small text-muted">{{ $invitation->created_at->format('d/m/Y à H:i') }}</td>
+                        <td class="small text-muted">{{ $invitation->created_at->format('d/m/Y') }}</td>
+                        <td class="small text-muted">{{ $invitation->expires_at?->format('d/m/Y') ?? '—' }}</td>
                         <td>
                             @if($invitation->isPending())
                                 <div class="input-group input-group-sm mw-320">
@@ -107,7 +115,7 @@
                             @endif
                         </td>
                         <td>
-                            @if($invitation->isPending())
+                            @if(!$invitation->isUsed())
                             <form method="POST" action="{{ route('admin.invitations.destroy', $invitation) }}"
                                   onsubmit="return confirm('Supprimer cette invitation ?')">
                                 @csrf

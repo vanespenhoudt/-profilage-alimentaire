@@ -387,4 +387,52 @@ class QuestionnaireData
             "Je ne connais plus le bien-être",
         ]],
     ];
+
+    public static array $canaris_adulte = [
+        ['id' => 'ca1',  'texte' => 'Épuisement chronique depuis toujours',                     'poids' => 2],
+        ['id' => 'ca2',  'texte' => 'Hypersensibilité aux parfums, solvants, fumée',            'poids' => 2],
+        ['id' => 'ca3',  'texte' => 'Envie incontrôlable de sucre ou de pain',                  'poids' => 2],
+        ['id' => 'ca4',  'texte' => 'Irritabilité, sautes d\'humeur, crises de colère',         'poids' => 1],
+        ['id' => 'ca5',  'texte' => 'Troubles du sommeil',                                      'poids' => 1],
+        ['id' => 'ca6',  'texte' => 'Migraines ou maux de tête fréquents',                      'poids' => 1],
+        ['id' => 'ca7',  'texte' => 'Troubles de l\'attention et de la concentration',          'poids' => 1],
+        ['id' => 'ca8',  'texte' => 'Allergies, asthme, eczéma, urticaire',                     'poids' => 1],
+        ['id' => 'ca9',  'texte' => 'Sinusites ou congestion chronique',                        'poids' => 1],
+        ['id' => 'ca10', 'texte' => 'Douleurs musculaires inexpliquées',                        'poids' => 1],
+        ['id' => 'ca11', 'texte' => 'Infections chroniques',                                    'poids' => 1],
+        ['id' => 'ca12', 'texte' => 'TOCs',                                                     'poids' => 1],
+    ];
+
+    public static array $canaris_enfant = [
+        ['id' => 'ce1',  'texte' => 'Réactions atypiques aux médicaments (microdoses)',         'poids' => 2],
+        ['id' => 'ce2',  'texte' => 'Un parent est allergique ou canari',                       'poids' => 2],
+        ['id' => 'ce3',  'texte' => 'Troubles dès la naissance',                                'poids' => 1],
+        ['id' => 'ce4',  'texte' => 'Eczéma, urticaire, asthme',                               'poids' => 1],
+        ['id' => 'ce5',  'texte' => 'Réactions cutanées autour de la bouche avec certains aliments', 'poids' => 1],
+        ['id' => 'ce6',  'texte' => 'Mange peu, chipote dans l\'assiette',                      'poids' => 1],
+        ['id' => 'ce7',  'texte' => 'Intolérances alimentaires multiples',                      'poids' => 1],
+        ['id' => 'ce8',  'texte' => 'Très réactif aux odeurs (essence, solvants, marqueurs)',   'poids' => 1],
+        ['id' => 'ce9',  'texte' => 'Cernes, teint pâle',                                       'poids' => 1],
+        ['id' => 'ce10', 'texte' => 'Céphalées fréquentes',                                     'poids' => 1],
+        ['id' => 'ce11', 'texte' => 'Inflammations chroniques (bronchites, otites à répétition)', 'poids' => 1],
+    ];
+
+    public static array $canaris_contexte = [
+        ['id' => 'ctx1', 'texte' => 'Ce questionnaire concerne :',
+         'options' => ['adulte' => 'Adulte', 'enfant' => 'Enfant', 'les_deux' => 'Les deux']],
+        ['id' => 'ctx2', 'texte' => 'Plusieurs régimes ont déjà été essayés sans succès ?',
+         'options' => ['non' => 'Non', 'oui' => 'Oui']],
+        ['id' => 'ctx3', 'texte' => 'Les traitements aident 10–15 jours puis cessent d\'agir ?',
+         'options' => ['non' => 'Non', 'oui' => 'Oui']],
+        ['id' => 'ctx4', 'texte' => 'Hypersensibilité aux médicaments ou réactions paradoxales ?',
+         'options' => ['non' => 'Non', 'oui' => 'Oui']],
+        ['id' => 'ctx5', 'texte' => 'Consommation régulière de charcuteries, fromages affinés, chocolat, vin, fermentés ?',
+         'options' => ['rarement' => 'Rarement', 'parfois' => 'Parfois', 'souvent' => 'Souvent']],
+        ['id' => 'ctx6', 'texte' => 'Avez-vous déjà suivi un régime sans gluten ou sans laitage depuis plus de 3 mois ?',
+         'options' => ['non' => 'Non', 'oui' => 'Oui']],
+        ['id' => 'ctx7', 'texte' => 'Utilisez-vous des cosmétiques ou produits ménagers parfumés ?',
+         'options' => ['non' => 'Non, produits neutres', 'quelques' => 'Quelques-uns', 'oui' => 'Oui tous']],
+        ['id' => 'ctx8', 'texte' => 'Prenez-vous des compléments alimentaires ?',
+         'options' => ['non' => 'Non', 'un' => 'Oui un ou deux', 'plusieurs' => 'Oui plusieurs']],
+    ];
 }

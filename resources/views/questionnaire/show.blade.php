@@ -36,8 +36,11 @@
 @section('content')
 @php
 use App\Data\QuestionnaireData;
-$totalJuliaRoss = collect(QuestionnaireData::$julia_ross)->sum(fn($c) => count($c['questions']));
-$totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c['questions']));
+$totalJuliaRoss  = collect(QuestionnaireData::$julia_ross)->sum(fn($c) => count($c['questions']));
+$totalHormones   = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c['questions']));
+$totalCanaris    = count(QuestionnaireData::$canaris_adulte)
+                 + count(QuestionnaireData::$canaris_enfant)
+                 + count(QuestionnaireData::$canaris_contexte); // ctx1 profil inclus dans contexte
 @endphp
 
 <style>
@@ -463,6 +466,111 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
             </div>
         </div>
 
+        {{-- ══ SECTION 7 — CANARIS ══ --}}
+        <div class="accordion-item" id="wrap-s7">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s7">
+                    <span class="section-icon"><i class="bi bi-feather"></i></span>
+                    7. Canaris
+                    <span class="badge-progress ms-3" id="badge-s7">0 / {{ $totalCanaris }}</span>
+                </button>
+            </h2>
+            <div id="s7" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+
+                    {{-- Profil --}}
+                    <div class="alert-section-info mb-3">
+                        Cochez les symptômes présents. Les items marqués <span class="badge text-bg-warning text-dark fw-semibold" style="font-size:10px;">×2</span> ont un poids double.
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="fw-semibold fs-13 mb-2">Ce questionnaire concerne :</div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            @foreach(['adulte' => 'Adulte', 'enfant' => 'Enfant', 'les_deux' => 'Les deux'] as $val => $label)
+                            <input type="radio" name="ctx1" value="{{ $val }}"
+                                   class="btn-check radio-q" id="ctx1_{{ $val }}"
+                                   data-section="s7"
+                                   @checked(($answers['ctx1'] ?? 'adulte') === $val)>
+                            <label class="btn btn-outline-primary btn-sm" for="ctx1_{{ $val }}">{{ $label }}</label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Symptômes adulte --}}
+                    <div id="canaris-adulte" class="canaris-profil-block">
+                        <div class="fw-semibold fs-13 mb-2 text-navy">Symptômes adulte</div>
+                        <div class="row g-2 mb-3">
+                            @foreach(QuestionnaireData::$canaris_adulte as $q)
+                            <div class="col-md-6">
+                                <div class="form-check py-1 px-3 rounded" style="background:var(--color-bg-tint);">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="{{ $q['id'] }}" value="1"
+                                           id="{{ $q['id'] }}"
+                                           data-section="s7"
+                                           @checked(!empty($answers[$q['id']]))>
+                                    <label class="form-check-label form-check-label-navy d-flex align-items-center gap-2" for="{{ $q['id'] }}">
+                                        <span class="flex-grow-1">{{ $q['texte'] }}</span>
+                                        @if($q['poids'] === 2)
+                                        <span class="badge text-bg-warning text-dark fw-semibold flex-shrink-0" style="font-size:10px;">×2</span>
+                                        @endif
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Symptômes enfant --}}
+                    <div id="canaris-enfant" class="canaris-profil-block" style="display:none;">
+                        <div class="fw-semibold fs-13 mb-2 text-navy">Symptômes enfant</div>
+                        <div class="row g-2 mb-3">
+                            @foreach(QuestionnaireData::$canaris_enfant as $q)
+                            <div class="col-md-6">
+                                <div class="form-check py-1 px-3 rounded" style="background:var(--color-bg-tint);">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="{{ $q['id'] }}" value="1"
+                                           id="{{ $q['id'] }}"
+                                           data-section="s7"
+                                           @checked(!empty($answers[$q['id']]))>
+                                    <label class="form-check-label form-check-label-navy d-flex align-items-center gap-2" for="{{ $q['id'] }}">
+                                        <span class="flex-grow-1">{{ $q['texte'] }}</span>
+                                        @if($q['poids'] === 2)
+                                        <span class="badge text-bg-warning text-dark fw-semibold flex-shrink-0" style="font-size:10px;">×2</span>
+                                        @endif
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Séparateur contexte --}}
+                    <hr class="my-3">
+                    <div class="fw-semibold fs-13 mb-3 text-navy">Questions de contexte</div>
+
+                    <div class="d-flex flex-column gap-3">
+                        @foreach(QuestionnaireData::$canaris_contexte as $q)
+                        @if($q['id'] === 'ctx1') @continue @endif
+                        <div>
+                            <div class="fs-13 mb-2" style="color:var(--color-navy);">{{ $q['texte'] }}</div>
+                            <div class="d-flex gap-2 flex-wrap">
+                                @foreach($q['options'] as $val => $label)
+                                <input type="radio" name="{{ $q['id'] }}" value="{{ $val }}"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_{{ $val }}"
+                                       data-section="s7"
+                                       @checked(($answers[$q['id']] ?? '') === $val)>
+                                <label class="btn btn-outline-primary btn-sm" for="{{ $q['id'] }}_{{ $val }}">{{ $label }}</label>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>{{-- /accordion --}}
 
     <div class="spacer-bottom"></div>
@@ -541,18 +649,37 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
         s4:      { type: 'radio', total: 59,                          badgeId: 'badge-s4' },
         s5:      { type: 'radio', total: 1,                           badgeId: 'badge-s5' },
         s6:      { type: 'check', total: @json($totalHormones),        badgeId: 'badge-s6' },
+        s7:      { type: 'mixed', total: @json($totalCanaris),         badgeId: 'badge-s7' },
     };
+
+    // Canaris : show/hide adulte / enfant blocks
+    function updateCanarisBlocks() {
+        const profil = document.querySelector('input[name="ctx1"]:checked')?.value ?? 'adulte';
+        document.getElementById('canaris-adulte').style.display = (profil === 'adulte' || profil === 'les_deux') ? '' : 'none';
+        document.getElementById('canaris-enfant').style.display = (profil === 'enfant' || profil === 'les_deux') ? '' : 'none';
+    }
+    document.addEventListener('change', function (e) {
+        if (e.target.name === 'ctx1') updateCanarisBlocks();
+    });
+    document.addEventListener('DOMContentLoaded', updateCanarisBlocks);
 
     function countSection(key) {
         const cfg    = sections[key];
         const inputs = document.querySelectorAll(`[data-section="${key}"]`);
-        if (cfg.type === 'radio') {
+        if (cfg.type === 'radio' || cfg.type === 'mixed') {
             const groups = {};
             inputs.forEach(el => {
-                if (!groups[el.name]) groups[el.name] = false;
-                if (el.checked) groups[el.name] = true;
+                if (el.type === 'radio') {
+                    if (!groups[el.name]) groups[el.name] = false;
+                    if (el.checked) groups[el.name] = true;
+                }
             });
-            return Object.values(groups).filter(Boolean).length;
+            const radioCount = Object.values(groups).filter(Boolean).length;
+            if (cfg.type === 'mixed') {
+                const checkCount = Array.from(inputs).filter(el => el.type === 'checkbox' && el.checked).length;
+                return radioCount + checkCount;
+            }
+            return radioCount;
         }
         return Array.from(inputs).filter(el => el.checked).length;
     }
@@ -607,6 +734,28 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
             if (status) status.textContent = 'Erreur de sauvegarde';
         });
     }
+
+    // Allow deselecting radio buttons by clicking the already-selected option again
+    document.addEventListener('mousedown', function(e) {
+        const label = e.target.closest('label.btn');
+        if (!label) return;
+        const input = document.getElementById(label.getAttribute('for'));
+        if (input && input.type === 'radio') {
+            label.dataset.wasChecked = input.checked ? 'true' : 'false';
+        }
+    });
+    document.addEventListener('click', function(e) {
+        const label = e.target.closest('label.btn');
+        if (!label) return;
+        const input = document.getElementById(label.getAttribute('for'));
+        if (!input || input.type !== 'radio') return;
+        if (label.dataset.wasChecked === 'true') {
+            e.preventDefault(); // block browser from forwarding click to input (would re-check it)
+            input.checked = false;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        delete label.dataset.wasChecked;
+    });
 
     document.addEventListener('change', function () { updateBadges(); triggerSave(); });
     document.addEventListener('input',  function (e) {
