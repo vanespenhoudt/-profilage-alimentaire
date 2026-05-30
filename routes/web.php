@@ -21,10 +21,13 @@ Route::post('/q/{token}/save', [PublicQuestionnaireController::class, 'save'])->
 Route::get('/q/{token}/validate', [PublicQuestionnaireController::class, 'validate'])->name('questionnaire.public.validate');
 Route::post('/q/{token}/submit', [PublicQuestionnaireController::class, 'submit'])->name('questionnaire.public.submit');
 
+// Dashboard accessible aux deux rôles
 Route::middleware(['auth', 'role:super_admin,conseiller'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
-    // Clients
+// Clients et questionnaires — conseillers uniquement
+Route::middleware(['auth', 'role:conseiller'])->group(function () {
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
     Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
     Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
@@ -33,27 +36,26 @@ Route::middleware(['auth', 'role:super_admin,conseiller'])->group(function () {
     Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
-    // Questionnaires (conseiller)
     Route::get('/clients/{client}/questionnaire', [QuestionnaireController::class, 'show'])->name('questionnaire.show');
     Route::post('/clients/{client}/questionnaire/save', [QuestionnaireController::class, 'autosave'])->name('questionnaire.autosave');
     Route::post('/clients/{client}/questionnaire', [QuestionnaireController::class, 'store'])->name('questionnaire.store');
     Route::get('/clients/{client}/bilan', [QuestionnaireController::class, 'bilan'])->name('questionnaire.bilan');
+    Route::post('/clients/{client}/bilan/notes', [QuestionnaireController::class, 'saveNotes'])->name('questionnaire.bilan.notes.save');
     Route::post('/clients/{client}/questionnaire/token', [QuestionnaireController::class, 'generateToken'])->name('questionnaire.generate-token');
     Route::post('/clients/{client}/menu', [QuestionnaireController::class, 'saveMenu'])->name('questionnaire.menu.save');
+});
 
-    // Admin - Conseillers
-    Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/conseillers', [ConseillerController::class, 'index'])->name('conseillers.index');
-        Route::get('/conseillers/create', [ConseillerController::class, 'create'])->name('conseillers.create');
-        Route::post('/conseillers', [ConseillerController::class, 'store'])->name('conseillers.store');
-        Route::get('/conseillers/{user}/edit', [ConseillerController::class, 'edit'])->name('conseillers.edit');
-        Route::put('/conseillers/{user}', [ConseillerController::class, 'update'])->name('conseillers.update');
-        Route::patch('/conseillers/{user}/toggle', [ConseillerController::class, 'toggle'])->name('conseillers.toggle');
+// Administration — super admin uniquement
+Route::middleware(['auth', 'role:super_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/conseillers', [ConseillerController::class, 'index'])->name('conseillers.index');
+    Route::get('/conseillers/create', [ConseillerController::class, 'create'])->name('conseillers.create');
+    Route::post('/conseillers', [ConseillerController::class, 'store'])->name('conseillers.store');
+    Route::get('/conseillers/{user}/edit', [ConseillerController::class, 'edit'])->name('conseillers.edit');
+    Route::put('/conseillers/{user}', [ConseillerController::class, 'update'])->name('conseillers.update');
+    Route::patch('/conseillers/{user}/toggle', [ConseillerController::class, 'toggle'])->name('conseillers.toggle');
 
-        // Invitations
-        Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
-        Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
-    });
+    Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
+    Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
 });
 
 require __DIR__.'/auth.php';

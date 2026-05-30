@@ -6,6 +6,116 @@
 @php
 use App\Data\QuestionnaireData;
 $scores = $questionnaire->scores;
+$notes  = $questionnaire->interpretation_notes ?? [];
+
+/* ── Tips Julia Ross (jr1→jr8) ───────────────────────────────── */
+$jrTips = [
+    'jr1' => [
+        'label' => 'Sérotonine',
+        'tips'  => [
+            'Carence probable en sérotonine.',
+            'Tendance à l\'anxiété, aux ruminations, au perfectionnisme.',
+            'Difficultés d\'endormissement. Envie de glucides en soirée.',
+            'Priorité : sommeil, gestion du stress, protéines de qualité, éventuellement soutien en tryptophane.',
+        ],
+    ],
+    'jr2' => [
+        'label' => 'Catécholamines',
+        'tips'  => [
+            'Manque de motivation ou d\'énergie mentale. Difficultés de concentration.',
+            'Fatigue au réveil. Baisse de l\'élan et de la motivation.',
+            'Priorité : protéines suffisantes, gestion du stress chronique.',
+        ],
+    ],
+    'jr3' => [
+        'label' => 'GABA',
+        'tips'  => [
+            'Nervosité, tension, hypervigilance.',
+            'Difficulté à se détendre. Sensation d\'être constamment sous pression.',
+            'Priorité : ralentir, restaurer le système nerveux.',
+        ],
+    ],
+    'jr4' => [
+        'label' => 'Endorphines',
+        'tips'  => [
+            'Sensibilité émotionnelle. Recherche de réconfort alimentaire.',
+            'Difficulté à gérer les émotions.',
+            'Priorité : soutien émotionnel et stabilisation glycémique.',
+        ],
+    ],
+    'jr5' => [
+        'label' => 'Glycémie',
+        'tips'  => [
+            'Glycémie instable. Fringales. Coups de pompe.',
+            'Irritabilité lorsque les repas sont retardés.',
+            'Priorité : protéines et bonnes graisses à chaque repas, réduction des sucres rapides.',
+        ],
+    ],
+    'jr6' => [
+        'label' => 'Hormones féminines',
+        'tips'  => [
+            'Déséquilibre hormonal possible.',
+            'Syndrome prémenstruel, périménopause ou ménopause.',
+            'Vérifier le statut hormonal et les apports en acides gras essentiels.',
+        ],
+    ],
+    'jr7' => [
+        'label' => 'Allergies / hypersensibilités',
+        'tips'  => [
+            'Terrain inflammatoire ou hypersensible. Intolérances alimentaires possibles.',
+            'Envisager une enquête alimentaire ou un carnet des sentinelles.',
+        ],
+    ],
+    'jr8' => [
+        'label' => 'Thyroïde',
+        'tips'  => [
+            'Ralentissement métabolique possible. Fatigue, frilosité, prise de poids.',
+            'Vérifier le contexte thyroïdien.',
+        ],
+    ],
+];
+
+/* ── Tips Métaboltyping ───────────────────────────────────────── */
+$metTips = [
+    'Cueilleur A' => [
+        'Tolère mieux les glucides. Peut sauter un repas plus facilement.',
+        'Préférence pour les portions plus petites.',
+        'Favoriser : légumes, féculents de qualité, protéines modérées.',
+    ],
+    'Chasseur B' => [
+        'Besoin plus élevé en protéines. Supporte mal le jeûne. Faim rapide.',
+        'Favoriser : protéines, légumes, bonnes graisses.',
+        'Limiter les repas très riches en sucres et féculents seuls.',
+    ],
+    'Mixte' => [
+        'Équilibre entre protéines, lipides et glucides.',
+        'Adapter selon les symptômes.',
+    ],
+];
+
+/* ── Tips Ayurveda ────────────────────────────────────────────── */
+$ayTips = [
+    'Vâta'  => [
+        'Favoriser : chaud, cuit, gras, onctueux, repas réguliers, soupes, mijotés.',
+        'Limiter : froid, crudités excessives, jeûne, alimentation sèche, irrégularité des repas.',
+    ],
+    'Pitta' => [
+        'Favoriser : aliments rafraîchissants, légumes verts, douceur, modération.',
+        'Limiter : alcool, piments, excès d\'épices, excès de café.',
+    ],
+    'Kapha' => [
+        'Favoriser : léger, épicé modérément, légumes, activité physique.',
+        'Limiter : excès de sucres, excès de laitages, excès de féculents, repas trop copieux.',
+    ],
+];
+
+/* ── Tips Diathèse ────────────────────────────────────────────── */
+$diathTips = [
+    1 => ['Terrain réactif mais encore adaptatif.', 'Travail préventif principalement.'],
+    2 => ['Début de fatigue fonctionnelle.', 'Soutenir les capacités d\'adaptation.'],
+    3 => ['Fatigue installée.', 'Besoin de récupération et de reconstruction.'],
+    4 => ['Terrain de blocage chronique.', 'Approche progressive et prudente.'],
+];
 @endphp
 
 <style>
@@ -254,7 +364,112 @@ $scores = $questionnaire->scores;
         background: var(--color-bg-card);
         color: var(--color-navy);
     }
+
+    /* ════════════════════════════════════════════════════════════════
+       ── Encadrés Guide d'interprétation ─────────────────────────────
+    ════════════════════════════════════════════════════════════════ */
+    .tip-box {
+        border-radius: var(--radius-card);
+        padding: 14px 16px;
+        margin-top: 16px;
+        border-left: 3px solid;
+    }
+    .tip-box--metabol  {
+        background: rgba(16,62,61,.05);
+        border-color: var(--color-navy);
+    }
+    .tip-box--ayurveda {
+        background: var(--color-bg-tint);
+        border-color: var(--color-primary);
+    }
+    .tip-box--julia {
+        background: rgba(59,130,246,.05);
+        border-color: #3b82f6;
+    }
+    .tip-box--diathese {
+        background: rgba(124,58,237,.05);
+        border-color: #7c3aed;
+    }
+    .tip-box--sanguin {
+        background: rgba(245,158,11,.05);
+        border-color: #f59e0b;
+    }
+
+    .tip-title {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        color: var(--color-navy);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    .tip-list {
+        margin: 0 0 4px 0;
+        padding-left: 16px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 13px;
+        color: var(--color-navy);
+    }
+    .tip-list li { margin-bottom: 3px; line-height: 1.5; }
+
+    /* Julia Ross : une puce par classe dépassée */
+    .tip-jr-block + .tip-jr-block { margin-top: 10px; }
+    .tip-jr-label {
+        font-family: 'Syne', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #3b82f6;
+        margin-bottom: 4px;
+    }
+
+    .tip-separator {
+        border: none;
+        border-top: 1px solid rgba(0,0,0,.07);
+        margin: 12px 0 10px;
+    }
+    .tip-notes-label {
+        font-family: 'Syne', sans-serif;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        color: var(--color-text-muted);
+        margin-bottom: 6px;
+    }
+    .tip-textarea {
+        width: 100%;
+        border: 1.5px solid rgba(0,0,0,.08);
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-family: 'Outfit', sans-serif;
+        font-size: 12.5px;
+        color: var(--color-navy);
+        background: rgba(255,255,255,.75);
+        resize: vertical;
+        min-height: 58px;
+        transition: border-color .15s;
+    }
+    .tip-textarea::placeholder { color: #aaa; font-style: italic; }
+    .tip-textarea:focus {
+        outline: none;
+        border-color: var(--color-primary-mid);
+        background: #fff;
+    }
 </style>
+
+{{-- Formulaire invisible pour les notes (HTML5 form association) --}}
+<form id="notesForm" method="POST"
+      action="{{ route('questionnaire.bilan.notes.save', $client) }}"
+      style="display:none">
+    @csrf
+</form>
 
 {{-- En-tête page ──────────────────────────────────────────────────── --}}
 <div class="bilan-header">
@@ -277,6 +492,9 @@ $scores = $questionnaire->scores;
         <a href="{{ route('questionnaire.show', $client) }}" class="btn btn-outline-primary btn-sm">
             <i class="bi bi-pencil me-1"></i>Modifier
         </a>
+        <button type="submit" form="notesForm" class="btn btn-primary btn-sm">
+            <i class="bi bi-save me-1"></i>Enregistrer les notes
+        </button>
         <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
             <i class="bi bi-printer me-1"></i>Imprimer
         </button>
@@ -341,6 +559,25 @@ $scores = $questionnaire->scores;
                         @endif
                     </p>
                 </div>
+
+                {{-- Guide d'interprétation Métaboltyping --}}
+                @if(isset($metTips[$met['type']]))
+                <div class="tip-box tip-box--metabol">
+                    <div class="tip-title">
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $met['type'] }}
+                    </div>
+                    <ul class="tip-list">
+                        @foreach($metTips[$met['type']] as $line)
+                        <li>{{ $line }}</li>
+                        @endforeach
+                    </ul>
+                    <hr class="tip-separator">
+                    <div class="tip-notes-label">Notes du conseiller</div>
+                    <textarea name="notes[metabolique]" form="notesForm"
+                              class="tip-textarea"
+                              placeholder="Ajouter des observations personnalisées...">{{ $notes['metabolique'] ?? '' }}</textarea>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -406,6 +643,25 @@ $scores = $questionnaire->scores;
                     <span class="{{ $sec['text'] }} fw-semibold">{{ $sec['label'] }}</span>
                     {{ $ay[$sec['key']] }} pts
                 </div>
+
+                {{-- Guide d'interprétation Ayurveda --}}
+                @if(isset($ayTips[$dom['label']]))
+                <div class="tip-box tip-box--ayurveda">
+                    <div class="tip-title">
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $dom['label'] }}
+                    </div>
+                    <ul class="tip-list">
+                        @foreach($ayTips[$dom['label']] as $line)
+                        <li>{{ $line }}</li>
+                        @endforeach
+                    </ul>
+                    <hr class="tip-separator">
+                    <div class="tip-notes-label">Notes du conseiller</div>
+                    <textarea name="notes[ayurveda]" form="notesForm"
+                              class="tip-textarea"
+                              placeholder="Ajouter des observations personnalisées...">{{ $notes['ayurveda'] ?? '' }}</textarea>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -468,6 +724,40 @@ $scores = $questionnaire->scores;
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Guide d'interprétation Julia Ross (classes dépassées uniquement) --}}
+                @php
+                    $jrDepasses = collect(QuestionnaireData::$julia_ross)
+                        ->filter(fn($c) => $scores['julia_ross'][$c['id']]['depasse'])
+                        ->values();
+                @endphp
+                @if($jrDepasses->isNotEmpty())
+                <div class="p-4 pt-0">
+                    <div class="tip-box tip-box--julia">
+                        <div class="tip-title">
+                            <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — Classes dépassées
+                        </div>
+                        @foreach($jrDepasses as $classe)
+                        @php $tip = $jrTips[$classe['id']] ?? null; @endphp
+                        @if($tip)
+                        <div class="tip-jr-block">
+                            <div class="tip-jr-label">{{ $tip['label'] }}</div>
+                            <ul class="tip-list">
+                                @foreach($tip['tips'] as $line)
+                                <li>{{ $line }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+                        @endforeach
+                        <hr class="tip-separator">
+                        <div class="tip-notes-label">Notes du conseiller</div>
+                        <textarea name="notes[julia_ross]" form="notesForm"
+                                  class="tip-textarea"
+                                  placeholder="Ajouter des observations personnalisées...">{{ $notes['julia_ross'] ?? '' }}</textarea>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -536,6 +826,35 @@ $scores = $questionnaire->scores;
                         Profil <strong class="text-navy">équilibré D1/D2</strong>.
                     @endif
                 </div>
+
+                {{-- Guide d'interprétation Diathèse --}}
+                @php
+                    $col1Total = $di['c1_d1'] + $di['c1_d2'];
+                    $col2Total = $di['c2_d1'] + $di['c2_d2'];
+                    $d1Dom     = $totalD1 >= $totalD2;
+                    $col1Dom   = $col1Total >= $col2Total;
+                    $diathNum  = match(true) {
+                        $d1Dom  && $col1Dom  => 1,
+                        !$d1Dom && $col1Dom  => 2,
+                        $d1Dom  && !$col1Dom => 3,
+                        default              => 4,
+                    };
+                @endphp
+                <div class="tip-box tip-box--diathese">
+                    <div class="tip-title">
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — Diathèse {{ $diathNum }}
+                    </div>
+                    <ul class="tip-list">
+                        @foreach($diathTips[$diathNum] as $line)
+                        <li>{{ $line }}</li>
+                        @endforeach
+                    </ul>
+                    <hr class="tip-separator">
+                    <div class="tip-notes-label">Notes du conseiller</div>
+                    <textarea name="notes[diathese]" form="notesForm"
+                              class="tip-textarea"
+                              placeholder="Ajouter des observations personnalisées...">{{ $notes['diathese'] ?? '' }}</textarea>
+                </div>
             </div>
         </div>
     </div>
@@ -575,6 +894,26 @@ $scores = $questionnaire->scores;
                     @endforeach
                 </ul>
             </div>
+        </div>
+    </div>
+
+    {{-- ════════════════════════════════════════════════════
+         NOTE PRIORITÉ GROUPE SANGUIN
+    ════════════════════════════════════════════════════ --}}
+    <div class="col-12">
+        <div class="tip-box tip-box--sanguin" style="margin-top:0;">
+            <div class="tip-title">
+                <i class="bi bi-info-circle-fill"></i>Ordre de priorité d'interprétation
+            </div>
+            <ul class="tip-list">
+                <li>À utiliser comme information secondaire et complémentaire.</li>
+                <li><strong>1.</strong> Julia Ross &nbsp;·&nbsp; <strong>2.</strong> Métaboltyping &nbsp;·&nbsp; <strong>3.</strong> Diathèse &nbsp;·&nbsp; <strong>4.</strong> Ayurveda &nbsp;·&nbsp; <strong>5.</strong> Canaris &nbsp;·&nbsp; <strong>6.</strong> Groupe sanguin</li>
+            </ul>
+            <hr class="tip-separator">
+            <div class="tip-notes-label">Notes du conseiller</div>
+            <textarea name="notes[priorite]" form="notesForm"
+                      class="tip-textarea"
+                      placeholder="Ajouter des observations générales...">{{ $notes['priorite'] ?? '' }}</textarea>
         </div>
     </div>
 

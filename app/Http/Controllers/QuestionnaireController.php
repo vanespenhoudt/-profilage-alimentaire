@@ -93,6 +93,17 @@ class QuestionnaireController extends Controller
         return view('questionnaire.bilan', compact('client', 'questionnaire', 'data'));
     }
 
+    public function saveNotes(Request $request, Client $client): RedirectResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $questionnaire = $client->questionnaire;
+        $questionnaire->interpretation_notes = array_map('trim', $request->input('notes', []));
+        $questionnaire->save();
+
+        return back()->with('success', 'Notes d\'interprétation enregistrées.');
+    }
+
     public function saveMenu(Request $request, Client $client): RedirectResponse
     {
         $this->authorizeClientAccess($request->user(), $client);

@@ -64,6 +64,7 @@
                 </a>
 
                 <div class="nav-links">
+                    @if(!auth()->user()->isSuperAdmin())
                     <a href="{{ route('dashboard') }}"
                        class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}">
                         Tableau de bord
@@ -72,6 +73,7 @@
                        class="nav-link {{ request()->is('clients*') ? 'active' : '' }}">
                         Clients
                     </a>
+                    @endif
                     @if(auth()->user()->isSuperAdmin())
                     <a href="{{ route('admin.conseillers.index') }}"
                        class="nav-link {{ request()->is('admin/conseillers*') ? 'active' : '' }}">

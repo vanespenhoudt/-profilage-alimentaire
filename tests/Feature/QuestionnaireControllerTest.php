@@ -104,14 +104,14 @@ class QuestionnaireControllerTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_super_admin_can_view_any_questionnaire(): void
+    public function test_super_admin_cannot_access_questionnaire(): void
     {
         $superAdmin = $this->makeSuperAdmin();
         $client     = $this->makeClientFor($this->makeConseiller());
 
         $this->actingAs($superAdmin)
             ->get(route('questionnaire.show', $client))
-            ->assertOk();
+            ->assertForbidden();
     }
 
     // -----------------------------------------------------------------------

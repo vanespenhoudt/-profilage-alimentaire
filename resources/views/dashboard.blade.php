@@ -21,22 +21,6 @@
             </div>
         </div>
     </div>
-
-    @isset($totalConseillers)
-    <div class="col-md-4">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center stat-icon-wrap">
-                    <i class="bi bi-person-badge-fill fs-icon-stat text-navy"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">Conseillers actifs</div>
-                    <div class="fw-bold fs-4 text-navy">{{ $totalConseillers }}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endisset
 </div>
 
 <div class="card">
@@ -61,9 +45,6 @@
                             <th class="ps-3">Code</th>
                             <th>Nom complet</th>
                             <th>Téléphone</th>
-                            @isset($totalConseillers)
-                            <th>Conseiller</th>
-                            @endisset
                             <th>Date création</th>
                             <th>Actions</th>
                         </tr>
@@ -76,9 +57,6 @@
                             </td>
                             <td class="fw-medium">{{ $client->nom_complet }}</td>
                             <td>{{ $client->tel }}</td>
-                            @isset($totalConseillers)
-                            <td>{{ $client->conseiller?->name ?? '-' }}</td>
-                            @endisset
                             <td class="text-muted small">{{ $client->created_at->format('d/m/Y') }}</td>
                             <td>
                                 <a href="{{ route('clients.show', $client) }}" class="btn btn-sm btn-outline-primary me-1">

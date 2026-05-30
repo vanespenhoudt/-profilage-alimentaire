@@ -22,6 +22,7 @@ class Questionnaire extends Model
         'menu_file',
         'menu_file_name',
         'menu_visible_client',
+        'interpretation_notes',
     ];
 
     protected function casts(): array
@@ -30,7 +31,8 @@ class Questionnaire extends Model
             'sections'             => 'array',
             'answers'              => 'array',
             'scores'               => 'array',
-            'menu_visible_client'  => 'boolean',
+            'menu_visible_client'   => 'boolean',
+            'interpretation_notes'  => 'array',
             'updated_at'           => 'datetime',
             'submitted_at'         => 'datetime',
         ];
