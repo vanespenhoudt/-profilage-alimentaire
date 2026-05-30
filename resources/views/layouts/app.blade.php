@@ -33,7 +33,7 @@
         }
         .nav-links    { display: flex; gap: 4px; margin-left: 16px; }
         .nav-user-pill {
-            margin-left: auto; background: var(--color-white-15);
+            margin-left: auto; background: rgba(0,0,0,0.20);
             border-radius: var(--radius-pill); padding: 5px 14px;
             font-family: 'Outfit', sans-serif; font-size: 13px;
             color: #FFFFFF; font-weight: 500; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
