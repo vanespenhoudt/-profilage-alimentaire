@@ -15,7 +15,7 @@
         :root { --nav-h: 54px; }
 
         .green-zone   { background: var(--color-primary); }
-        .app-nav      { height: var(--nav-h); display: flex; align-items: center; }
+        .app-nav      { height: var(--nav-h); display: flex; align-items: center; background: var(--color-navy); }
         .app-nav-inner {
             max-width: 1100px; margin: 0 auto; width: 100%;
             padding: 0 20px; display: flex; align-items: center; gap: 24px;
@@ -33,10 +33,10 @@
         }
         .nav-links    { display: flex; gap: 4px; margin-left: 16px; }
         .nav-user-pill {
-            margin-left: auto; background: var(--color-white-15);
+            margin-left: auto; background: rgba(255,255,255,0.12);
             border-radius: var(--radius-pill); padding: 5px 14px;
             font-family: 'Outfit', sans-serif; font-size: 13px;
-            color: var(--color-text-on-green); display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+            color: #FFFFFF; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
         }
         .content-panel {
             background: var(--color-bg-page);
