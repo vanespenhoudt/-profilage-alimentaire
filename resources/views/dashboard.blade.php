@@ -83,9 +83,10 @@
     </div>
     <div class="card-body">
         @if(session('success') && str_contains(session('success'), 'Invitation'))
-            <div class="alert alert-success alert-dismissible fade show py-2" role="alert">
-                <i class="bi bi-check-circle me-1"></i>{{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="alert alert-success-soft alert-dismissible fade show py-2 d-flex align-items-center gap-2" role="alert">
+                <i class="bi bi-check-circle-fill me-1" style="font-size:1rem;flex-shrink:0;"></i>
+                <span class="fw-medium">{{ session('success') }}</span>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
             </div>
         @endif
 

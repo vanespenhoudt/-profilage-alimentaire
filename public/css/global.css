@@ -180,7 +180,7 @@ textarea.form-control, .field-textarea { height: auto; min-height: 60px; padding
 
 
 /* ─── ALERTES / MESSAGES ─────────────────────────────────── */
-.alert-success-soft { background: var(--color-bg-tint); border: 1px solid var(--color-border-tint); color: var(--green-dark); border-radius: var(--r-card); font-family: var(--font-body); font-size: 13px; }
+.alert-success-soft { background: #ffffff; border: 1.5px solid var(--color-primary-dark); color: var(--color-primary-dark); border-radius: var(--r-card); font-family: var(--font-body); font-size: 13px; }
 .alert-warning-soft { background: var(--color-bg-warning); border: 1px solid var(--color-border-warning); color: var(--color-text-warning); border-radius: var(--r-card); font-family: var(--font-body); font-size: 13px; }
 .alert-danger       { background: #f7ecea !important; border-color: #e8c4bf !important; color: var(--navy) !important; }
 .alert-section-info { background: var(--color-bg-tint); border: 1px solid var(--color-border-tint); color: var(--navy); border-radius: 8px; font-family: var(--font-body); font-size: 13px; padding: 10px 14px; }
