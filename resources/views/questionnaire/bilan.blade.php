@@ -432,6 +432,15 @@ $diathTips = [
         background: rgba(245,158,11,.05);
         border-color: #f59e0b;
     }
+    .tip-box--canaris {
+        background: rgba(14,165,233,.05);
+        border-color: #0ea5e9;
+    }
+    .canaris-badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 5px 14px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; }
+    .canaris-badge--vert   { background: #dcfce7; color: #166534; }
+    .canaris-badge--jaune  { background: #fef9c3; color: #854d0e; }
+    .canaris-badge--rouge  { background: #fee2e2; color: #991b1b; }
+    .canaris-ctx-item { font-size: 13px; color: var(--color-navy); padding: 7px 12px; border-radius: 8px; background: rgba(14,165,233,.06); border-left: 3px solid #0ea5e9; margin-bottom: 6px; }
 
     .tip-title {
         font-family: 'Syne', sans-serif;
@@ -945,6 +954,92 @@ $diathTips = [
                     </li>
                     @endforeach
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    {{-- ════════════════════════════════════════════════════
+         CARD 6 — CANARIS
+    ════════════════════════════════════════════════════ --}}
+    <div class="col-12">
+        @php
+            $can     = $scores['canaris'] ?? ['score' => 0, 'niveau' => 'non_canari', 'profil' => 'adulte', 'contexte' => []];
+            $canCtx  = $can['contexte'] ?? [];
+        @endphp
+        <div class="card">
+            <div class="section-header">
+                <i class="bi bi-feather"></i>
+                <span>6. Canaris</span>
+            </div>
+            <div class="card-body p-4">
+
+                {{-- Score + badge --}}
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="score-num" style="color:#0ea5e9;">{{ $can['score'] }}</div>
+                    <div>
+                        @if($can['niveau'] === 'probable')
+                            <span class="canaris-badge canaris-badge--rouge">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                Profil canari probable — investigation recommandée
+                            </span>
+                        @elseif($can['niveau'] === 'suspicion')
+                            <span class="canaris-badge canaris-badge--jaune">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                Profil canari possible — à observer
+                            </span>
+                        @else
+                            <span class="canaris-badge canaris-badge--vert">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                Pas de profil canari identifié
+                            </span>
+                        @endif
+                        <div class="text-muted small mt-1">
+                            Score {{ $can['score'] }} — profil {{ $can['profil'] === 'les_deux' ? 'adulte + enfant' : $can['profil'] }}
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Conseils contexte --}}
+                @php
+                    $ctxConseils = [];
+                    if (($canCtx['ctx1'] ?? null) === 'long')
+                        $ctxConseils[] = ['icon' => 'exclamation-triangle-fill', 'text' => 'Régime SG-SL > 3 mois : réintroduction délicate, avancer au millimètre avec un thérapeute.'];
+                    if (($canCtx['ctx2'] ?? null) === 'mitige')
+                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Éviction passée mitigée : renforce la suspicion canari.'];
+                    if (($canCtx['ctx3'] ?? null) === 'souvent')
+                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Consommation élevée de fermentés / charcuteries : piste amines à investiguer.'];
+                    if (($canCtx['ctx4'] ?? null) === 'oui')
+                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Cosmétiques parfumés : commencer par supprimer les parfums et solvants (Tableau 1).'];
+                    if (($canCtx['ctx5'] ?? null) === 'plusieurs')
+                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Compléments alimentaires : les mettre de côté avant tout test d\'éviction.'];
+                @endphp
+                @if(count($ctxConseils))
+                <div class="mb-3">
+                    <div class="fw-semibold fs-13 mb-2" style="color:var(--color-navy);">Points d'attention contexte</div>
+                    @foreach($ctxConseils as $conseil)
+                    <div class="canaris-ctx-item">
+                        <i class="bi bi-{{ $conseil['icon'] }} me-2" style="color:#0ea5e9;"></i>{{ $conseil['text'] }}
+                    </div>
+                    @endforeach
+                </div>
+                @endif
+
+                {{-- Tip box --}}
+                <div class="tip-box tip-box--canaris">
+                    <div class="tip-title">
+                        <i class="bi bi-exclamation-triangle-fill"></i>Protocole d'éviction — règle fondamentale
+                    </div>
+                    <ul class="tip-list">
+                        <li>Ne pas cumuler les évictions. Commencer par les additifs alimentaires avant d'envisager salicylates ou amines.</li>
+                        <li>Tout protocole d'éviction doit être accompagné par un thérapeute.</li>
+                    </ul>
+                    <hr class="tip-separator">
+                    <div class="tip-notes-label">Notes du conseiller</div>
+                    <textarea name="notes[canaris]" form="notesForm"
+                              class="tip-textarea"
+                              placeholder="Ajouter des observations personnalisées...">{{ $notes['canaris'] ?? '' }}</textarea>
+                </div>
+
             </div>
         </div>
     </div>

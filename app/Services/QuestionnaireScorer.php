@@ -14,6 +14,7 @@ class QuestionnaireScorer
             'julia_ross'  => $this->scoreJuliaRoss($answers),
             'diathese'    => $this->scoreDiathese($answers),
             'hormones'    => $this->scoreHormones($answers),
+            'canaris'     => $this->scoreCanaris($answers),
         ];
     }
 
@@ -135,5 +136,40 @@ class QuestionnaireScorer
         }
 
         return $scores;
+    }
+
+    private function scoreCanaris(array $answers): array
+    {
+        $profil = $answers['ctx_profil'] ?? 'adulte';
+        $profils = $profil === 'les_deux'
+            ? ['adulte', 'enfant']
+            : [$profil === 'enfant' ? 'enfant' : 'adulte'];
+
+        $score = 0;
+        foreach ($profils as $p) {
+            foreach (QuestionnaireData::$canaris[$p] as $q) {
+                if (!empty($answers[$q['id']])) {
+                    $score += $q['poids'];
+                }
+            }
+        }
+
+        $niveau = match(true) {
+            $score >= 10 => 'probable',
+            $score >= 5  => 'suspicion',
+            default      => 'non_canari',
+        };
+
+        $contexte = [];
+        foreach (QuestionnaireData::$canaris_contexte as $q) {
+            $contexte[$q['id']] = $answers[$q['id']] ?? null;
+        }
+
+        return [
+            'score'   => $score,
+            'niveau'  => $niveau,
+            'profil'  => $profil,
+            'contexte'=> $contexte,
+        ];
     }
 }
