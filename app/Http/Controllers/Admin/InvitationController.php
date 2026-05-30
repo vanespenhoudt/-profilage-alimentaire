@@ -4,19 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
+use App\Mail\InvitationMail;
 use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 class InvitationController extends Controller
 {
-    // ── Admin : envoyer une invitation ───────────────────────────────────────
+    // ── Envoyer une invitation (admin ou conseiller) ─────────────────────────
 
     public function store(Request $request): RedirectResponse
     {
@@ -26,34 +28,55 @@ class InvitationController extends Controller
             'email.unique' => "Un compte ou une invitation existe déjà pour cette adresse email.",
         ]);
 
-        Invitation::create([
-            'email' => strtolower($request->email),
-            'token' => Str::random(48),
+        $invitation = Invitation::create([
+            'email'      => strtolower($request->email),
+            'token'      => Str::uuid()->toString(),
+            'invited_by' => auth()->id(),
+            'expires_at' => now()->addDays(7),
         ]);
 
-        return redirect()
-            ->route('admin.conseillers.index')
-            ->with('success', "Invitation envoyée à {$request->email}. Copiez le lien ci-dessous.");
+        Mail::to($invitation->email)->send(new InvitationMail($invitation));
+
+        $redirect = auth()->user()->role === Role::SuperAdmin
+            ? route('admin.conseillers.index')
+            : route('dashboard');
+
+        return redirect($redirect)->with('success', "Invitation envoyée à {$invitation->email}.");
     }
 
     public function destroy(Invitation $invitation): RedirectResponse
     {
+        $user = auth()->user();
+
+        if ($user->role !== Role::SuperAdmin && $invitation->invited_by !== $user->id) {
+            abort(403);
+        }
+
         $invitation->delete();
 
-        return redirect()
-            ->route('admin.conseillers.index')
-            ->with('success', "Invitation supprimée.");
+        $redirect = $user->role === Role::SuperAdmin
+            ? route('admin.conseillers.index')
+            : route('dashboard');
+
+        return redirect($redirect)->with('success', "Invitation supprimée.");
     }
 
     // ── Public : inscription via lien ────────────────────────────────────────
 
-    public function show(string $token): View|RedirectResponse
+    public function show(string $token): View
     {
-        $invitation = Invitation::where('token', $token)->firstOrFail();
+        $invitation = Invitation::where('token', $token)->first();
+
+        if (!$invitation) {
+            return view('auth.invitation-error', ['reason' => 'invalid']);
+        }
 
         if ($invitation->isUsed()) {
-            return redirect()->route('login')
-                ->with('error', "Ce lien d'invitation a déjà été utilisé. Connectez-vous directement.");
+            return view('auth.invitation-error', ['reason' => 'used']);
+        }
+
+        if ($invitation->isExpired()) {
+            return view('auth.invitation-error', ['reason' => 'expired']);
         }
 
         return view('auth.invitation', compact('invitation', 'token'));
@@ -61,11 +84,11 @@ class InvitationController extends Controller
 
     public function register(Request $request, string $token): RedirectResponse
     {
-        $invitation = Invitation::where('token', $token)->firstOrFail();
+        $invitation = Invitation::where('token', $token)->first();
 
-        if ($invitation->isUsed()) {
+        if (!$invitation || $invitation->isUsed() || $invitation->isExpired()) {
             return redirect()->route('login')
-                ->with('error', "Ce lien d'invitation a déjà été utilisé.");
+                ->with('error', "Ce lien d'invitation est invalide ou expiré.");
         }
 
         $request->validate([

@@ -43,6 +43,11 @@ class User extends Authenticatable
         return $this->hasMany(Client::class, 'conseiller_id');
     }
 
+    public function sentInvitations(): HasMany
+    {
+        return $this->hasMany(Invitation::class, 'invited_by');
+    }
+
     public function scopeConseillers($query): void
     {
         $query->where('role', Role::Conseiller->value);

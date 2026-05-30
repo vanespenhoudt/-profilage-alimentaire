@@ -26,6 +26,12 @@ Route::middleware(['auth', 'role:super_admin,conseiller'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
+// Invitations — conseillers uniquement
+Route::middleware(['auth', 'role:conseiller'])->group(function () {
+    Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
+    Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
+});
+
 // Clients et questionnaires — conseillers uniquement
 Route::middleware(['auth', 'role:conseiller'])->group(function () {
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
