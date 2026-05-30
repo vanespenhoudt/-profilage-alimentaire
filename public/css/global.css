@@ -160,17 +160,17 @@ textarea.form-control, .field-textarea { height: auto; min-height: 60px; padding
 
 
 /* ─── BOUTONS ─────────────────────────────────────────────── */
-.btn-primary     { background: var(--navy); border-color: var(--navy); color: var(--green); font-family: var(--font-title); font-weight: 700; font-size: 13px; height: 36px; padding: 0 16px; border-radius: 8px; }
+.btn-primary     { background: var(--navy); border-color: var(--navy); color: var(--green); font-family: var(--font-title); font-weight: 700; font-size: 13px; height: 36px; padding: 0 16px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-primary:hover, .btn-primary:focus { background: var(--green-dark); border-color: var(--green-dark); color: var(--color-text-on-green); }
-.btn-outline-secondary { background: transparent; border: 1.5px solid var(--border); color: var(--navy); font-family: var(--font-body); font-size: 13px; height: 36px; padding: 0 14px; border-radius: 8px; }
+.btn-outline-secondary { background: transparent; border: 1.5px solid var(--border); color: var(--navy); font-family: var(--font-body); font-size: 13px; height: 36px; padding: 0 14px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-outline-secondary:hover, .btn-outline-secondary:focus { border-color: var(--green-mid); color: var(--green-dark); background: transparent; }
-.btn-outline-primary { color: var(--navy); border: 1.5px solid var(--navy); background: transparent; font-family: var(--font-body); font-size: 13px; height: 36px; padding: 0 14px; border-radius: 8px; }
+.btn-outline-primary { color: var(--navy); border: 1.5px solid var(--navy); background: transparent; font-family: var(--font-body); font-size: 13px; height: 36px; padding: 0 14px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-outline-primary:hover, .btn-outline-primary:focus { background: var(--navy); border-color: var(--navy); color: var(--color-text-on-green); }
-.btn-outline-chasseur { color: var(--green-dark); border: 1.5px solid var(--green); background: transparent; font-family: var(--font-body); font-size: 13px; border-radius: 8px; }
+.btn-outline-chasseur { color: var(--green-dark); border: 1.5px solid var(--green); background: transparent; font-family: var(--font-body); font-size: 13px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
 .btn-outline-chasseur:hover, .btn-check:checked + .btn-outline-chasseur { background: var(--green); border-color: var(--green); color: var(--color-text-on-green); font-weight: 600; }
 .btn-sm          { height: 30px; font-size: 12px; padding: 0 10px; }
 .btn-back        { width: 26px; height: 26px; padding: 0; border: 1.5px solid var(--color-white-30); border-radius: var(--r-input); background: transparent; color: var(--color-text-on-green); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.btn-topbar-logout { background: #1a1a1a; border: none; border-radius: 8px; color: #FFFFFF; font-family: var(--font-body); font-size: 13px; padding: 4px 12px; cursor: pointer; transition: background .15s; }
+.btn-topbar-logout { background: #1a1a1a; border: none; border-radius: 8px; color: #FFFFFF; font-family: var(--font-body); font-size: 13px; padding: 4px 12px; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; justify-content: center; }
 .btn-topbar-logout:hover { background: #333333; }
 
 

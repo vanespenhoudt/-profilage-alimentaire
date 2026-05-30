@@ -36,7 +36,7 @@
             margin-left: auto; background: var(--color-white-15);
             border-radius: var(--radius-pill); padding: 5px 14px;
             font-family: 'Outfit', sans-serif; font-size: 13px;
-            color: var(--color-text-on-green); display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+            color: #FFFFFF; font-weight: 500; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
         }
         .content-panel {
             background: var(--color-bg-page);
