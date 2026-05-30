@@ -53,6 +53,22 @@ class LoginTest extends DuskTestCase
         });
     }
 
+    public function test_compte_desactive_ne_peut_pas_acceder_au_dashboard(): void
+    {
+        $user = User::factory()->create([
+            'role'   => Role::Conseiller->value,
+            'active' => false,
+        ]);
+
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs($user)
+                ->visit('/dashboard')
+                ->waitForLocation('/login')
+                ->assertPathIs('/login')
+                ->assertSee('Votre compte a été désactivé');
+        });
+    }
+
     public function test_logout_redirects_to_login(): void
     {
         $user = User::factory()->create([

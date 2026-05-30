@@ -17,5 +17,6 @@
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="file"/>
+        <env name="DB_DATABASE" value="profilage_alimentaire_dusk"/>
     </php>
 </phpunit>
