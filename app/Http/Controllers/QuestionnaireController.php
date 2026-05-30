@@ -99,7 +99,7 @@ class QuestionnaireController extends Controller
 
         $request->validate([
             'menu_text'            => 'nullable|string',
-            'menu_file'            => 'nullable|file|mimes:pdf,txt,doc,docx|max:10240',
+            'menu_file'            => 'nullable|file|mimes:pdf,txt,doc,docx,jpg,jpeg|max:10240',
             'menu_visible_client'  => 'nullable|boolean',
         ]);
 

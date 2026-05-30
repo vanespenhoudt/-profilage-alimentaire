@@ -503,10 +503,10 @@ $totalHormones  = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c
                 <div class="mb-3">
                     <label class="form-label">
                         Joindre un fichier
-                        <span class="text-muted-pa fw-normal fs-12 ms-1">(PDF, TXT, DOC, DOCX — max 10 Mo)</span>
+                        <span class="text-muted-pa fw-normal fs-12 ms-1">(PDF, TXT, DOC, DOCX, JPG — max 10 Mo)</span>
                     </label>
                     <input type="file" name="menu_file" class="form-control form-control-sm"
-                           accept=".pdf,.txt,.doc,.docx">
+                           accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg">
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-sm">
