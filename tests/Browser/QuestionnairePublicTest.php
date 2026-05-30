@@ -67,8 +67,9 @@ class QuestionnairePublicTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($token) {
             $browser->visit("/q/{$token}")
                 ->assertPresent('input[name="groupe_sanguin"]')
-                ->radio('groupe_sanguin', 'A')
+                ->click('label[for="gs_1"]')
                 ->press('Soumettre le questionnaire')
+                ->waitForText('Merci', 10)
                 ->assertSee('Merci');
         });
     }

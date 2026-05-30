@@ -9,16 +9,13 @@
             <directory>tests/Browser</directory>
         </testsuite>
     </testsuites>
-    <source>
-        <include>
-            <directory>app</directory>
-        </include>
-    </source>
     <php>
-        <env name="APP_ENV" value="dusk.local"/>
+        <env name="APP_URL" value="http://127.0.0.1:8003"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_STORE" value="array"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="file"/>
     </php>
 </phpunit>

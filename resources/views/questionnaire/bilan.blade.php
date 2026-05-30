@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends(($clientView ?? false) ? 'layouts.public' : 'layouts.app')
 
 @section('title', 'Bilan – ' . $client->nom_complet)
 
 @section('content')
 @php
 use App\Data\QuestionnaireData;
-$scores = $questionnaire->scores;
+$scores = $questionnaire->scores ?? [];
 $notes  = $questionnaire->interpretation_notes ?? [];
 
 /* ── Tips Julia Ross (jr1→jr8) ───────────────────────────────── */
@@ -522,12 +522,14 @@ $diathTips = [
     }
 </style>
 
+@unless($clientView ?? false)
 {{-- Formulaire invisible pour les notes (HTML5 form association) --}}
 <form id="notesForm" method="POST"
       action="{{ route('questionnaire.bilan.notes.save', $client) }}"
       style="display:none">
     @csrf
 </form>
+@endunless
 
 {{-- En-tête page ──────────────────────────────────────────────────── --}}
 <div class="bilan-header">
@@ -539,10 +541,11 @@ $diathTips = [
         <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
             <span class="bilan-client-chip">{{ $client->nom_complet }}</span>
             <span class="bilan-date">
-                <i class="bi bi-clock me-1"></i>Enregistré le {{ $questionnaire->updated_at->format('d/m/Y à H:i') }}
+                <i class="bi bi-clock me-1"></i>Enregistré le {{ $questionnaire->updated_at?->format('d/m/Y à H:i') ?? '—' }}
             </span>
         </div>
     </div>
+    @unless($clientView ?? false)
     <div class="d-flex gap-2 flex-shrink-0">
         <a href="{{ route('clients.show', $client) }}" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-arrow-left me-1"></i>Retour
@@ -557,6 +560,7 @@ $diathTips = [
             <i class="bi bi-printer me-1"></i>Imprimer
         </button>
     </div>
+    @endunless
 </div>
 
 <div class="row g-3">
@@ -572,7 +576,7 @@ $diathTips = [
             </div>
             <div class="card-body p-4">
                 @php
-                    $met   = $scores['metabolique'];
+                    $met   = $scores['metabolique'] ?? ['a' => 0, 'b' => 0, 'type' => 'Mixte'];
                     $total = $met['a'] + $met['b'];
                     $pctA  = $total > 0 ? round(($met['a'] / $total) * 100) : 50;
                     $pctB  = $total > 0 ? round(($met['b'] / $total) * 100) : 50;
@@ -629,11 +633,13 @@ $diathTips = [
                         <li>{{ $line }}</li>
                         @endforeach
                     </ul>
+                    @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
                     <textarea name="notes[metabolique]" form="notesForm"
                               class="tip-textarea"
                               placeholder="Ajouter des observations personnalisées...">{{ $notes['metabolique'] ?? '' }}</textarea>
+                    @endunless
                 </div>
                 @endif
             </div>
@@ -651,7 +657,7 @@ $diathTips = [
             </div>
             <div class="card-body p-4">
                 @php
-                    $ay = $scores['ayurveda'];
+                    $ay = $scores['ayurveda'] ?? ['vata' => 0, 'pitta' => 0, 'kapha' => 0];
                     $doshas = [
                         ['label' => 'Vâta',  'key' => 'vata',  'max' => 114, 'bar' => 'bar-vata',  'text' => 'text-vata'],
                         ['label' => 'Pitta', 'key' => 'pitta', 'max' => 120, 'bar' => 'bar-pitta', 'text' => 'text-pitta'],
@@ -713,11 +719,13 @@ $diathTips = [
                         <li>{{ $line }}</li>
                         @endforeach
                     </ul>
+                    @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
                     <textarea name="notes[ayurveda]" form="notesForm"
                               class="tip-textarea"
                               placeholder="Ajouter des observations personnalisées...">{{ $notes['ayurveda'] ?? '' }}</textarea>
+                    @endunless
                 </div>
                 @endif
             </div>
@@ -748,7 +756,7 @@ $diathTips = [
                         <tbody>
                             @foreach(QuestionnaireData::$julia_ross as $classe)
                             @php
-                                $jr        = $scores['julia_ross'][$classe['id']];
+                                $jr        = ($scores['julia_ross'] ?? [])[$classe['id']] ?? ['total' => 0, 'seuil' => 0, 'depasse' => false];
                                 $max       = collect($classe['questions'])->sum('w');
                                 $pct       = $max > 0 ? min(100, round(($jr['total'] / $max) * 100)) : 0;
                                 $seuil_pct = $max > 0 ? min(100, round(($jr['seuil'] / $max) * 100)) : 0;
@@ -786,7 +794,7 @@ $diathTips = [
                 {{-- Guide d'interprétation Julia Ross (classes dépassées uniquement) --}}
                 @php
                     $jrDepasses = collect(QuestionnaireData::$julia_ross)
-                        ->filter(fn($c) => $scores['julia_ross'][$c['id']]['depasse'])
+                        ->filter(fn($c) => (($scores['julia_ross'] ?? [])[$c['id']]['depasse'] ?? false))
                         ->values();
                 @endphp
                 @if($jrDepasses->isNotEmpty())
@@ -808,11 +816,13 @@ $diathTips = [
                         </div>
                         @endif
                         @endforeach
+                        @unless($clientView ?? false)
                         <hr class="tip-separator">
                         <div class="tip-notes-label">Notes du conseiller</div>
                         <textarea name="notes[julia_ross]" form="notesForm"
                                   class="tip-textarea"
                                   placeholder="Ajouter des observations personnalisées...">{{ $notes['julia_ross'] ?? '' }}</textarea>
+                        @endunless
                     </div>
                 </div>
                 @endif
@@ -830,7 +840,7 @@ $diathTips = [
                 <span>4. Diathèse de Ménétrier</span>
             </div>
             <div class="card-body p-4">
-                @php $di = $scores['diathese']; @endphp
+                @php $di = $scores['diathese'] ?? ['c1_d1' => 0, 'c1_d2' => 0, 'c2_d1' => 0, 'c2_d2' => 0]; @endphp
                 <table class="table table-bordered text-center mb-0">
                     <thead>
                         <tr>
@@ -910,11 +920,13 @@ $diathTips = [
                         @endforeach
                     </ul>
                     @endforeach
+                    @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
                     <textarea name="notes[diathese]" form="notesForm"
                               class="tip-textarea"
                               placeholder="Ajouter des observations personnalisées...">{{ $notes['diathese'] ?? '' }}</textarea>
+                    @endunless
                 </div>
             </div>
         </div>
@@ -933,7 +945,7 @@ $diathTips = [
                 <ul class="list-group list-group-flush">
                     @foreach(QuestionnaireData::$hormones as $cat)
                     @php
-                        $hor   = $scores['hormones'][$cat['id']];
+                        $hor   = ($scores['hormones'] ?? [])[$cat['id']] ?? ['total' => 0, 'max' => 0];
                         $pct   = $hor['max'] > 0 ? round(($hor['total'] / $hor['max']) * 100) : 0;
                         $alert = $pct >= 60;
                     @endphp
@@ -963,7 +975,7 @@ $diathTips = [
     ════════════════════════════════════════════════════ --}}
     <div class="col-12">
         @php
-            $can     = $scores['canaris'] ?? ['score' => 0, 'niveau' => 'non_canari', 'profil' => 'adulte', 'contexte' => []];
+            $can     = $scores['canaris'] ?? ['score' => 0, 'grade' => 'non_canari', 'profil' => 'adulte', 'familles' => ['additifs'], 'contexte' => []];
             $canCtx  = $can['contexte'] ?? [];
         @endphp
         <div class="card">
@@ -973,45 +985,48 @@ $diathTips = [
             </div>
             <div class="card-body p-4">
 
-                {{-- Score + badge --}}
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="score-num" style="color:#0ea5e9;">{{ $can['score'] }}</div>
-                    <div>
-                        @if($can['niveau'] === 'probable')
-                            <span class="canaris-badge canaris-badge--rouge">
-                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
-                                Profil canari probable — investigation recommandée
-                            </span>
-                        @elseif($can['niveau'] === 'suspicion')
-                            <span class="canaris-badge canaris-badge--jaune">
-                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
-                                Profil canari possible — à observer
-                            </span>
-                        @else
-                            <span class="canaris-badge canaris-badge--vert">
-                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
-                                Pas de profil canari identifié
-                            </span>
-                        @endif
-                        <div class="text-muted small mt-1">
-                            Score {{ $can['score'] }} — profil {{ $can['profil'] === 'les_deux' ? 'adulte + enfant' : $can['profil'] }}
-                        </div>
-                    </div>
+                {{-- Badge grade --}}
+                <div class="mb-4">
+                    @if($can['grade'] === 'grade_3')
+                        <span class="canaris-badge canaris-badge--rouge">
+                            <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                            Profil canari confirmé
+                        </span>
+                    @elseif($can['grade'] === 'grade_2')
+                        <span class="canaris-badge canaris-badge--rouge">
+                            <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                            Profil canari probable
+                        </span>
+                    @elseif($can['grade'] === 'grade_1')
+                        <span class="canaris-badge canaris-badge--jaune">
+                            <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                            Profil canari possible
+                        </span>
+                    @else
+                        <span class="canaris-badge canaris-badge--vert">
+                            <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                            Pas de profil canari identifié
+                        </span>
+                    @endif
                 </div>
 
                 {{-- Conseils contexte --}}
                 @php
                     $ctxConseils = [];
-                    if (($canCtx['ctx1'] ?? null) === 'long')
-                        $ctxConseils[] = ['icon' => 'exclamation-triangle-fill', 'text' => 'Régime SG-SL > 3 mois : réintroduction délicate, avancer au millimètre avec un thérapeute.'];
-                    if (($canCtx['ctx2'] ?? null) === 'mitige')
-                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Éviction passée mitigée : renforce la suspicion canari.'];
-                    if (($canCtx['ctx3'] ?? null) === 'souvent')
-                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Consommation élevée de fermentés / charcuteries : piste amines à investiguer.'];
+                    if (($canCtx['ctx2'] ?? null) === 'oui')
+                        $ctxConseils[] = ['icon' => 'exclamation-triangle-fill', 'text' => 'Plusieurs régimes essayés sans succès : les régimes classiques ne fonctionnent pas sur un terrain canari — piste à confirmer.'];
+                    if (($canCtx['ctx3'] ?? null) === 'oui')
+                        $ctxConseils[] = ['icon' => 'exclamation-triangle-fill', 'text' => 'Efficacité transitoire des traitements : signe typique d\'hyperréactivité — chaque traitement stimule puis surcharge.'];
                     if (($canCtx['ctx4'] ?? null) === 'oui')
-                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Cosmétiques parfumés : commencer par supprimer les parfums et solvants (Tableau 1).'];
-                    if (($canCtx['ctx5'] ?? null) === 'plusieurs')
-                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Compléments alimentaires : les mettre de côté avant tout test d\'éviction.'];
+                        $ctxConseils[] = ['icon' => 'exclamation-triangle-fill', 'text' => 'Hypersensibilité médicamenteuse : commencer impérativement par les additifs alimentaires avant tout autre protocole.'];
+                    if (($canCtx['ctx5'] ?? null) === 'souvent')
+                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Consommation élevée d\'amines biogènes (charcuteries, fromages, fermentés) : piste amines à investiguer.'];
+                    if (($canCtx['ctx6'] ?? null) === 'oui')
+                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Régime SG-SL > 3 mois : réintroduction délicate, avancer au millimètre avec un thérapeute.'];
+                    if (($canCtx['ctx7'] ?? null) !== 'non' && ($canCtx['ctx7'] ?? null) !== null)
+                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Cosmétiques ou produits parfumés : commencer par supprimer les parfums et solvants (Tableau 1).'];
+                    if (($canCtx['ctx8'] ?? null) === 'plusieurs')
+                        $ctxConseils[] = ['icon' => 'info-circle-fill', 'text' => 'Compléments alimentaires multiples : les mettre de côté avant tout test d\'éviction.'];
                 @endphp
                 @if(count($ctxConseils))
                 <div class="mb-3">
@@ -1033,11 +1048,13 @@ $diathTips = [
                         <li>Ne pas cumuler les évictions. Commencer par les additifs alimentaires avant d'envisager salicylates ou amines.</li>
                         <li>Tout protocole d'éviction doit être accompagné par un thérapeute.</li>
                     </ul>
+                    @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
                     <textarea name="notes[canaris]" form="notesForm"
                               class="tip-textarea"
                               placeholder="Ajouter des observations personnalisées...">{{ $notes['canaris'] ?? '' }}</textarea>
+                    @endunless
                 </div>
 
             </div>
@@ -1056,11 +1073,13 @@ $diathTips = [
                 <li>À utiliser comme information secondaire et complémentaire.</li>
                 <li><strong>1.</strong> Julia Ross &nbsp;·&nbsp; <strong>2.</strong> Métaboltyping &nbsp;·&nbsp; <strong>3.</strong> Diathèse &nbsp;·&nbsp; <strong>4.</strong> Ayurveda &nbsp;·&nbsp; <strong>5.</strong> Canaris &nbsp;·&nbsp; <strong>6.</strong> Groupe sanguin</li>
             </ul>
+            @unless($clientView ?? false)
             <hr class="tip-separator">
             <div class="tip-notes-label">Notes du conseiller</div>
             <textarea name="notes[priorite]" form="notesForm"
                       class="tip-textarea"
                       placeholder="Ajouter des observations générales...">{{ $notes['priorite'] ?? '' }}</textarea>
+            @endunless
         </div>
     </div>
 
@@ -1115,6 +1134,39 @@ $diathTips = [
                         <i class="bi bi-save me-1"></i>Enregistrer le menu
                     </button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- ════════════════════════════════════════════════════
+         ALIMENTS PRÉFÉRÉS
+    ════════════════════════════════════════════════════ --}}
+    <div class="col-12">
+        <div class="card">
+            <div class="section-header">
+                <i class="bi bi-heart"></i>
+                <span>10 aliments préférés</span>
+            </div>
+            <div class="card-body p-4">
+
+                @if(($clientView ?? false) && $questionnaire->aliments_text)
+                    <div style="white-space: pre-wrap; font-size: 14px; color: var(--color-navy);">{{ $questionnaire->aliments_text }}</div>
+
+                @elseif(!($clientView ?? false))
+                    <form method="POST" action="{{ route('questionnaire.aliments.save', $client) }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Quels sont vos 10 aliments préférés ?</label>
+                            <textarea name="aliments_text" rows="6"
+                                      class="form-control"
+                                      placeholder="Listez les aliments préférés du client, un par ligne...">{{ $questionnaire->aliments_text ?? '' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-save me-1"></i>Enregistrer
+                        </button>
+                    </form>
+                @endif
+
             </div>
         </div>
     </div>

@@ -109,14 +109,18 @@ class QuestionnaireController extends Controller
         $this->authorizeClientAccess($request->user(), $client);
 
         $request->validate([
-            'menu_text'            => 'nullable|string',
-            'menu_file'            => 'nullable|file|mimes:pdf,txt,doc,docx,jpg,jpeg|max:10240',
-            'menu_visible_client'  => 'nullable|boolean',
+            'menu_text'               => 'nullable|string',
+            'menu_file'               => 'nullable|file|mimes:pdf,txt,doc,docx,jpg,jpeg|max:10240',
+            'menu_visible_client'     => 'nullable|boolean',
+            'aliments_text'           => 'nullable|string|max:2000',
+            'aliments_visible_client' => 'nullable|boolean',
         ]);
 
         $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
-        $questionnaire->menu_text           = $request->input('menu_text');
-        $questionnaire->menu_visible_client = $request->boolean('menu_visible_client');
+        $questionnaire->menu_text                = $request->input('menu_text');
+        $questionnaire->menu_visible_client      = $request->boolean('menu_visible_client');
+        $questionnaire->aliments_text            = $request->input('aliments_text');
+        $questionnaire->aliments_visible_client  = $request->boolean('aliments_visible_client');
         $questionnaire->updated_at          = now();
 
         if ($request->hasFile('menu_file') && $request->file('menu_file')->isValid()) {
@@ -135,21 +139,45 @@ class QuestionnaireController extends Controller
             ->with('success', 'Menu enregistré.');
     }
 
+    public function saveAliments(Request $request, Client $client): RedirectResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $request->validate([
+            'aliments_text'           => 'nullable|string|max:2000',
+            'aliments_visible_client' => 'nullable|boolean',
+        ]);
+
+        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
+        $questionnaire->aliments_text           = $request->input('aliments_text');
+        $questionnaire->aliments_visible_client = $request->boolean('aliments_visible_client');
+        $questionnaire->updated_at              = now();
+        $questionnaire->save();
+
+        return redirect()
+            ->route('questionnaire.bilan', $client)
+            ->with('success', 'Aliments préférés enregistrés.');
+    }
+
     public function generateToken(Request $request, Client $client): RedirectResponse
     {
         $this->authorizeClientAccess($request->user(), $client);
 
         $validated = $request->validate([
-            'sections'            => 'nullable|array|min:1',
-            'sections.*'          => 'in:julia_ross,metabolique,diathese,ayurveda,groupe_sanguin,hormones',
-            'menu_visible_client' => 'nullable|boolean',
+            'sections'             => 'nullable|array|min:1',
+            'sections.*'           => 'in:julia_ross,metabolique,diathese,ayurveda,groupe_sanguin,hormones',
+            'menu_visible_client'     => 'nullable|boolean',
+            'bilan_visible_client'    => 'nullable|boolean',
+            'aliments_visible_client' => 'nullable|boolean',
         ]);
 
         $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
-        $questionnaire->token               = Str::random(48);
-        $questionnaire->sections            = $validated['sections'] ?? null;
-        $questionnaire->menu_visible_client = $request->boolean('menu_visible_client');
-        $questionnaire->submitted_at        = null;
+        $questionnaire->token                = Str::random(48);
+        $questionnaire->sections             = $validated['sections'] ?? null;
+        $questionnaire->menu_visible_client      = $request->boolean('menu_visible_client');
+        $questionnaire->bilan_visible_client     = $request->boolean('bilan_visible_client');
+        $questionnaire->aliments_visible_client  = $request->boolean('aliments_visible_client');
+        $questionnaire->submitted_at             = null;
         $questionnaire->updated_at          = now();
         $questionnaire->save();
 

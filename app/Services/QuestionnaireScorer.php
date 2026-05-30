@@ -140,25 +140,47 @@ class QuestionnaireScorer
 
     private function scoreCanaris(array $answers): array
     {
-        $profil = $answers['ctx_profil'] ?? 'adulte';
-        $profils = $profil === 'les_deux'
-            ? ['adulte', 'enfant']
-            : [$profil === 'enfant' ? 'enfant' : 'adulte'];
+        $profil = $answers['ctx1'] ?? 'adulte';
+
+        $sous_sections = match($profil) {
+            'adulte'   => ['adulte'],
+            'enfant'   => ['enfant'],
+            'les_deux' => ['adulte', 'enfant'],
+            default    => ['adulte'],
+        };
 
         $score = 0;
-        foreach ($profils as $p) {
-            foreach (QuestionnaireData::$canaris[$p] as $q) {
+        foreach ($sous_sections as $section) {
+            $items = $section === 'enfant'
+                ? QuestionnaireData::$canaris_enfant
+                : QuestionnaireData::$canaris_adulte;
+            foreach ($items as $q) {
                 if (!empty($answers[$q['id']])) {
                     $score += $q['poids'];
                 }
             }
         }
 
-        $niveau = match(true) {
-            $score >= 10 => 'probable',
-            $score >= 5  => 'suspicion',
+        foreach (['ctx2', 'ctx3', 'ctx4'] as $ctx) {
+            if (($answers[$ctx] ?? null) === 'oui') {
+                $score += 2;
+            }
+        }
+
+        $grade = match(true) {
+            $score >= 12 => 'grade_3',
+            $score >= 8  => 'grade_2',
+            $score >= 5  => 'grade_1',
             default      => 'non_canari',
         };
+
+        $familles = ['additifs'];
+        if (($answers['ctx5'] ?? null) === 'souvent') {
+            $familles[] = 'amines';
+        }
+        if (($answers['ctx7'] ?? null) !== 'non') {
+            $familles[] = 'cosmetiques';
+        }
 
         $contexte = [];
         foreach (QuestionnaireData::$canaris_contexte as $q) {
@@ -166,10 +188,11 @@ class QuestionnaireScorer
         }
 
         return [
-            'score'   => $score,
-            'niveau'  => $niveau,
-            'profil'  => $profil,
-            'contexte'=> $contexte,
+            'score'    => $score,
+            'grade'    => $grade,
+            'profil'   => $profil,
+            'familles' => $familles,
+            'contexte' => $contexte,
         ];
     }
 }

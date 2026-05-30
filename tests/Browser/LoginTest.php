@@ -31,7 +31,7 @@ class LoginTest extends DuskTestCase
                 ->type('email', 'mauvais@email.com')
                 ->type('password', 'mauvais_mdp')
                 ->click('.auth-btn')
-                ->assertSee('credentials do not match');
+                ->assertSee('Ces identifiants ne correspondent pas');
         });
     }
 
@@ -48,6 +48,7 @@ class LoginTest extends DuskTestCase
                 ->type('email', $user->email)
                 ->type('password', 'password1234')
                 ->click('.auth-btn')
+                ->waitForLocation('/dashboard')
                 ->assertPathIs('/dashboard');
         });
     }
@@ -62,6 +63,7 @@ class LoginTest extends DuskTestCase
             $browser->loginAs($user)
                 ->visit('/dashboard')
                 ->click('.btn-topbar-logout')
+                ->waitForLocation('/login')
                 ->assertPathIs('/login');
         });
     }

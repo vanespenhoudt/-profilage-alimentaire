@@ -38,9 +38,9 @@
 use App\Data\QuestionnaireData;
 $totalJuliaRoss  = collect(QuestionnaireData::$julia_ross)->sum(fn($c) => count($c['questions']));
 $totalHormones   = collect(QuestionnaireData::$hormones)->sum(fn($c)  => count($c['questions']));
-$totalCanaris    = count(QuestionnaireData::$canaris['adulte'])
-                 + count(QuestionnaireData::$canaris['enfant'])
-                 + count(QuestionnaireData::$canaris_contexte) + 1; // +1 ctx_profil
+$totalCanaris    = count(QuestionnaireData::$canaris_adulte)
+                 + count(QuestionnaireData::$canaris_enfant)
+                 + count(QuestionnaireData::$canaris_contexte); // ctx1 profil inclus dans contexte
 @endphp
 
 <style>
@@ -488,11 +488,11 @@ $totalCanaris    = count(QuestionnaireData::$canaris['adulte'])
                         <div class="fw-semibold fs-13 mb-2">Ce questionnaire concerne :</div>
                         <div class="d-flex gap-2 flex-wrap">
                             @foreach(['adulte' => 'Adulte', 'enfant' => 'Enfant', 'les_deux' => 'Les deux'] as $val => $label)
-                            <input type="radio" name="ctx_profil" value="{{ $val }}"
-                                   class="btn-check radio-q" id="ctx_profil_{{ $val }}"
+                            <input type="radio" name="ctx1" value="{{ $val }}"
+                                   class="btn-check radio-q" id="ctx1_{{ $val }}"
                                    data-section="s7"
-                                   @checked(($answers['ctx_profil'] ?? 'adulte') === $val)>
-                            <label class="btn btn-outline-primary btn-sm" for="ctx_profil_{{ $val }}">{{ $label }}</label>
+                                   @checked(($answers['ctx1'] ?? 'adulte') === $val)>
+                            <label class="btn btn-outline-primary btn-sm" for="ctx1_{{ $val }}">{{ $label }}</label>
                             @endforeach
                         </div>
                     </div>
@@ -501,7 +501,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris['adulte'])
                     <div id="canaris-adulte" class="canaris-profil-block">
                         <div class="fw-semibold fs-13 mb-2 text-navy">Symptômes adulte</div>
                         <div class="row g-2 mb-3">
-                            @foreach(QuestionnaireData::$canaris['adulte'] as $q)
+                            @foreach(QuestionnaireData::$canaris_adulte as $q)
                             <div class="col-md-6">
                                 <div class="form-check py-1 px-3 rounded" style="background:var(--color-bg-tint);">
                                     <input class="form-check-input" type="checkbox"
@@ -525,7 +525,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris['adulte'])
                     <div id="canaris-enfant" class="canaris-profil-block" style="display:none;">
                         <div class="fw-semibold fs-13 mb-2 text-navy">Symptômes enfant</div>
                         <div class="row g-2 mb-3">
-                            @foreach(QuestionnaireData::$canaris['enfant'] as $q)
+                            @foreach(QuestionnaireData::$canaris_enfant as $q)
                             <div class="col-md-6">
                                 <div class="form-check py-1 px-3 rounded" style="background:var(--color-bg-tint);">
                                     <input class="form-check-input" type="checkbox"
@@ -551,6 +551,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris['adulte'])
 
                     <div class="d-flex flex-column gap-3">
                         @foreach(QuestionnaireData::$canaris_contexte as $q)
+                        @if($q['id'] === 'ctx1') @continue @endif
                         <div>
                             <div class="fs-13 mb-2" style="color:var(--color-navy);">{{ $q['texte'] }}</div>
                             <div class="d-flex gap-2 flex-wrap">
@@ -653,12 +654,12 @@ $totalCanaris    = count(QuestionnaireData::$canaris['adulte'])
 
     // Canaris : show/hide adulte / enfant blocks
     function updateCanarisBlocks() {
-        const profil = document.querySelector('input[name="ctx_profil"]:checked')?.value ?? 'adulte';
+        const profil = document.querySelector('input[name="ctx1"]:checked')?.value ?? 'adulte';
         document.getElementById('canaris-adulte').style.display = (profil === 'adulte' || profil === 'les_deux') ? '' : 'none';
         document.getElementById('canaris-enfant').style.display = (profil === 'enfant' || profil === 'les_deux') ? '' : 'none';
     }
     document.addEventListener('change', function (e) {
-        if (e.target.name === 'ctx_profil') updateCanarisBlocks();
+        if (e.target.name === 'ctx1') updateCanarisBlocks();
     });
     document.addEventListener('DOMContentLoaded', updateCanarisBlocks);
 
@@ -733,6 +734,28 @@ $totalCanaris    = count(QuestionnaireData::$canaris['adulte'])
             if (status) status.textContent = 'Erreur de sauvegarde';
         });
     }
+
+    // Allow deselecting radio buttons by clicking the already-selected option again
+    document.addEventListener('mousedown', function(e) {
+        const label = e.target.closest('label.btn');
+        if (!label) return;
+        const input = document.getElementById(label.getAttribute('for'));
+        if (input && input.type === 'radio') {
+            label.dataset.wasChecked = input.checked ? 'true' : 'false';
+        }
+    });
+    document.addEventListener('click', function(e) {
+        const label = e.target.closest('label.btn');
+        if (!label) return;
+        const input = document.getElementById(label.getAttribute('for'));
+        if (!input || input.type !== 'radio') return;
+        if (label.dataset.wasChecked === 'true') {
+            e.preventDefault(); // block browser from forwarding click to input (would re-check it)
+            input.checked = false;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        delete label.dataset.wasChecked;
+    });
 
     document.addEventListener('change', function () { updateBadges(); triggerSave(); });
     document.addEventListener('input',  function (e) {

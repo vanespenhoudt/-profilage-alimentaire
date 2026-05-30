@@ -49,6 +49,7 @@ Route::middleware(['auth', 'role:conseiller'])->group(function () {
     Route::post('/clients/{client}/bilan/notes', [QuestionnaireController::class, 'saveNotes'])->name('questionnaire.bilan.notes.save');
     Route::post('/clients/{client}/questionnaire/token', [QuestionnaireController::class, 'generateToken'])->name('questionnaire.generate-token');
     Route::post('/clients/{client}/menu', [QuestionnaireController::class, 'saveMenu'])->name('questionnaire.menu.save');
+    Route::post('/clients/{client}/aliments', [QuestionnaireController::class, 'saveAliments'])->name('questionnaire.aliments.save');
 });
 
 // Administration — super admin uniquement
