@@ -49,9 +49,9 @@ body { font-family: var(--font-body); background: var(--bg); color: var(--text);
 .nav          { height: 50px; display: flex; align-items: center; padding: 0 24px; gap: 18px; background: var(--green); }
 .nav-logo     { font-family: var(--font-title); font-size: 13px; font-weight: 700; color: var(--color-text-on-green); letter-spacing: -0.02em; text-decoration: none; }
 .nav-sep      { width: 1px; height: 16px; background: var(--color-white-20); }
-.nav-link     { font-family: var(--font-body); font-size: 12px; color: #FFFFFF; background: #1a1a1a; cursor: pointer; text-decoration: none; padding: 6px 10px; border-radius: var(--r-input); transition: background .15s, color .15s; }
-.nav-link:hover  { color: #FFFFFF; background: #333333; }
-.nav-link.active { color: #FFFFFF; background: #1a1a1a; }
+.nav-link     { font-family: var(--font-body); font-size: 12px; color: #FFFFFF; background: rgba(0,0,0,0.20); cursor: pointer; text-decoration: none; padding: 6px 10px; border-radius: var(--r-input); transition: background .15s, color .15s; }
+.nav-link:hover  { color: #FFFFFF; background: rgba(0,0,0,0.35); }
+.nav-link.active { color: #FFFFFF; background: rgba(0,0,0,0.20); }
 .nav-right    { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .nav-avatar   { width: 26px; height: 26px; background: var(--color-white-20); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-size: 9px; font-weight: 700; color: var(--color-text-on-green); }
 .nav-user-name { font-family: var(--font-body); font-size: 12px; color: #FFFFFF; }
@@ -170,8 +170,8 @@ textarea.form-control, .field-textarea { height: auto; min-height: 60px; padding
 .btn-outline-chasseur:hover, .btn-check:checked + .btn-outline-chasseur { background: var(--green); border-color: var(--green); color: var(--color-text-on-green); font-weight: 600; }
 .btn-sm          { height: 30px; font-size: 12px; padding: 0 10px; }
 .btn-back        { width: 26px; height: 26px; padding: 0; border: 1.5px solid var(--color-white-30); border-radius: var(--r-input); background: transparent; color: var(--color-text-on-green); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.btn-topbar-logout { background: #1a1a1a; border: none; border-radius: 8px; color: #FFFFFF; font-family: var(--font-body); font-size: 13px; padding: 4px 12px; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; justify-content: center; }
-.btn-topbar-logout:hover { background: #333333; }
+.btn-topbar-logout { background: rgba(0,0,0,0.20); border: none; border-radius: var(--r-pill); color: #FFFFFF; font-family: var(--font-body); font-size: 13px; padding: 5px 14px; cursor: pointer; transition: background .15s; display: inline-flex; align-items: center; justify-content: center; }
+.btn-topbar-logout:hover { background: rgba(0,0,0,0.35); }
 
 
 /* ─── QUESTION ROW ───────────────────────────────────────── */

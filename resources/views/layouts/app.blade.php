@@ -21,13 +21,14 @@
             padding: 0 20px; display: flex; align-items: center; gap: 24px;
         }
         .nav-brand {
-            color: var(--color-text-on-green); font-family: 'Syne', sans-serif;
+            color: #FFFFFF; font-family: 'Syne', sans-serif;
             font-weight: 700; font-size: 15px; text-decoration: none;
             display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+            background: rgba(0,0,0,0.20); border-radius: var(--radius-pill); padding: 5px 14px;
         }
-        .nav-brand:hover { color: var(--color-text-on-green); text-decoration: none; }
+        .nav-brand:hover { color: #FFFFFF; text-decoration: none; background: rgba(0,0,0,0.30); }
         .brand-icon {
-            width: 30px; height: 30px; background: var(--color-white-20);
+            width: 28px; height: 28px; background: transparent;
             border-radius: 9px; display: flex; align-items: center; justify-content: center;
             font-size: 1rem; flex-shrink: 0;
         }
