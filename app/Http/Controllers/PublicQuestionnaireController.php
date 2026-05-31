@@ -75,13 +75,6 @@ class PublicQuestionnaireController extends Controller
 
         (new SubmitQuestionnaireAction())->execute($questionnaire, $answers);
 
-        if ($questionnaire->bilan_visible_client && $questionnaire->scores) {
-            $client     = $questionnaire->client;
-            $data       = QuestionnaireData::class;
-            $clientView = true;
-            return view('questionnaire.bilan', compact('questionnaire', 'client', 'data', 'clientView'));
-        }
-
         return view('questionnaire.merci', compact('questionnaire'));
     }
 
