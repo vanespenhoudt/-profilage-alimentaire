@@ -419,10 +419,10 @@ dt { font-family: var(--font-body); }
 .tiptap-btn:hover { background: var(--color-bg-card); border-color: var(--color-border-light); }
 .tiptap-btn-active { background: var(--color-primary) !important; color: #fff !important; border-color: var(--color-primary) !important; }
 .tiptap-sep { width: 1px; background: var(--color-border-light); margin: 2px 4px; align-self: stretch; }
-[data-tiptap-content] { min-height: 180px; padding: 12px 14px; font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--color-navy); outline: none; cursor: text; }
-[data-tiptap-content] p { margin-bottom: 6px; }
-[data-tiptap-content] h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin: 12px 0 4px; }
-[data-tiptap-content] h3 { font-family: 'Syne', sans-serif; font-size: .875rem; font-weight: 700; margin: 10px 0 4px; }
-[data-tiptap-content] ul, [data-tiptap-content] ol { padding-left: 1.4rem; margin-bottom: 6px; }
-[data-tiptap-content] blockquote { border-left: 3px solid var(--color-primary); padding-left: 10px; color: var(--color-text-muted); margin: 8px 0; }
-[data-tiptap-content]:empty:before { content: attr(data-placeholder); color: var(--color-text-muted); pointer-events: none; }
+[data-tiptap-content], .tiptap-content { min-height: 180px; padding: 12px 14px; font-family: 'Outfit', sans-serif; font-size: 14px; line-height: 1.6; color: var(--color-navy); outline: none; cursor: text; display: block; width: 100%; }
+[data-tiptap-content] p, .tiptap-content p { margin-bottom: 6px; }
+[data-tiptap-content] h2, .tiptap-content h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin: 12px 0 4px; }
+[data-tiptap-content] h3, .tiptap-content h3 { font-family: 'Syne', sans-serif; font-size: .875rem; font-weight: 700; margin: 10px 0 4px; }
+[data-tiptap-content] ul, [data-tiptap-content] ol, .tiptap-content ul, .tiptap-content ol { padding-left: 1.4rem; margin-bottom: 6px; }
+[data-tiptap-content] blockquote, .tiptap-content blockquote { border-left: 3px solid var(--color-primary); padding-left: 10px; color: var(--color-text-muted); margin: 8px 0; }
+[data-tiptap-content]:empty:before, .tiptap-content:empty:before { content: attr(data-placeholder); color: var(--color-text-muted); pointer-events: none; }
