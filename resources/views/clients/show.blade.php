@@ -60,6 +60,24 @@
                     <dt class="col-sm-4 dt-label">Modifié le</dt>
                     <dd class="col-sm-8 dd-value mb-0">{{ $client->updated_at->format('d/m/Y à H:i') }}</dd>
                 </dl>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-3">
+                        <label class="form-label">Âge</label>
+                        <p class="form-control-plaintext">{{ $client->age ?? '—' }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Sexe</label>
+                        <p class="form-control-plaintext">{{ $client->sexe ?? '—' }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Taille</label>
+                        <p class="form-control-plaintext">{{ $client->taille ? $client->taille . ' cm' : '—' }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Poids</label>
+                        <p class="form-control-plaintext">{{ $client->poids ? $client->poids . ' kg' : '—' }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
