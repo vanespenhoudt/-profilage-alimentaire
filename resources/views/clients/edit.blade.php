@@ -85,6 +85,45 @@
                 @enderror
             </div>
 
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label for="age" class="form-label fw-medium">Âge</label>
+                    <input type="number" name="age" id="age" value="{{ old('age', $client->age) }}"
+                           class="form-control @error('age') is-invalid @enderror"
+                           placeholder="ans" min="0" max="150">
+                    @error('age')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-3">
+                    <label for="sexe" class="form-label fw-medium">Sexe</label>
+                    <input type="text" name="sexe" id="sexe" value="{{ old('sexe', $client->sexe) }}"
+                           class="form-control @error('sexe') is-invalid @enderror"
+                           placeholder="Ex : F, M…">
+                    @error('sexe')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-3">
+                    <label for="taille" class="form-label fw-medium">Taille (cm)</label>
+                    <input type="number" name="taille" id="taille" value="{{ old('taille', $client->taille) }}"
+                           class="form-control @error('taille') is-invalid @enderror"
+                           placeholder="cm" min="0" max="300">
+                    @error('taille')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-3">
+                    <label for="poids" class="form-label fw-medium">Poids (kg)</label>
+                    <input type="number" name="poids" id="poids" value="{{ old('poids', $client->poids) }}"
+                           class="form-control @error('poids') is-invalid @enderror"
+                           placeholder="kg" min="0" max="500">
+                    @error('poids')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
             <div class="mb-3">
                 <label for="bt" class="form-label fw-medium">Bilan terrain</label>
                 <textarea name="bt" id="bt" rows="4"
