@@ -18,6 +18,11 @@ final class SubmitQuestionnaireAction
         }
         unset($answers['rgpd_consent']);
 
+        if (isset($answers['menu_text'])) {
+            $questionnaire->menu_text = $answers['menu_text'] ?: null;
+            unset($answers['menu_text']);
+        }
+
         if (isset($answers['aliments_text'])) {
             $questionnaire->aliments_text = $answers['aliments_text'] ?: null;
             unset($answers['aliments_text']);

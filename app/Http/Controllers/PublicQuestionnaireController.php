@@ -71,7 +71,14 @@ class PublicQuestionnaireController extends Controller
             return view('questionnaire.merci', compact('questionnaire'));
         }
 
-        $answers = $request->except(['_token']);
+        $answers = $request->except(['_token', 'menu_file']);
+
+        if ($request->hasFile('menu_file')) {
+            $file = $request->file('menu_file');
+            $path = $file->store('menus', 'public');
+            $questionnaire->menu_file      = $path;
+            $questionnaire->menu_file_name = $file->getClientOriginalName();
+        }
 
         (new SubmitQuestionnaireAction())->execute($questionnaire, $answers);
 

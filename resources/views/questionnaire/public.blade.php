@@ -562,20 +562,19 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
     </div>{{-- /accordion --}}
 
-    {{-- Menu (lecture seule si menu_visible_client) ─────────────────── --}}
-    @if($questionnaire->menu_visible_client && $questionnaire->menu_text)
+    {{-- Menu + Aliments (si menu_visible_client) ────────────────────── --}}
+    @if($questionnaire->menu_visible_client)
     <div class="card mt-3">
         <div class="card-body p-4">
-            <div class="fw-semibold fs-13 mb-2 text-navy">
-                <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Votre plan alimentaire
-            </div>
-            <div class="menu-text">{!! $questionnaire->menu_text !!}</div>
+            <label class="fw-semibold fs-13 mb-2 d-block text-navy" for="menu_text">
+                <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Votre plan alimentaire sur 5 jours
+            </label>
+            <p class="fs-12 text-muted-pa mb-2">Décrivez vos repas typiques sur une semaine (petit-déjeuner, déjeuner, dîner, collations).</p>
+            <textarea name="menu_text" id="menu_text" rows="8" class="form-control"
+                      placeholder="Ex : Lundi – Petit-déjeuner : flocons d'avoine, fruits rouges…">{{ $answers['menu_text'] ?? $questionnaire->menu_text ?? '' }}</textarea>
         </div>
     </div>
-    @endif
 
-    {{-- Aliments préférés (si aliments_visible_client) ──────────────── --}}
-    @if($questionnaire->aliments_visible_client)
     <div class="card mt-3">
         <div class="card-body p-4">
             <label class="fw-semibold fs-13 mb-2 d-block text-navy" for="aliments_text">
@@ -627,8 +626,20 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
         {{-- Droite : bouton soumettre --}}
         <div class="d-flex gap-2">
-            <form method="POST" action="{{ route('questionnaire.public.submit', $token) }}" id="submitForm">
+            <form method="POST" action="{{ route('questionnaire.public.submit', $token) }}"
+                  enctype="multipart/form-data" id="submitForm">
                 @csrf
+                @if($questionnaire->menu_visible_client)
+                <div class="mb-0 me-2" style="display:inline-block;">
+                    <label class="btn btn-outline-secondary btn-sm mb-0" style="cursor:pointer;" title="Joindre un fichier (PDF, DOC, JPG — max 10 Mo)">
+                        <i class="bi bi-paperclip me-1"></i><span id="fileLabel">Joindre un fichier</span>
+                        <input type="file" name="menu_file" id="menuFileInput"
+                               accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg"
+                               class="d-none"
+                               onchange="document.getElementById('fileLabel').textContent = this.files[0]?.name ?? 'Joindre un fichier'">
+                    </label>
+                </div>
+                @endif
             </form>
             <button type="button" class="btn btn-primary fw-semibold px-4" id="submitBtn"
                     onclick="submitQuestionnaire()">
@@ -858,7 +869,8 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
         if (ev.target.name === 'ctx1') updateCanarisBlocks();
     });
 
-    document.addEventListener('change',          () => { updateBadges(); scheduleAutoSave(); });
+    document.addEventListener('change', () => { updateBadges(); scheduleAutoSave(); });
+    document.addEventListener('input',  (e) => { if (e.target.matches('textarea')) scheduleAutoSave(); });
     document.addEventListener('DOMContentLoaded', () => { updateBadges(); updateCanarisBlocks(); });
 
     document.querySelectorAll('.accordion-collapse').forEach(el => {
