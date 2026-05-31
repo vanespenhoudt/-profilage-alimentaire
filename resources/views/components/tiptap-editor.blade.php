@@ -2,6 +2,18 @@
 @props(['name' => 'menu_text', 'value' => ''])
 @php $uid = 'tiptap-' . uniqid(); @endphp
 
+<style>
+#{{ $uid }} .tiptap-content {
+    min-height: 180px; padding: 12px 14px; outline: none; cursor: text;
+    display: block; width: 100%; font-size: 14px; line-height: 1.6;
+    font-family: 'Outfit', sans-serif; color: var(--color-navy, #1a2233);
+    border-top: 0;
+}
+#{{ $uid }} .tiptap-content:empty:before {
+    content: attr(data-placeholder); color: #adb5bd; pointer-events: none;
+}
+</style>
+
 <div class="tiptap-wrap" data-editor-root id="{{ $uid }}">
     <div class="tiptap-toolbar" data-tiptap-toolbar>
         <button type="button" class="tiptap-btn" data-cmd="bold"><b>B</b></button>
