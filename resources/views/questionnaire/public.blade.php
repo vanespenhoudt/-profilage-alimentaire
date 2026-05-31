@@ -685,10 +685,12 @@
     document.addEventListener('DOMContentLoaded', updateBadges);
 
     document.querySelectorAll('.accordion-collapse').forEach(el => {
-        el.addEventListener('shown.bs.collapse', function () {
-            const header = this.previousElementSibling;
-            const top = header.getBoundingClientRect().top + window.scrollY - 12;
-            window.scrollTo({ top, behavior: 'smooth' });
+        el.addEventListener('show.bs.collapse', function () {
+            const top = this.previousElementSibling.getBoundingClientRect().top + window.scrollY - 12;
+            this.addEventListener('shown.bs.collapse', function once() {
+                window.scrollTo({ top, behavior: 'smooth' });
+                this.removeEventListener('shown.bs.collapse', once);
+            });
         });
     });
 })();
