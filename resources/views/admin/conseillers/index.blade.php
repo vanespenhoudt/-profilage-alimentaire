@@ -52,7 +52,7 @@
 </div>
 
 {{-- Lien généré --}}
-@if(session('token_generated') || ($invitations->where('isPending')->isNotEmpty() && session('success')))
+@if(session('token_generated') || ($invitations->filter(fn($i) => $i->isPending())->isNotEmpty() && session('success')))
 @endif
 
 {{-- Panel invitations --}}
