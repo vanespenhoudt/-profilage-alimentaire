@@ -685,12 +685,9 @@
     document.addEventListener('DOMContentLoaded', updateBadges);
 
     document.querySelectorAll('.accordion-collapse').forEach(el => {
-        el.addEventListener('show.bs.collapse', function () {
-            const top = this.previousElementSibling.getBoundingClientRect().top + window.scrollY - 12;
-            this.addEventListener('shown.bs.collapse', function once() {
-                window.scrollTo({ top, behavior: 'smooth' });
-                this.removeEventListener('shown.bs.collapse', once);
-            });
+        el.addEventListener('shown.bs.collapse', function () {
+            const header = this.previousElementSibling;
+            setTimeout(() => header.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
         });
     });
 })();
