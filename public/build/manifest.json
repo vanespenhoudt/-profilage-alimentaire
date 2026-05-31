@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-6PbARsGy.css",
+    "file": "assets/app-CN4-LWmu.css",
     "name": "app",
     "names": [
       "app.css"
@@ -15,7 +15,7 @@
     "isEntry": true
   },
   "resources/js/tiptap-editor.js": {
-    "file": "assets/tiptap-editor-BuUbRK1l.js",
+    "file": "assets/tiptap-editor-Bq4lJy5b.js",
     "name": "tiptap-editor",
     "src": "resources/js/tiptap-editor.js",
     "isEntry": true
