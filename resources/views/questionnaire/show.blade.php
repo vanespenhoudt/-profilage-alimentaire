@@ -741,10 +741,18 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
         const status  = document.getElementById('saveStatus');
         if (spinner) spinner.classList.remove('d-none');
 
+        const fd = new FormData(document.getElementById('questForm'));
+
+        const menuHidden = document.querySelector('#menuForm textarea[name="menu_text"]');
+        if (menuHidden) fd.set('menu_text', menuHidden.value);
+
+        const alimentsField = document.querySelector('textarea[name="aliments_text"]');
+        if (alimentsField) fd.set('aliments_text', alimentsField.value);
+
         fetch(SAVE_URL, {
             method: 'POST',
             headers: { 'X-CSRF-TOKEN': CSRF },
-            body: new FormData(document.getElementById('questForm')),
+            body: fd,
         })
         .then(r => r.json())
         .then(data => {
@@ -783,7 +791,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 
     document.addEventListener('change', function () { updateBadges(); triggerSave(); });
     document.addEventListener('input',  function (e) {
-        if (e.target.matches('input[type="text"],input[type="number"],textarea')) triggerSave();
+        if (e.target.matches('input[type="text"],input[type="number"],textarea,[contenteditable]')) triggerSave();
     });
     document.addEventListener('DOMContentLoaded', updateBadges);
 })();

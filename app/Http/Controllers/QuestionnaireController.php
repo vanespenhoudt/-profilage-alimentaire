@@ -30,11 +30,19 @@ class QuestionnaireController extends Controller
     {
         $this->authorizeClientAccess($request->user(), $client);
 
-        $answers = $request->except(['_token']);
+        $answers = $request->except(['_token', 'menu_text', 'aliments_text']);
 
         $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
         $questionnaire->answers    = $answers;
         $questionnaire->updated_at = now();
+
+        if ($request->has('menu_text')) {
+            $questionnaire->menu_text = $request->input('menu_text') ?: null;
+        }
+        if ($request->has('aliments_text')) {
+            $questionnaire->aliments_text = $request->input('aliments_text') ?: null;
+        }
+
         $questionnaire->save();
 
         $this->syncIdentityToClient($client, $answers);
