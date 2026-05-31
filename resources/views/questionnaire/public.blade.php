@@ -570,8 +570,15 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                 <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Votre plan alimentaire sur 5 jours
             </label>
             <p class="fs-12 text-muted-pa mb-2">Décrivez vos repas typiques sur une semaine (petit-déjeuner, déjeuner, dîner, collations).</p>
-            <textarea name="menu_text" id="menu_text" rows="8" class="form-control"
+            <textarea name="menu_text" id="menu_text" rows="8" class="form-control mb-3"
                       placeholder="Ex : Lundi – Petit-déjeuner : flocons d'avoine, fruits rouges…">{{ $answers['menu_text'] ?? $questionnaire->menu_text ?? '' }}</textarea>
+            <label class="form-label fw-semibold fs-12 text-navy mb-1">
+                <i class="bi bi-paperclip me-1 text-green-dark"></i>Joindre un fichier
+                <span class="fw-normal text-muted-pa ms-1">(PDF, TXT, DOC, DOCX, JPG — max 10 Mo)</span>
+            </label>
+            <input type="file" name="menu_file" id="menuFileInput"
+                   accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg"
+                   class="form-control form-control-sm">
         </div>
     </div>
 
@@ -629,17 +636,6 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             <form method="POST" action="{{ route('questionnaire.public.submit', $token) }}"
                   enctype="multipart/form-data" id="submitForm">
                 @csrf
-                @if($questionnaire->menu_visible_client)
-                <div class="mb-0 me-2" style="display:inline-block;">
-                    <label class="btn btn-outline-secondary btn-sm mb-0" style="cursor:pointer;" title="Joindre un fichier (PDF, DOC, JPG — max 10 Mo)">
-                        <i class="bi bi-paperclip me-1"></i><span id="fileLabel">Joindre un fichier</span>
-                        <input type="file" name="menu_file" id="menuFileInput"
-                               accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg"
-                               class="d-none"
-                               onchange="document.getElementById('fileLabel').textContent = this.files[0]?.name ?? 'Joindre un fichier'">
-                    </label>
-                </div>
-                @endif
             </form>
             <button type="button" class="btn btn-primary fw-semibold px-4" id="submitBtn"
                     onclick="submitQuestionnaire()">
@@ -806,6 +802,11 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             input.classList.add('q-field');
             dst.appendChild(input);
         });
+        // Déplacer le fichier (ne peut pas passer en hidden input)
+        const fileInput = document.getElementById('menuFileInput');
+        if (fileInput && fileInput.files.length > 0) {
+            dst.appendChild(fileInput);
+        }
         dst.submit();
     }
 
