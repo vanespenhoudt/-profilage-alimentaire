@@ -426,3 +426,9 @@ dt { font-family: var(--font-body); }
 [data-tiptap-content] ul, [data-tiptap-content] ol, .tiptap-content ul, .tiptap-content ol { padding-left: 1.4rem; margin-bottom: 6px; }
 [data-tiptap-content] blockquote, .tiptap-content blockquote { border-left: 3px solid var(--color-primary); padding-left: 10px; color: var(--color-text-muted); margin: 8px 0; }
 [data-tiptap-content]:empty:before, .tiptap-content:empty:before { content: attr(data-placeholder); color: var(--color-text-muted); pointer-events: none; }
+.tiptap-readonly { padding: 12px 14px; font-size: 14px; line-height: 1.6; font-family: 'Outfit', sans-serif; color: var(--color-navy); }
+.tiptap-readonly p { margin-bottom: 6px; }
+.tiptap-readonly h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin: 12px 0 4px; }
+.tiptap-readonly h3 { font-family: 'Syne', sans-serif; font-size: .875rem; font-weight: 700; margin: 10px 0 4px; }
+.tiptap-readonly ul, .tiptap-readonly ol { padding-left: 1.4rem; margin-bottom: 6px; }
+.tiptap-readonly blockquote { border-left: 3px solid var(--color-primary); padding-left: 10px; color: var(--color-text-muted); margin: 8px 0; }

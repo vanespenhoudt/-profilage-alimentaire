@@ -1123,31 +1123,10 @@ $diathTips = [
                 </div>
                 @endif
 
-                <form method="POST" action="{{ route('questionnaire.menu.save', $client) }}"
-                      enctype="multipart/form-data">
-                    @csrf
-
-                    {{-- Éditeur riche --}}
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Menu / Plan alimentaire</label>
-                        <x-tiptap-editor name="menu_text" :value="$questionnaire->menu_text ?? ''" />
-                    </div>
-
-                    {{-- Upload fichier --}}
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold">
-                            Joindre un fichier
-                            <span class="text-muted-pa fw-normal fs-12 ms-1">(PDF, TXT, DOC, DOCX, JPG — max 10 Mo)</span>
-                        </label>
-                        <input type="file" name="menu_file" id="menu_file"
-                               class="form-control form-control-sm"
-                               accept=".pdf,.txt,.doc,.docx,.jpg,.jpeg">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-sm" id="saveMenuBtn">
-                        <i class="bi bi-save me-1"></i>Enregistrer le menu
-                    </button>
-                </form>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Menu / Plan alimentaire</label>
+                    <x-tiptap-editor name="menu_text" :value="$questionnaire->menu_text ?? ''" :readonly="true" />
+                </div>
             </div>
         </div>
     </div>
@@ -1167,18 +1146,11 @@ $diathTips = [
                     <div style="white-space: pre-wrap; font-size: 14px; color: var(--color-navy);">{{ $questionnaire->aliments_text }}</div>
 
                 @elseif(!($clientView ?? false))
-                    <form method="POST" action="{{ route('questionnaire.aliments.save', $client) }}">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Quels sont vos 10 aliments préférés ?</label>
-                            <textarea name="aliments_text" rows="6"
-                                      class="form-control"
-                                      placeholder="Listez les aliments préférés du client, un par ligne...">{{ $questionnaire->aliments_text ?? '' }}</textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="bi bi-save me-1"></i>Enregistrer
-                        </button>
-                    </form>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Quels sont vos 10 aliments préférés ?</label>
+                        <textarea rows="6" class="form-control" readonly
+                                  style="background:var(--color-bg-input);resize:none;">{{ $questionnaire->aliments_text ?? '' }}</textarea>
+                    </div>
                 @endif
 
             </div>

@@ -1,7 +1,11 @@
 {{-- Usage: <x-tiptap-editor name="menu_text" :value="$questionnaire?->menu_text ?? ''" /> --}}
-@props(['name' => 'menu_text', 'value' => ''])
+@props(['name' => 'menu_text', 'value' => '', 'readonly' => false])
 @php $uid = 'tiptap-' . uniqid(); @endphp
 
+@if($readonly)
+    {{-- Lecture seule : affichage HTML brut --}}
+    <div class="tiptap-readonly">{!! $value ?: '<p class="text-muted-pa fst-italic">Aucun menu enregistré.</p>' !!}</div>
+@else
 <style>
 #{{ $uid }} .tiptap-content {
     min-height: 180px; padding: 12px 14px; outline: none; cursor: text;
@@ -78,3 +82,4 @@
     }
 })();
 </script>
+@endif
