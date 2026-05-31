@@ -95,12 +95,16 @@
                         Conseillers
                     </a>
                     @endif
+                    <a href="{{ route('profile.edit') }}"
+                       class="nav-link {{ request()->is('profile') ? 'active' : '' }}">
+                        <i class="bi bi-person-gear me-1"></i>Mon profil
+                    </a>
                 </div>
 
-                <a href="{{ route('profile.edit') }}" class="nav-user-pill" style="text-decoration:none;">
+                <div class="nav-user-pill">
                     <i class="bi bi-person-circle"></i>
                     <span class="nav-user-name-text">{{ auth()->user()->name }}</span>
-                </a>
+                </div>
 
                 <form method="POST" action="{{ route('logout') }}" class="mb-0">
                     @csrf
