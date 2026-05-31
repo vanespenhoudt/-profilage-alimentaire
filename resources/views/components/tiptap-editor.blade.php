@@ -24,7 +24,7 @@
 
 <script>
 (function () {
-    var root    = document.currentScript.previousElementSibling.previousElementSibling;
+    var root    = document.currentScript.previousElementSibling;
     var toolbar = root.querySelector('[data-tiptap-toolbar]');
     var content = root.querySelector('[data-tiptap-content]');
     var hidden  = root.querySelector('textarea');
