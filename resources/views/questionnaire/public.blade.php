@@ -3,7 +3,12 @@
 @section('title', 'Mon questionnaire nutritionnel')
 
 @section('content')
-@php use App\Data\QuestionnaireData; @endphp
+@php
+use App\Data\QuestionnaireData;
+$totalCanaris = count(QuestionnaireData::$canaris_adulte)
+              + count(QuestionnaireData::$canaris_enfant)
+              + count(QuestionnaireData::$canaris_contexte) - 1; // ctx1 non compté (profil)
+@endphp
 
 <style>
     /* ── Spécifique vue publique questionnaire ──────────────────── */
@@ -456,7 +461,132 @@
         </div>
         @endif
 
+        {{-- SECTION 7 — CANARIS ──────────────────────────────────── --}}
+        @if(in_array('canaris', $sections))
+        @php $sNum++; @endphp
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button {{ $sNum > 1 ? 'collapsed' : '' }} fw-semibold" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s7" @if($sNum === 1) aria-expanded="true" @endif>
+                    <span class="section-icon"><i class="bi bi-feather"></i></span>
+                    {{ $sNum }}. Canaris
+                    <span class="badge-progress ms-3" id="badge-s7">0 cochés</span>
+                </button>
+            </h2>
+            <div id="s7" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+                    <div class="alert-section-info mb-3">
+                        Cochez les symptômes qui vous correspondent. Les items <span class="badge text-bg-warning text-dark fw-semibold" style="font-size:10px;">×2</span> ont un poids double.
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="fw-semibold fs-13 mb-2">Ce questionnaire concerne :</div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            @foreach(['adulte' => 'Adulte', 'enfant' => 'Enfant', 'les_deux' => 'Les deux'] as $val => $label)
+                            <input type="radio" name="ctx1" value="{{ $val }}"
+                                   class="btn-check radio-q" id="ctx1_{{ $val }}"
+                                   data-section="s7"
+                                   @checked(($answers['ctx1'] ?? 'adulte') === $val)>
+                            <label class="btn btn-outline-primary btn-sm" for="ctx1_{{ $val }}">{{ $label }}</label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div id="canaris-adulte" class="canaris-profil-block">
+                        <div class="fw-semibold fs-13 mb-2 text-navy">Symptômes adulte</div>
+                        <div class="row g-2 mb-3">
+                            @foreach(QuestionnaireData::$canaris_adulte as $q)
+                            <div class="col-md-6">
+                                <div class="form-check py-1 px-3 rounded" style="background:var(--color-bg-tint);">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="{{ $q['id'] }}" value="1"
+                                           id="{{ $q['id'] }}" data-section="s7"
+                                           @checked(!empty($answers[$q['id']]))>
+                                    <label class="form-check-label form-check-label-navy d-flex align-items-center gap-2" for="{{ $q['id'] }}">
+                                        <span class="flex-grow-1">{{ $q['texte'] }}</span>
+                                        @if($q['poids'] === 2)
+                                        <span class="badge text-bg-warning text-dark fw-semibold flex-shrink-0" style="font-size:10px;">×2</span>
+                                        @endif
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div id="canaris-enfant" class="canaris-profil-block" style="display:none;">
+                        <div class="fw-semibold fs-13 mb-2 text-navy">Symptômes enfant</div>
+                        <div class="row g-2 mb-3">
+                            @foreach(QuestionnaireData::$canaris_enfant as $q)
+                            <div class="col-md-6">
+                                <div class="form-check py-1 px-3 rounded" style="background:var(--color-bg-tint);">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="{{ $q['id'] }}" value="1"
+                                           id="{{ $q['id'] }}" data-section="s7"
+                                           @checked(!empty($answers[$q['id']]))>
+                                    <label class="form-check-label form-check-label-navy d-flex align-items-center gap-2" for="{{ $q['id'] }}">
+                                        <span class="flex-grow-1">{{ $q['texte'] }}</span>
+                                        @if($q['poids'] === 2)
+                                        <span class="badge text-bg-warning text-dark fw-semibold flex-shrink-0" style="font-size:10px;">×2</span>
+                                        @endif
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+                    <div class="fw-semibold fs-13 mb-3 text-navy">Questions de contexte</div>
+                    <div class="d-flex flex-column gap-3">
+                        @foreach(QuestionnaireData::$canaris_contexte as $q)
+                        @if($q['id'] === 'ctx1') @continue @endif
+                        <div>
+                            <div class="fs-13 mb-2" style="color:var(--color-navy);">{{ $q['texte'] }}</div>
+                            <div class="d-flex gap-2 flex-wrap">
+                                @foreach($q['options'] as $val => $label)
+                                <input type="radio" name="{{ $q['id'] }}" value="{{ $val }}"
+                                       class="btn-check radio-q" id="{{ $q['id'] }}_{{ $val }}"
+                                       data-section="s7"
+                                       @checked(($answers[$q['id']] ?? '') === $val)>
+                                <label class="btn btn-outline-primary btn-sm" for="{{ $q['id'] }}_{{ $val }}">{{ $label }}</label>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
     </div>{{-- /accordion --}}
+
+    {{-- Menu (lecture seule si menu_visible_client) ─────────────────── --}}
+    @if($questionnaire->menu_visible_client && $questionnaire->menu_text)
+    <div class="card mt-3">
+        <div class="card-body p-4">
+            <div class="fw-semibold fs-13 mb-2 text-navy">
+                <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Votre plan alimentaire
+            </div>
+            <div class="menu-text">{!! $questionnaire->menu_text !!}</div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Aliments préférés (si aliments_visible_client) ──────────────── --}}
+    @if($questionnaire->aliments_visible_client)
+    <div class="card mt-3">
+        <div class="card-body p-4">
+            <label class="fw-semibold fs-13 mb-2 d-block text-navy" for="aliments_text">
+                <i class="bi bi-heart me-2 text-green-dark"></i>Vos 10 aliments préférés
+            </label>
+            <p class="fs-12 text-muted-pa mb-2">Listez vos aliments préférés, un par ligne.</p>
+            <textarea name="aliments_text" id="aliments_text" rows="6" class="form-control"
+                      placeholder="Ex : Saumon, Avocat, Myrtilles…">{{ $answers['aliments_text'] ?? $questionnaire->aliments_text ?? '' }}</textarea>
+        </div>
+    </div>
+    @endif
 
     {{-- Consentement RGPD ─────────────────────────────────────────── --}}
     <div class="card mt-3" id="rgpdBlock">
@@ -564,6 +694,9 @@
     @endif
     @if(in_array('hormones', $sections))
     sectionCfg.s6 = { type: 'check', total: null, badgeId: 'badge-s6', suffix: ' cochés' };
+    @endif
+    @if(in_array('canaris', $sections))
+    sectionCfg.s7 = { type: 'check', total: null, badgeId: 'badge-s7', suffix: ' cochés' };
     @endif
 
     const TOTAL_RADIO = Object.values(sectionCfg)
@@ -713,8 +846,20 @@
         copyFormAndSubmit();
     };
 
+    // Canaris : afficher/masquer blocs adulte/enfant
+    function updateCanarisBlocks() {
+        const profil = document.querySelector('input[name="ctx1"]:checked')?.value ?? 'adulte';
+        const a = document.getElementById('canaris-adulte');
+        const e = document.getElementById('canaris-enfant');
+        if (a) a.style.display = (profil === 'adulte' || profil === 'les_deux') ? '' : 'none';
+        if (e) e.style.display = (profil === 'enfant'  || profil === 'les_deux') ? '' : 'none';
+    }
+    document.addEventListener('change', function (ev) {
+        if (ev.target.name === 'ctx1') updateCanarisBlocks();
+    });
+
     document.addEventListener('change',          () => { updateBadges(); scheduleAutoSave(); });
-    document.addEventListener('DOMContentLoaded', updateBadges);
+    document.addEventListener('DOMContentLoaded', () => { updateBadges(); updateCanarisBlocks(); });
 
     document.querySelectorAll('.accordion-collapse').forEach(el => {
         el.addEventListener('shown.bs.collapse', function () {

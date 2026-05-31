@@ -13,6 +13,16 @@ final class SubmitQuestionnaireAction
 {
     public function execute(Questionnaire $questionnaire, array $answers): void
     {
+        if (!empty($answers['rgpd_consent'])) {
+            $questionnaire->rgpd_accepted_at = now();
+        }
+        unset($answers['rgpd_consent']);
+
+        if (isset($answers['aliments_text'])) {
+            $questionnaire->aliments_text = $answers['aliments_text'] ?: null;
+            unset($answers['aliments_text']);
+        }
+
         $scores = (new QuestionnaireScorer())->calculate($answers);
 
         $questionnaire->answers      = $answers;

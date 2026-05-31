@@ -31,6 +31,7 @@ class Questionnaire extends Model
         'aliments_visible_client',
         'interpretation_notes',
         'submitted_at',
+        'rgpd_accepted_at',
     ];
 
     protected function casts(): array
@@ -45,6 +46,7 @@ class Questionnaire extends Model
             'interpretation_notes'  => 'array',
             'updated_at'           => 'datetime',
             'submitted_at'         => 'datetime',
+            'rgpd_accepted_at'     => 'datetime',
         ];
     }
 
