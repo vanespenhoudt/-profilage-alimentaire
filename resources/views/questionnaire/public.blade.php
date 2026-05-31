@@ -686,8 +686,9 @@
 
     document.querySelectorAll('.accordion-collapse').forEach(el => {
         el.addEventListener('shown.bs.collapse', function () {
-            const header = this.previousElementSibling;
-            setTimeout(() => header.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+            const btn = this.previousElementSibling.querySelector('button');
+            const y   = btn.getBoundingClientRect().top + window.scrollY - 8;
+            window.scrollTo({ top: y, behavior: 'instant' });
         });
     });
 })();
