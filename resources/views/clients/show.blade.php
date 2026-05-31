@@ -122,19 +122,6 @@
                                 </span>
                             </label>
                         </div>
-                        <div class="d-flex align-items-start gap-3 p-3 rounded mb-2" style="background:var(--color-bg-tint);">
-                            <div class="form-check form-switch mb-0 mt-1">
-                                <input class="form-check-input" type="checkbox" role="switch"
-                                       name="bilan_visible_client" id="bilanVisibleClient" value="1"
-                                       @checked($q?->bilan_visible_client)>
-                            </div>
-                            <label class="form-check-label" for="bilanVisibleClient">
-                                <span class="fw-semibold fs-13">Partager le bilan avec le client</span>
-                                <span class="d-block fs-12 text-muted-pa mt-1">
-                                    Si activé, le bilan nutritionnel sera affiché au client après soumission de son questionnaire.
-                                </span>
-                            </label>
-                        </div>
                     </div>
                     <div class="modal-footer modal-footer-card">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
