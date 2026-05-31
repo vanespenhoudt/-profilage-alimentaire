@@ -33,6 +33,9 @@
             font-size: 1rem; flex-shrink: 0;
         }
         .nav-links    { display: flex; gap: 4px; margin-left: 16px; }
+        .nav-link     { font-family: 'Outfit', sans-serif; font-size: 12px; color: #FFFFFF !important; background: rgba(0,0,0,0.20) !important; text-decoration: none !important; padding: 6px 10px; border-radius: 8px; transition: background .15s; }
+        .nav-link:hover  { background: rgba(0,0,0,0.35) !important; }
+        .nav-link.active { background: rgba(0,0,0,0.40) !important; font-weight: 600; }
         .nav-user-pill {
             margin-left: auto; background: rgba(0,0,0,0.20);
             border-radius: var(--radius-pill); padding: 5px 14px;
