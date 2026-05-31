@@ -49,6 +49,20 @@
             border-bottom: 1px solid var(--color-border-card);
             background: var(--color-bg-card);
         }
+
+        .nav-user-pill      { flex-shrink: 1; min-width: 0; }
+        .nav-user-name-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 140px; }
+
+        @media (max-width: 767px) {
+            .app-nav-inner     { gap: 6px; padding: 0 10px; }
+            .nav-brand         { padding: 5px 9px; }
+            .nav-brand-text    { display: none; }
+            .nav-links         { margin-left: 4px; gap: 2px; }
+            .nav-link          { padding: 5px 9px; font-size: 11px; }
+            .nav-user-pill     { display: none; }
+            .btn-topbar-logout { padding: 5px 9px; font-size: 0; }
+            .btn-topbar-logout i { font-size: 14px; margin: 0 !important; }
+        }
     </style>
 </head>
 <body>
@@ -61,7 +75,7 @@
             <div class="app-nav-inner">
                 <a class="nav-brand" href="{{ route('dashboard') }}">
                     <span class="brand-icon"><i class="bi bi-heart-pulse"></i></span>
-                    Profilage Alimentaire
+                    <span class="nav-brand-text">Profilage Alimentaire</span>
                 </a>
 
                 <div class="nav-links">
@@ -84,7 +98,8 @@
                 </div>
 
                 <div class="nav-user-pill">
-                    <i class="bi bi-person-circle"></i>{{ auth()->user()->name }}
+                    <i class="bi bi-person-circle"></i>
+                    <span class="nav-user-name-text">{{ auth()->user()->name }}</span>
                 </div>
 
                 <form method="POST" action="{{ route('logout') }}" class="mb-0">
