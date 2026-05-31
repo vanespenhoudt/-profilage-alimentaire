@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-header bg-white border-0 pt-3 pb-0 d-flex justify-content-between align-items-center">
         <h5 class="mb-0 fw-semibold">Clients récents</h5>
-        <a href="{{ route('clients.index') }}" class="btn btn-sm btn-outline-primary">Voir tous</a>
+        <a href="{{ route('clients.index') }}" class="btn btn-sm btn-outline-primary">Tous les clients</a>
     </div>
     <div class="card-body p-0">
         @if($clientsRecents->isEmpty())
