@@ -419,10 +419,10 @@ dt { font-family: var(--font-body); }
 .tiptap-btn:hover { background: var(--color-bg-card); border-color: var(--color-border-light); }
 .tiptap-btn-active { background: var(--color-primary) !important; color: #fff !important; border-color: var(--color-primary) !important; }
 .tiptap-sep { width: 1px; background: var(--color-border-light); margin: 2px 4px; align-self: stretch; }
-.tiptap-wrap .ProseMirror { min-height: 180px; padding: 12px 14px; font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--color-navy); outline: none; }
-.tiptap-wrap .ProseMirror p { margin-bottom: 6px; }
-.tiptap-wrap .ProseMirror h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin: 12px 0 4px; }
-.tiptap-wrap .ProseMirror h3 { font-family: 'Syne', sans-serif; font-size: .875rem; font-weight: 700; margin: 10px 0 4px; }
-.tiptap-wrap .ProseMirror ul, .tiptap-wrap .ProseMirror ol { padding-left: 1.4rem; margin-bottom: 6px; }
-.tiptap-wrap .ProseMirror blockquote { border-left: 3px solid var(--color-primary); padding-left: 10px; color: var(--color-text-muted); margin: 8px 0; }
-.tiptap-wrap .ProseMirror p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: var(--color-text-muted); pointer-events: none; float: left; height: 0; }
+[data-tiptap-content] { min-height: 180px; padding: 12px 14px; font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--color-navy); outline: none; cursor: text; }
+[data-tiptap-content] p { margin-bottom: 6px; }
+[data-tiptap-content] h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin: 12px 0 4px; }
+[data-tiptap-content] h3 { font-family: 'Syne', sans-serif; font-size: .875rem; font-weight: 700; margin: 10px 0 4px; }
+[data-tiptap-content] ul, [data-tiptap-content] ol { padding-left: 1.4rem; margin-bottom: 6px; }
+[data-tiptap-content] blockquote { border-left: 3px solid var(--color-primary); padding-left: 10px; color: var(--color-text-muted); margin: 8px 0; }
+[data-tiptap-content]:empty:before { content: attr(data-placeholder); color: var(--color-text-muted); pointer-events: none; }
