@@ -13,11 +13,5 @@
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
-  },
-  "resources/js/tiptap-editor.js": {
-    "file": "assets/tiptap-editor-Bq4lJy5b.js",
-    "name": "tiptap-editor",
-    "src": "resources/js/tiptap-editor.js",
-    "isEntry": true
   }
 }
