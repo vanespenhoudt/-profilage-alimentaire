@@ -625,6 +625,30 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
     </div>
 </div>
 
+{{-- 10 ALIMENTS PRÉFÉRÉS ─────────────────────────────────────────── --}}
+<div class="mt-3 mb-3">
+    <div class="card">
+        <div class="section-header">
+            <i class="bi bi-heart"></i>
+            <span>10 aliments préférés</span>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST" action="{{ route('questionnaire.aliments.save', $client) }}">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Quels sont vos 10 aliments préférés ?</label>
+                    <textarea name="aliments_text" rows="6"
+                              class="form-control"
+                              placeholder="Listez les aliments préférés du client, un par ligne...">{{ $questionnaire?->aliments_text ?? '' }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-save me-1"></i>Enregistrer
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 {{-- Barre flottante bas ──────────────────────────────────────────── --}}
 <div class="position-fixed bottom-0 end-0 p-4 zi-1050">
     <div class="d-flex gap-2 align-items-center float-bar">
