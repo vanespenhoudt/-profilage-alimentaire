@@ -1187,6 +1187,4 @@ $diathTips = [
 
 </div>{{-- /row --}}
 
-@vite('resources/js/tiptap-editor.js')
-
 @endsection

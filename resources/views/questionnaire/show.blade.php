@@ -789,6 +789,4 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 })();
 </script>
 
-@vite('resources/js/tiptap-editor.js')
-
 @endsection
