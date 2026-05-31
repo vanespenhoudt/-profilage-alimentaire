@@ -764,10 +764,16 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
         const status  = document.getElementById('saveStatus');
         spinner.classList.remove('d-none');
 
+        const fd = new FormData(document.getElementById('questForm'));
+        const menuEl     = document.getElementById('menu_text');
+        const alimentsEl = document.getElementById('aliments_text');
+        if (menuEl)     fd.set('menu_text',     menuEl.value);
+        if (alimentsEl) fd.set('aliments_text', alimentsEl.value);
+
         fetch(SAVE_URL, {
             method: 'POST',
             headers: { 'X-CSRF-TOKEN': CSRF },
-            body: new FormData(document.getElementById('questForm')),
+            body: fd,
         })
         .then(r => r.json())
         .then(d => {
