@@ -97,7 +97,7 @@
                     @endif
                     <a href="{{ route('profile.edit') }}"
                        class="nav-link {{ request()->is('profile') ? 'active' : '' }}">
-                        <i class="bi bi-person-gear me-1"></i>Mon profil
+                        Mon profil
                     </a>
                 </div>
 
