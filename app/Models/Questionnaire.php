@@ -12,6 +12,10 @@ class Questionnaire extends Model
 
     public $timestamps = false;
 
+    protected $attributes = [
+        'bilan_visible_client' => false,
+    ];
+
     protected $fillable = [
         'client_id',
         'token',
