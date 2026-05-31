@@ -108,6 +108,7 @@ class InvitationController extends Controller
         $invitation->save();
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         return redirect()->route('dashboard')
             ->with('success', "Bienvenue {$user->name} ! Votre compte conseiller est actif.");
