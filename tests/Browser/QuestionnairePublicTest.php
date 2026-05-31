@@ -68,6 +68,7 @@ class QuestionnairePublicTest extends DuskTestCase
             $browser->visit("/q/{$token}")
                 ->assertPresent('input[name="groupe_sanguin"]')
                 ->click('label[for="gs_1"]')
+                ->check('#rgpdConsent')
                 ->press('Soumettre le questionnaire')
                 ->waitForText('Merci', 10)
                 ->assertSee('Merci');

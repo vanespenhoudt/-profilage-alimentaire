@@ -563,6 +563,20 @@ $diathTips = [
     @endunless
 </div>
 
+{{-- Sentinelles (conseiller uniquement) ────────────────────────────── --}}
+@unless($clientView ?? false)
+@if($client->sentinelles)
+<div class="alert d-flex align-items-start gap-2 mb-3 py-2 px-3"
+     style="background:#fff8e1;border:1px solid #ffe082;border-radius:10px;">
+    <i class="bi bi-exclamation-triangle-fill text-warning mt-1 flex-shrink-0"></i>
+    <div>
+        <div class="fw-semibold fs-12 text-warning-emphasis mb-1">Alertes / Sentinelles</div>
+        <div class="fs-13" style="white-space:pre-wrap;color:var(--color-navy);">{{ $client->sentinelles }}</div>
+    </div>
+</div>
+@endif
+@endunless
+
 <div class="row g-3">
 
     {{-- ════════════════════════════════════════════════════
