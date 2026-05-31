@@ -97,10 +97,10 @@
                     @endif
                 </div>
 
-                <div class="nav-user-pill">
+                <a href="{{ route('profile.edit') }}" class="nav-user-pill" style="text-decoration:none;">
                     <i class="bi bi-person-circle"></i>
                     <span class="nav-user-name-text">{{ auth()->user()->name }}</span>
-                </div>
+                </a>
 
                 <form method="POST" action="{{ route('logout') }}" class="mb-0">
                     @csrf

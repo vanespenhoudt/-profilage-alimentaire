@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\InvitationController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicQuestionnaireController;
 use App\Http\Controllers\QuestionnaireController;
 use Illuminate\Support\Facades\Route;
@@ -21,9 +22,11 @@ Route::post('/q/{token}/save', [PublicQuestionnaireController::class, 'save'])->
 Route::get('/q/{token}/validate', [PublicQuestionnaireController::class, 'validate'])->name('questionnaire.public.validate');
 Route::post('/q/{token}/submit', [PublicQuestionnaireController::class, 'submit'])->name('questionnaire.public.submit');
 
-// Dashboard accessible aux deux rôles
+// Dashboard et profil accessibles aux deux rôles
 Route::middleware(['auth', 'role:super_admin,conseiller'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Invitations — conseillers uniquement
