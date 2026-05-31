@@ -457,6 +457,30 @@
         @endif
 
     </div>{{-- /accordion --}}
+
+    {{-- Consentement RGPD ─────────────────────────────────────────── --}}
+    <div class="card mt-3" id="rgpdBlock">
+        <div class="card-body py-3 px-4">
+            <div class="form-check d-flex align-items-start gap-3">
+                <input class="form-check-input mt-1 flex-shrink-0" type="checkbox"
+                       name="rgpd_consent" id="rgpdConsent" value="1"
+                       @checked(!empty($answers['rgpd_consent'])) style="width:20px;height:20px;">
+                <label class="form-check-label fs-13" for="rgpdConsent">
+                    <span class="fw-semibold">Consentement RGPD <span class="text-danger">*</span></span><br>
+                    <span class="text-muted-pa">
+                        J'accepte que les données renseignées dans ce questionnaire soient traitées
+                        par mon conseiller dans le cadre de mon suivi nutritionnel personnalisé,
+                        conformément au Règlement Général sur la Protection des Données (RGPD — UE 2016/679).
+                        Ces données ne seront pas transmises à des tiers.
+                    </span>
+                </label>
+            </div>
+            <div id="rgpdError" class="text-danger fs-12 mt-2 d-none">
+                <i class="bi bi-exclamation-circle me-1"></i>Vous devez accepter le consentement RGPD avant de soumettre.
+            </div>
+        </div>
+    </div>
+
 </form>
 
 {{-- Barre de soumission flottante ─────────────────────────────── --}}
@@ -642,6 +666,14 @@
     }
 
     window.submitQuestionnaire = async function () {
+        const rgpd = document.getElementById('rgpdConsent');
+        if (!rgpd.checked) {
+            document.getElementById('rgpdError').classList.remove('d-none');
+            document.getElementById('rgpdBlock').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        document.getElementById('rgpdError').classList.add('d-none');
+
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Vérification…';
