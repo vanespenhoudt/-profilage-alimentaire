@@ -1,7 +1,8 @@
 {{-- Usage: <x-tiptap-editor name="menu_text" :value="$questionnaire?->menu_text ?? ''" /> --}}
 @props(['name' => 'menu_text', 'value' => ''])
+@php $uid = 'tiptap-' . uniqid(); @endphp
 
-<div class="tiptap-wrap" data-editor-root>
+<div class="tiptap-wrap" data-editor-root id="{{ $uid }}">
     <div class="tiptap-toolbar" data-tiptap-toolbar>
         <button type="button" class="tiptap-btn" data-cmd="bold"><b>B</b></button>
         <button type="button" class="tiptap-btn" data-cmd="italic"><i>I</i></button>
@@ -24,7 +25,7 @@
 
 <script>
 (function () {
-    var root    = document.currentScript.previousElementSibling;
+    var root    = document.getElementById('{{ $uid }}');
     var toolbar = root.querySelector('[data-tiptap-toolbar]');
     var content = root.querySelector('[data-tiptap-content]');
     var hidden  = root.querySelector('textarea');
