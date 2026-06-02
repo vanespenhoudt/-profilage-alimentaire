@@ -30,6 +30,9 @@ jobs:
             echo "▶ migrations"
             php artisan migrate --force
 
+            echo "▶ chiffrement données existantes"
+            php artisan clients:encrypt-existing
+
             echo "▶ cache"
             php artisan config:clear
             php artisan route:clear

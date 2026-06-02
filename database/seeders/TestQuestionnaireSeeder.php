@@ -16,7 +16,7 @@ class TestQuestionnaireSeeder extends Seeder
 {
     public function run(): void
     {
-        $client = Client::where('prenom', 'Sophie')->first()
+        $client = Client::all()->first(fn($c) => $c->prenom === 'Sophie')
             ?? Client::first();
 
         if (! $client) {
