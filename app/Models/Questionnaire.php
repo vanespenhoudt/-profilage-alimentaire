@@ -38,8 +38,10 @@ class Questionnaire extends Model
     {
         return [
             'sections'             => 'array',
-            'answers'              => 'array',
-            'scores'               => 'array',
+            'answers'              => 'encrypted:array',
+            'scores'               => 'encrypted:array',
+            'menu_text'            => 'encrypted',
+            'aliments_text'        => 'encrypted',
             'menu_visible_client'   => 'boolean',
             'bilan_visible_client'   => 'boolean',
             'aliments_visible_client' => 'boolean',
@@ -60,7 +62,7 @@ class Questionnaire extends Model
         if ($this->isSubmitted()) {
             return 'Soumis le ' . $this->submitted_at->format('d/m/Y à H:i');
         }
-        if ($this->answers) {
+        if ($this->getRawOriginal('answers')) {
             return 'En cours';
         }
         return 'En attente';

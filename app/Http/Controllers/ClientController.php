@@ -22,15 +22,26 @@ class ClientController extends Controller
             ? Client::with('conseiller')
             : $user->clients();
 
+        $allClients = $query->orderBy('created_at', 'desc')->get();
+
         if ($search) {
-            $query->where(function ($q) use ($search): void {
-                $q->where('prenom', 'LIKE', "%{$search}%")
-                  ->orWhere('nom', 'LIKE', "%{$search}%")
-                  ->orWhere('code', 'LIKE', "%{$search}%");
-            });
+            $lower = mb_strtolower($search);
+            $allClients = $allClients->filter(function (Client $c) use ($lower): bool {
+                return str_contains(mb_strtolower((string) $c->prenom), $lower)
+                    || str_contains(mb_strtolower((string) $c->nom), $lower)
+                    || str_contains(mb_strtolower((string) $c->code), $lower);
+            })->values();
         }
 
-        $clients = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+        $page    = $request->input('page', 1);
+        $perPage = 15;
+        $clients = new \Illuminate\Pagination\LengthAwarePaginator(
+            $allClients->forPage($page, $perPage),
+            $allClients->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         $isSuperAdmin = $user->role === Role::SuperAdmin;
 
@@ -126,6 +137,29 @@ class ClientController extends Controller
 
         return redirect()->route('clients.index')
             ->with('success', "Le client {$nomComplet} a été supprimé.");
+    }
+
+    public function anonymize(Request $request, Client $client): RedirectResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $client->update([
+            'prenom'     => 'Anonymisé',
+            'nom'        => 'Anonymisé',
+            'tel'        => null,
+            'email'      => null,
+            'adresse'    => null,
+            'bt'         => null,
+            'notes'      => null,
+            'sexe'       => null,
+            'sentinelles' => null,
+            'age'        => null,
+            'taille'     => null,
+            'poids'      => null,
+        ]);
+
+        return redirect()->route('clients.show', $client)
+            ->with('success', 'Les données personnelles du client ont été anonymisées.');
     }
 
     private function authorizeClientAccess(\App\Models\User $user, Client $client): void

@@ -32,7 +32,19 @@ class Client extends Model
     protected function casts(): array
     {
         return [
-            'rgpd' => 'boolean',
+            'prenom'     => 'encrypted',
+            'nom'        => 'encrypted',
+            'tel'        => 'encrypted',
+            'email'      => 'encrypted',
+            'adresse'    => 'encrypted',
+            'bt'         => 'encrypted',
+            'notes'      => 'encrypted',
+            'sexe'       => 'encrypted',
+            'sentinelles' => 'encrypted',
+            'age'        => 'encrypted',
+            'taille'     => 'encrypted',
+            'poids'      => 'encrypted',
+            'rgpd'       => 'boolean',
         ];
     }
 
