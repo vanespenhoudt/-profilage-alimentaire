@@ -16,24 +16,38 @@ use Illuminate\View\View;
 
 class QuestionnaireController extends Controller
 {
+    // -----------------------------------------------------------------------
+    // Affichage du formulaire (session active)
+    // -----------------------------------------------------------------------
+
     public function show(Request $request, Client $client): View
     {
         $this->authorizeClientAccess($request->user(), $client);
 
         $questionnaire = $client->questionnaire;
-        $answers = $questionnaire?->answers ?? [];
+        $answers       = $questionnaire?->answers ?? [];
 
         return view('questionnaire.show', compact('client', 'questionnaire', 'answers'));
     }
+
+    // -----------------------------------------------------------------------
+    // Autosave AJAX (merge partiel)
+    // -----------------------------------------------------------------------
 
     public function autosave(Request $request, Client $client): JsonResponse
     {
         $this->authorizeClientAccess($request->user(), $client);
 
-        $answers = $request->except(['_token', 'menu_text', 'aliments_text']);
+        $incoming = $request->except(['_token', 'menu_text', 'aliments_text']);
 
-        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
-        $questionnaire->answers    = $answers;
+        $questionnaire = $client->questionnaire
+            ?? Questionnaire::create([
+                'client_id' => $client->id,
+                'is_active' => true,
+                'answers'   => [],
+            ]);
+
+        $questionnaire->answers    = Questionnaire::mergeAnswers($questionnaire->answers ?? [], $incoming);
         $questionnaire->updated_at = now();
 
         if ($request->has('menu_text')) {
@@ -45,7 +59,7 @@ class QuestionnaireController extends Controller
 
         $questionnaire->save();
 
-        $this->syncIdentityToClient($client, $answers);
+        $this->syncIdentityToClient($client, $incoming);
 
         return response()->json([
             'saved' => true,
@@ -53,36 +67,41 @@ class QuestionnaireController extends Controller
         ]);
     }
 
+    // -----------------------------------------------------------------------
+    // Soumission finale (merge partiel + recalcul scores)
+    // -----------------------------------------------------------------------
+
     public function store(Request $request, Client $client): RedirectResponse
     {
         $this->authorizeClientAccess($request->user(), $client);
 
-        $answers = $request->except(['_token']);
-        $scores  = (new QuestionnaireScorer())->calculate($answers);
+        $incoming = $request->except(['_token']);
 
-        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
-        $questionnaire->answers    = $answers;
+        $questionnaire = $client->questionnaire
+            ?? Questionnaire::create([
+                'client_id' => $client->id,
+                'is_active' => true,
+                'answers'   => [],
+            ]);
+
+        $merged = Questionnaire::mergeAnswers($questionnaire->answers ?? [], $incoming);
+        $scores = (new QuestionnaireScorer())->calculate($merged);
+
+        $questionnaire->answers    = $merged;
         $questionnaire->scores     = $scores;
         $questionnaire->updated_at = now();
         $questionnaire->save();
 
-        $this->syncIdentityToClient($client, $answers);
+        $this->syncIdentityToClient($client, $incoming);
 
         return redirect()
             ->route('questionnaire.bilan', $client)
             ->with('success', 'Questionnaire enregistré avec succès.');
     }
 
-    private function syncIdentityToClient(Client $client, array $data): void
-    {
-        foreach (['nom', 'prenom', 'age', 'sexe', 'taille', 'poids', 'sentinelles'] as $field) {
-            if (array_key_exists("identite_{$field}", $data)) {
-                $value = $data["identite_{$field}"];
-                $client->$field = ($value !== '' && $value !== null) ? $value : null;
-            }
-        }
-        $client->save();
-    }
+    // -----------------------------------------------------------------------
+    // Bilan (session active)
+    // -----------------------------------------------------------------------
 
     public function bilan(Request $request, Client $client): View|RedirectResponse
     {
@@ -96,10 +115,66 @@ class QuestionnaireController extends Controller
                 ->with('error', 'Aucun questionnaire enregistré pour ce client.');
         }
 
-        $data = QuestionnaireData::class;
+        $allSessions = $client->questionnaires()->get(['id', 'session_label', 'created_at', 'is_active']);
+        $data        = QuestionnaireData::class;
 
-        return view('questionnaire.bilan', compact('client', 'questionnaire', 'data'));
+        return view('questionnaire.bilan', compact('client', 'questionnaire', 'allSessions', 'data'));
     }
+
+    // -----------------------------------------------------------------------
+    // Nouvelle session
+    // -----------------------------------------------------------------------
+
+    public function nouvelleSession(Request $request, Client $client): RedirectResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $request->validate([
+            'session_label' => 'nullable|string|max:100',
+        ]);
+
+        $previousAnswers = $client->questionnaire?->answers ?? [];
+
+        // Désactiver toutes les sessions existantes
+        $client->questionnaires()->update(['is_active' => false]);
+
+        Questionnaire::create([
+            'client_id'     => $client->id,
+            'session_label' => $request->input('session_label') ?: 'Session du ' . now()->format('d/m/Y'),
+            'is_active'     => true,
+            'answers'       => $previousAnswers,
+            'scores'        => [],
+        ]);
+
+        return redirect()
+            ->route('questionnaire.show', $client)
+            ->with('success', 'Nouvelle session créée. Les réponses précédentes sont conservées et pré-remplies.');
+    }
+
+    // -----------------------------------------------------------------------
+    // Bilan comparatif
+    // -----------------------------------------------------------------------
+
+    public function comparer(Request $request, Client $client): View
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $request->validate([
+            'session_a' => 'required|integer|exists:questionnaires,id',
+            'session_b' => 'required|integer|exists:questionnaires,id',
+        ]);
+
+        $sessionA = Questionnaire::where('client_id', $client->id)
+            ->findOrFail($request->integer('session_a'));
+        $sessionB = Questionnaire::where('client_id', $client->id)
+            ->findOrFail($request->integer('session_b'));
+
+        return view('questionnaire.comparer', compact('client', 'sessionA', 'sessionB'));
+    }
+
+    // -----------------------------------------------------------------------
+    // Notes d'interprétation
+    // -----------------------------------------------------------------------
 
     public function saveNotes(Request $request, Client $client): RedirectResponse
     {
@@ -111,6 +186,10 @@ class QuestionnaireController extends Controller
 
         return back()->with('success', 'Notes d\'interprétation enregistrées.');
     }
+
+    // -----------------------------------------------------------------------
+    // Menu
+    // -----------------------------------------------------------------------
 
     public function saveMenu(Request $request, Client $client): RedirectResponse
     {
@@ -124,12 +203,14 @@ class QuestionnaireController extends Controller
             'aliments_visible_client' => 'nullable|boolean',
         ]);
 
-        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
-        $questionnaire->menu_text                = $request->input('menu_text');
-        $questionnaire->menu_visible_client      = $request->boolean('menu_visible_client');
-        $questionnaire->aliments_text            = $request->input('aliments_text');
-        $questionnaire->aliments_visible_client  = $request->boolean('aliments_visible_client');
-        $questionnaire->updated_at          = now();
+        $questionnaire = $client->questionnaire
+            ?? Questionnaire::create(['client_id' => $client->id, 'is_active' => true]);
+
+        $questionnaire->menu_text               = $request->input('menu_text');
+        $questionnaire->menu_visible_client     = $request->boolean('menu_visible_client');
+        $questionnaire->aliments_text           = $request->input('aliments_text');
+        $questionnaire->aliments_visible_client = $request->boolean('aliments_visible_client');
+        $questionnaire->updated_at              = now();
 
         if ($request->hasFile('menu_file') && $request->file('menu_file')->isValid()) {
             if ($questionnaire->menu_file) {
@@ -147,6 +228,10 @@ class QuestionnaireController extends Controller
             ->with('success', 'Menu enregistré.');
     }
 
+    // -----------------------------------------------------------------------
+    // Aliments
+    // -----------------------------------------------------------------------
+
     public function saveAliments(Request $request, Client $client): RedirectResponse
     {
         $this->authorizeClientAccess($request->user(), $client);
@@ -156,7 +241,9 @@ class QuestionnaireController extends Controller
             'aliments_visible_client' => 'nullable|boolean',
         ]);
 
-        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
+        $questionnaire = $client->questionnaire
+            ?? Questionnaire::create(['client_id' => $client->id, 'is_active' => true]);
+
         $questionnaire->aliments_text           = $request->input('aliments_text');
         $questionnaire->aliments_visible_client = $request->boolean('aliments_visible_client');
         $questionnaire->updated_at              = now();
@@ -167,31 +254,52 @@ class QuestionnaireController extends Controller
             ->with('success', 'Aliments préférés enregistrés.');
     }
 
+    // -----------------------------------------------------------------------
+    // Génération du lien token (session active)
+    // -----------------------------------------------------------------------
+
     public function generateToken(Request $request, Client $client): RedirectResponse
     {
         $this->authorizeClientAccess($request->user(), $client);
 
         $validated = $request->validate([
-            'sections'             => 'nullable|array|min:1',
-            'sections.*'           => 'in:julia_ross,metabolique,diathese,ayurveda,groupe_sanguin,hormones',
+            'sections'                => 'nullable|array|min:1',
+            'sections.*'              => 'in:julia_ross,metabolique,diathese,ayurveda,groupe_sanguin,hormones,canaris',
             'menu_visible_client'     => 'nullable|boolean',
             'bilan_visible_client'    => 'nullable|boolean',
             'aliments_visible_client' => 'nullable|boolean',
         ]);
 
-        $questionnaire = Questionnaire::firstOrNew(['client_id' => $client->id]);
-        $questionnaire->token                = Str::random(48);
-        $questionnaire->sections             = $validated['sections'] ?? null;
-        $questionnaire->menu_visible_client      = $request->boolean('menu_visible_client');
-        $questionnaire->bilan_visible_client     = $request->boolean('bilan_visible_client');
-        $questionnaire->aliments_visible_client  = $request->boolean('aliments_visible_client');
-        $questionnaire->submitted_at             = null;
-        $questionnaire->updated_at          = now();
+        $questionnaire = $client->questionnaire
+            ?? Questionnaire::create(['client_id' => $client->id, 'is_active' => true]);
+
+        $questionnaire->token                   = Str::random(48);
+        $questionnaire->sections                = $validated['sections'] ?? null;
+        $questionnaire->menu_visible_client     = $request->boolean('menu_visible_client');
+        $questionnaire->bilan_visible_client    = $request->boolean('bilan_visible_client');
+        $questionnaire->aliments_visible_client = $request->boolean('aliments_visible_client');
+        $questionnaire->submitted_at            = null;
+        $questionnaire->updated_at              = now();
         $questionnaire->save();
 
         return redirect()
             ->route('clients.show', $client)
             ->with('token_generated', route('questionnaire.public.show', $questionnaire->token));
+    }
+
+    // -----------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------
+
+    private function syncIdentityToClient(Client $client, array $data): void
+    {
+        foreach (['nom', 'prenom', 'age', 'sexe', 'taille', 'poids', 'sentinelles'] as $field) {
+            if (array_key_exists("identite_{$field}", $data)) {
+                $value = $data["identite_{$field}"];
+                $client->$field = ($value !== '' && $value !== null) ? $value : null;
+            }
+        }
+        $client->save();
     }
 
     private function authorizeClientAccess(\App\Models\User $user, Client $client): void

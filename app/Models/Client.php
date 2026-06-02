@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Client extends Model
@@ -68,9 +69,24 @@ class Client extends Model
         return $this->belongsTo(User::class, 'conseiller_id');
     }
 
+    public function questionnaires(): HasMany
+    {
+        return $this->hasMany(Questionnaire::class)->latest();
+    }
+
+    public function activeQuestionnaire(): HasOne
+    {
+        return $this->hasOne(Questionnaire::class)
+            ->where('is_active', true)
+            ->latest();
+    }
+
+    // Alias rétrocompatible — retourne la session active la plus récente
     public function questionnaire(): HasOne
     {
-        return $this->hasOne(Questionnaire::class);
+        return $this->hasOne(Questionnaire::class)
+            ->where('is_active', true)
+            ->latest();
     }
 
     public function getNomCompletAttribute(): string

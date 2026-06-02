@@ -564,6 +564,57 @@ $diathTips = [
     @endunless
 </div>
 
+{{-- Bandeau session (conseiller uniquement) ────────────────────────── --}}
+@unless($clientView ?? false)
+<div class="card mb-3">
+    <div class="card-body py-2 px-3 d-flex align-items-center gap-3 flex-wrap">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-layers text-muted"></i>
+            <span class="small text-muted">Session :</span>
+            <span class="fw-semibold small">
+                {{ $questionnaire->session_label ?? 'Session initiale' }}
+                — {{ $questionnaire->created_at?->format('d/m/Y') ?? '—' }}
+            </span>
+        </div>
+
+        @if(isset($allSessions) && $allSessions->count() > 1)
+        <form action="{{ route('questionnaire.comparer', $client) }}" method="GET"
+              class="d-flex align-items-center gap-2 ms-auto">
+            <select name="session_a" class="form-select form-select-sm" style="width:auto">
+                @foreach($allSessions as $s)
+                <option value="{{ $s->id }}" @selected($s->is_active)>
+                    {{ $s->session_label ?? 'Session initiale' }} ({{ $s->created_at?->format('d/m/Y') }})
+                </option>
+                @endforeach
+            </select>
+            <span class="text-muted small">vs</span>
+            <select name="session_b" class="form-select form-select-sm" style="width:auto">
+                @foreach($allSessions as $s)
+                <option value="{{ $s->id }}" @selected(!$s->is_active && $loop->first)>
+                    {{ $s->session_label ?? 'Session initiale' }} ({{ $s->created_at?->format('d/m/Y') }})
+                </option>
+                @endforeach
+            </select>
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-columns-gap me-1"></i>Comparer
+            </button>
+        </form>
+        @endif
+
+        <form action="{{ route('questionnaire.nouvelle-session', $client) }}" method="POST"
+              class="d-flex align-items-center gap-2 {{ isset($allSessions) && $allSessions->count() > 1 ? '' : 'ms-auto' }}">
+            @csrf
+            <input type="text" name="session_label"
+                   class="form-control form-control-sm" style="width:180px"
+                   placeholder="Nom de la session (optionnel)">
+            <button type="submit" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-plus-lg me-1"></i>Nouvelle session
+            </button>
+        </form>
+    </div>
+</div>
+@endunless
+
 {{-- Sentinelles (conseiller uniquement) ────────────────────────────── --}}
 @unless($clientView ?? false)
 @if($client->sentinelles)
