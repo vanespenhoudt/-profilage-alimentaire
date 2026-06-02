@@ -20,7 +20,7 @@
         <div class="card mb-3" style="border-top:3px solid var(--color-primary)">
             <div class="card-body py-2 px-3 text-center">
                 <div class="fw-semibold">{{ $sessionA->session_label ?? 'Session initiale' }}</div>
-                <div class="small text-muted">{{ $sessionA->created_at?->format('d/m/Y') }}</div>
+                <div class="small text-muted">{{ $sessionA->updated_at?->format('d/m/Y') }}</div>
             </div>
         </div>
         @include('questionnaire.partials.bilan-scores', ['questionnaire' => $sessionA])
@@ -31,7 +31,7 @@
         <div class="card mb-3" style="border-top:3px solid var(--color-primary-dark)">
             <div class="card-body py-2 px-3 text-center">
                 <div class="fw-semibold">{{ $sessionB->session_label ?? 'Session initiale' }}</div>
-                <div class="small text-muted">{{ $sessionB->created_at?->format('d/m/Y') }}</div>
+                <div class="small text-muted">{{ $sessionB->updated_at?->format('d/m/Y') }}</div>
             </div>
         </div>
         @include('questionnaire.partials.bilan-scores', ['questionnaire' => $sessionB])

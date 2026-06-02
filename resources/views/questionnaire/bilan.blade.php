@@ -573,7 +573,7 @@ $diathTips = [
             <span class="small text-muted">Session :</span>
             <span class="fw-semibold small">
                 {{ $questionnaire->session_label ?? 'Session initiale' }}
-                — {{ $questionnaire->created_at?->format('d/m/Y') ?? '—' }}
+                — {{ $questionnaire->updated_at?->format('d/m/Y') ?? '—' }}
             </span>
         </div>
 
@@ -583,7 +583,7 @@ $diathTips = [
             <select name="session_a" class="form-select form-select-sm" style="width:auto">
                 @foreach($allSessions as $s)
                 <option value="{{ $s->id }}" @selected($s->is_active)>
-                    {{ $s->session_label ?? 'Session initiale' }} ({{ $s->created_at?->format('d/m/Y') }})
+                    {{ $s->session_label ?? 'Session initiale' }} ({{ $s->updated_at?->format('d/m/Y') }})
                 </option>
                 @endforeach
             </select>
@@ -591,7 +591,7 @@ $diathTips = [
             <select name="session_b" class="form-select form-select-sm" style="width:auto">
                 @foreach($allSessions as $s)
                 <option value="{{ $s->id }}" @selected(!$s->is_active && $loop->first)>
-                    {{ $s->session_label ?? 'Session initiale' }} ({{ $s->created_at?->format('d/m/Y') }})
+                    {{ $s->session_label ?? 'Session initiale' }} ({{ $s->updated_at?->format('d/m/Y') }})
                 </option>
                 @endforeach
             </select>
