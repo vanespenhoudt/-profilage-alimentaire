@@ -83,6 +83,64 @@ class EncryptionTest extends TestCase
         $this->assertSame('mathilde@test.be', $fromDb->email);
     }
 
+    public function test_all_pii_fields_are_not_stored_as_plaintext(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client = Client::factory()->create([
+            'conseiller_id' => $conseiller->id,
+            'email'      => 'test@enc.be',
+            'adresse'    => 'Rue de la Paix 1',
+            'bt'         => 'A+',
+            'notes'      => 'Notes confidentielles',
+            'sexe'       => 'F',
+            'sentinelles' => 'Fatigue chronique',
+            'age'        => '42',
+            'taille'     => '165',
+            'poids'      => '62',
+        ]);
+
+        $raw = DB::table('clients')->where('id', $client->id)->first();
+
+        $this->assertNotEquals('test@enc.be',            $raw->email);
+        $this->assertNotEquals('Rue de la Paix 1',       $raw->adresse);
+        $this->assertNotEquals('A+',                     $raw->bt);
+        $this->assertNotEquals('Notes confidentielles',  $raw->notes);
+        $this->assertNotEquals('F',                      $raw->sexe);
+        $this->assertNotEquals('Fatigue chronique',      $raw->sentinelles);
+        $this->assertNotEquals('42',                     $raw->age);
+        $this->assertNotEquals('165',                    $raw->taille);
+        $this->assertNotEquals('62',                     $raw->poids);
+    }
+
+    public function test_all_pii_fields_decrypt_correctly(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client = Client::factory()->create([
+            'conseiller_id' => $conseiller->id,
+            'email'      => 'test@enc.be',
+            'adresse'    => 'Rue de la Paix 1',
+            'bt'         => 'A+',
+            'notes'      => 'Notes confidentielles',
+            'sexe'       => 'F',
+            'sentinelles' => 'Fatigue chronique',
+            'age'        => '42',
+            'taille'     => '165',
+            'poids'      => '62',
+        ]);
+
+        $fromDb = Client::find($client->id);
+
+        $this->assertSame('test@enc.be',           $fromDb->email);
+        $this->assertSame('Rue de la Paix 1',      $fromDb->adresse);
+        $this->assertSame('A+',                    $fromDb->bt);
+        $this->assertSame('Notes confidentielles', $fromDb->notes);
+        $this->assertSame('F',                     $fromDb->sexe);
+        $this->assertSame('Fatigue chronique',     $fromDb->sentinelles);
+        $this->assertSame('42',                    $fromDb->age);
+        $this->assertSame('165',                   $fromDb->taille);
+        $this->assertSame('62',                    $fromDb->poids);
+    }
+
     // -----------------------------------------------------------------------
     // Questionnaire — chiffrement answers et scores
     // -----------------------------------------------------------------------
@@ -128,6 +186,20 @@ class EncryptionTest extends TestCase
         $raw = DB::table('questionnaires')->where('id', $q->id)->value('scores');
 
         $this->assertStringNotContainsString('metabolique', $raw);
+    }
+
+    public function test_questionnaire_scores_decrypt_correctly(): void
+    {
+        $scores = ['metabolique' => ['a' => 2, 'b' => 5, 'type' => 'Chasseur B']];
+        $client = $this->makeClientFor($this->makeConseiller());
+
+        $q = Questionnaire::create([
+            'client_id' => $client->id,
+            'token'     => 'tok-dec-scores',
+            'scores'    => $scores,
+        ]);
+
+        $this->assertSame($scores, Questionnaire::find($q->id)->scores);
     }
 
     // -----------------------------------------------------------------------

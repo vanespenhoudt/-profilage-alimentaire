@@ -215,6 +215,161 @@ class QuestionnaireControllerTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
+    // autosave — merge partiel
+    // -----------------------------------------------------------------------
+
+    public function test_autosave_merges_partial_answers_without_erasing_other_sections(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        Questionnaire::create([
+            'client_id' => $client->id,
+            'is_active' => true,
+            'answers'   => ['mb1' => 'a', 'jr3_0' => '1'],
+        ]);
+
+        // Autosave n'envoie que la section métabolique
+        $this->actingAs($conseiller)
+            ->post(route('questionnaire.autosave', $client), ['mb1' => 'b'])
+            ->assertOk();
+
+        $q = $client->questionnaire;
+        $this->assertSame('b',  $q->answers['mb1']);
+        $this->assertSame('1',  $q->answers['jr3_0']); // section julia_ross préservée
+    }
+
+    public function test_autosave_removes_unchecked_checkbox_of_same_section(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        Questionnaire::create([
+            'client_id' => $client->id,
+            'is_active' => true,
+            'answers'   => ['mb1' => 'a', 'mb2' => 'b'],
+        ]);
+
+        // mb2 absent = décoché dans le POST
+        $this->actingAs($conseiller)
+            ->post(route('questionnaire.autosave', $client), ['mb1' => 'a'])
+            ->assertOk();
+
+        $q = $client->questionnaire;
+        $this->assertArrayHasKey('mb1', $q->answers);
+        $this->assertArrayNotHasKey('mb2', $q->answers);
+    }
+
+    // -----------------------------------------------------------------------
+    // Sessions — nouvelle session
+    // -----------------------------------------------------------------------
+
+    public function test_nouvelle_session_creates_new_questionnaire_and_deactivates_previous(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        // Session initiale avec réponses
+        $this->actingAs($conseiller)
+            ->post(route('questionnaire.store', $client), $this->minimalAnswers());
+
+        // Créer une nouvelle session
+        $this->actingAs($conseiller)
+            ->post(route('questionnaire.nouvelle-session', $client), ['session_label' => 'Suivi 1'])
+            ->assertRedirect();
+
+        $this->assertDatabaseCount('questionnaires', 2);
+
+        $sessions = \App\Models\Questionnaire::where('client_id', $client->id)->get();
+        $active   = $sessions->where('is_active', true);
+        $inactive = $sessions->where('is_active', false);
+
+        $this->assertCount(1, $active);
+        $this->assertCount(1, $inactive);
+        $this->assertSame('Suivi 1', $active->first()->session_label);
+    }
+
+    public function test_nouvelle_session_prefills_answers_from_previous(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        $this->actingAs($conseiller)
+            ->post(route('questionnaire.store', $client), $this->minimalAnswers());
+
+        $this->actingAs($conseiller)
+            ->post(route('questionnaire.nouvelle-session', $client), [
+                'session_label'   => 'Suivi 1',
+                'previous_answers' => '1',
+            ]);
+
+        $newSession = $client->questionnaire;
+        $this->assertNotNull($newSession->answers);
+        $this->assertArrayHasKey('mb1', $newSession->answers);
+    }
+
+    // -----------------------------------------------------------------------
+    // Sessions — comparer
+    // -----------------------------------------------------------------------
+
+    public function test_comparer_returns_200_for_two_sessions(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        // Créer deux questionnaires pour ce client
+        $q1 = Questionnaire::create(['client_id' => $client->id, 'is_active' => false]);
+        $q2 = Questionnaire::create(['client_id' => $client->id, 'is_active' => true]);
+
+        $url = route('questionnaire.comparer', $client) . "?session_a={$q1->id}&session_b={$q2->id}";
+
+        $this->actingAs($conseiller)
+            ->get($url)
+            ->assertOk();
+    }
+
+    public function test_comparer_retourne_404_si_session_appartient_a_autre_client(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client1    = $this->makeClientFor($conseiller);
+        $client2    = $this->makeClientFor($conseiller);
+
+        $q1 = Questionnaire::create(['client_id' => $client1->id, 'is_active' => false]);
+        $q2 = Questionnaire::create(['client_id' => $client2->id, 'is_active' => true]);
+
+        $url = route('questionnaire.comparer', $client1) . "?session_a={$q1->id}&session_b={$q2->id}";
+
+        $this->actingAs($conseiller)
+            ->get($url)
+            ->assertNotFound();
+    }
+
+    // -----------------------------------------------------------------------
+    // activeQuestionnaire — relation
+    // -----------------------------------------------------------------------
+
+    public function test_active_questionnaire_relation_returns_only_active_session(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        $old = Questionnaire::create(['client_id' => $client->id, 'is_active' => false]);
+        $new = Questionnaire::create(['client_id' => $client->id, 'is_active' => true]);
+
+        $this->assertSame($new->id, $client->questionnaire->id);
+    }
+
+    public function test_active_questionnaire_returns_null_when_all_inactive(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        Questionnaire::create(['client_id' => $client->id, 'is_active' => false]);
+
+        $this->assertNull($client->questionnaire);
+    }
+
+    // -----------------------------------------------------------------------
     // Rôle client — accès interdit aux routes conseiller
     // -----------------------------------------------------------------------
 
