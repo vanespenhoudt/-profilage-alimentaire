@@ -5,8 +5,9 @@
 @section('content')
 @php
 use App\Data\QuestionnaireData;
-$scores = $questionnaire->scores ?? [];
-$notes  = $questionnaire->interpretation_notes ?? [];
+$scores  = $questionnaire->scores ?? [];
+$notes   = $questionnaire->interpretation_notes ?? [];
+$answers = $questionnaire->answers ?? [];
 
 /* ── Tips Julia Ross (jr1→jr8) ───────────────────────────────── */
 $jrTips = [
@@ -800,6 +801,25 @@ $diathTips = [
                                     <div class="progress-label-sm">{{ $pct }}% du max</div>
                                 </td>
                             </tr>
+                            @if($classe['id'] === 'jr3' && !empty($answers['jr_3_4_heures']))
+                            <tr>
+                                <td colspan="5" class="ps-4 pt-0 pb-2 text-muted small">
+                                    <span class="fw-medium">Heures des rages :</span> {{ $answers['jr_3_4_heures'] }}
+                                </td>
+                            </tr>
+                            @endif
+                            @if($classe['id'] === 'jr5' && (!empty($answers['jr_5_10_type']) || !empty($answers['jr_5_10_diagnostic'])))
+                            <tr>
+                                <td colspan="5" class="ps-4 pt-0 pb-2 text-muted small">
+                                    @if(!empty($answers['jr_5_10_type']))
+                                    <div><span class="fw-medium">Type d'allergie :</span> {{ $answers['jr_5_10_type'] }}</div>
+                                    @endif
+                                    @if(!empty($answers['jr_5_10_diagnostic']))
+                                    <div><span class="fw-medium">Diagnostic :</span> {{ $answers['jr_5_10_diagnostic'] }}</div>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endif
                             @endforeach
                         </tbody>
                     </table>
