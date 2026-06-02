@@ -159,6 +159,33 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                                     <span class="badge-tint-bordered">+{{ $q['w'] }}</span>
                                 </label>
                             </div>
+                            @if($classe['id'] === 'jr3' && $qi === 3)
+                            <div class="ms-4 mt-1 pb-2">
+                                <label for="jr_3_4_heures" class="form-label text-muted small mb-1">Option : à quelles heures ressentez-vous ces rages ?</label>
+                                <input type="text" name="jr_3_4_heures" id="jr_3_4_heures"
+                                       class="form-control form-control-sm"
+                                       placeholder="ex : en milieu d'après-midi, après le dîner…"
+                                       value="{{ $answers['jr_3_4_heures'] ?? '' }}">
+                            </div>
+                            @endif
+                            @if($classe['id'] === 'jr5' && $qi === 9)
+                            <div class="ms-4 mt-1 pb-2">
+                                <div class="mb-2">
+                                    <label for="jr_5_10_type" class="form-label text-muted small mb-1">Option : allergies réelles ou intolérances IgG ?</label>
+                                    <input type="text" name="jr_5_10_type" id="jr_5_10_type"
+                                           class="form-control form-control-sm"
+                                           placeholder="ex : allergie réelle / intolérance IgG"
+                                           value="{{ $answers['jr_5_10_type'] ?? '' }}">
+                                </div>
+                                <div>
+                                    <label for="jr_5_10_diagnostic" class="form-label text-muted small mb-1">Option : diagnostiquées comment ?</label>
+                                    <input type="text" name="jr_5_10_diagnostic" id="jr_5_10_diagnostic"
+                                           class="form-control form-control-sm"
+                                           placeholder="ex : test sanguin, test cutané, auto-diagnostic…"
+                                           value="{{ $answers['jr_5_10_diagnostic'] ?? '' }}">
+                                </div>
+                            </div>
+                            @endif
                             @endforeach
                         </div>
                     </div>
