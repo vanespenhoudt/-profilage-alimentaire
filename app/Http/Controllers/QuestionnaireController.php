@@ -115,7 +115,7 @@ class QuestionnaireController extends Controller
                 ->with('error', 'Aucun questionnaire enregistré pour ce client.');
         }
 
-        $allSessions = $client->questionnaires()->get(['id', 'session_label', 'created_at', 'is_active']);
+        $allSessions = $client->questionnaires()->get(['id', 'session_label', 'updated_at', 'is_active']);
         $data        = QuestionnaireData::class;
 
         return view('questionnaire.bilan', compact('client', 'questionnaire', 'allSessions', 'data'));
