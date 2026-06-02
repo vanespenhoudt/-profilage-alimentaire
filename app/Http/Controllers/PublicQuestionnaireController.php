@@ -36,7 +36,7 @@ class PublicQuestionnaireController extends Controller
             return response()->json(['error' => 'Questionnaire déjà soumis.'], 403);
         }
 
-        $answers = $request->except(['_token', 'menu_text', 'aliments_text']);
+        $incoming = $request->except(['_token', 'menu_text', 'aliments_text']);
 
         if ($request->has('menu_text')) {
             $questionnaire->menu_text = $request->input('menu_text') ?: null;
@@ -45,11 +45,11 @@ class PublicQuestionnaireController extends Controller
             $questionnaire->aliments_text = $request->input('aliments_text') ?: null;
         }
 
-        $questionnaire->answers    = $answers;
+        $questionnaire->answers    = Questionnaire::mergeAnswers($questionnaire->answers ?? [], $incoming);
         $questionnaire->updated_at = now();
         $questionnaire->save();
 
-        $this->syncIdentityToClient($questionnaire->client, $answers);
+        $this->syncIdentityToClient($questionnaire->client, $incoming);
 
         return response()->json([
             'saved' => true,
