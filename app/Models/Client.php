@@ -71,14 +71,14 @@ class Client extends Model
 
     public function questionnaires(): HasMany
     {
-        return $this->hasMany(Questionnaire::class)->latest();
+        return $this->hasMany(Questionnaire::class)->latest('id');
     }
 
     public function activeQuestionnaire(): HasOne
     {
         return $this->hasOne(Questionnaire::class)
             ->where('is_active', true)
-            ->latest();
+            ->latest('id');
     }
 
     // Alias rétrocompatible — retourne la session active la plus récente
@@ -86,7 +86,7 @@ class Client extends Model
     {
         return $this->hasOne(Questionnaire::class)
             ->where('is_active', true)
-            ->latest();
+            ->latest('id');
     }
 
     public function getNomCompletAttribute(): string
