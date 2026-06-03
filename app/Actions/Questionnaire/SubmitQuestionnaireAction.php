@@ -30,7 +30,7 @@ final class SubmitQuestionnaireAction
 
         $scores = (new QuestionnaireScorer())->calculate($answers);
 
-        $questionnaire->answers      = $answers;
+        $questionnaire->answers      = Questionnaire::mergeAnswers($questionnaire->answers ?? [], $answers);
         $questionnaire->scores       = $scores;
         $questionnaire->submitted_at = now();
         $questionnaire->updated_at   = now();

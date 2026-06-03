@@ -101,6 +101,31 @@ class SubmitQuestionnaireActionTest extends TestCase
         $this->assertSame('a', $questionnaire->answers['mb2']);
     }
 
+    public function test_submit_preserve_sections_non_soumises(): void
+    {
+        Mail::fake();
+
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        // Questionnaire avec réponses Julia Ross déjà sauvegardées
+        $questionnaire = $this->makeQuestionnaire($client, [
+            'jr1_0' => '1',
+            'jr3_3' => '1',
+        ]);
+
+        // Submit ne contient que la section métabolique (pas Julia Ross)
+        (new SubmitQuestionnaireAction())->execute($questionnaire, [
+            'mb1' => 'a',
+            'mb2' => 'b',
+        ]);
+
+        $questionnaire->refresh();
+        $this->assertSame('a',  $questionnaire->answers['mb1']);
+        $this->assertSame('1',  $questionnaire->answers['jr1_0']); // préservé
+        $this->assertSame('1',  $questionnaire->answers['jr3_3']); // préservé
+    }
+
     // -----------------------------------------------------------------------
     // Synchronisation identité client
     // -----------------------------------------------------------------------
