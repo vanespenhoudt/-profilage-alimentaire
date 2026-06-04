@@ -97,7 +97,7 @@ $jrSubProfiles = [
 
 /* ── Tips Métaboltyping ───────────────────────────────────────── */
 $metTips = [
-    'Chasseur B' => [
+    'Chasseur' => [
         ['section' => 'Interprétation', 'items' => [
             'Votre métabolisme fonctionne généralement mieux avec une proportion plus importante de protéines et de graisses naturelles.',
         ]],
@@ -111,7 +111,7 @@ $metTips = [
             'Chaque repas devrait contenir une source de protéines.',
         ]],
     ],
-    'Cueilleur A' => [
+    'Cueilleur' => [
         ['section' => 'Interprétation', 'items' => [
             'Votre métabolisme est souvent mieux adapté à une alimentation comprenant davantage de glucides complexes.',
         ]],
@@ -695,7 +695,12 @@ $diathTips = [
             </div>
             <div class="card-body p-4">
                 @php
-                    $met   = $scores['metabolique'] ?? ['a' => 0, 'b' => 0, 'type' => 'Mixte'];
+                    $met          = $scores['metabolique'] ?? ['a' => 0, 'b' => 0, 'type' => 'Mixte'];
+                    $metabolicType = $scores['metabolic_type'] ?? match($met['type']) {
+                        'Chasseur B'  => 'Chasseur',
+                        'Cueilleur A' => 'Cueilleur',
+                        default       => 'Mixte',
+                    };
                     $total = $met['a'] + $met['b'];
                     $pctA  = $total > 0 ? round(($met['a'] / $total) * 100) : 50;
                     $pctB  = $total > 0 ? round(($met['b'] / $total) * 100) : 50;
@@ -717,23 +722,23 @@ $diathTips = [
                 </div>
 
                 <div class="text-center">
-                    @if($met['type'] === 'Cueilleur A')
+                    @if($metabolicType === 'Cueilleur')
                         <span class="badge-cueilleur">
-                            <i class="bi bi-person-badge me-2"></i>{{ $met['type'] }}
+                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
                         </span>
-                    @elseif($met['type'] === 'Chasseur B')
+                    @elseif($metabolicType === 'Chasseur')
                         <span class="badge-chasseur">
-                            <i class="bi bi-person-badge me-2"></i>{{ $met['type'] }}
+                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
                         </span>
                     @else
                         <span class="badge-mixte">
-                            <i class="bi bi-person-badge me-2"></i>{{ $met['type'] }}
+                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
                         </span>
                     @endif
                     <p class="profil-desc">
-                        @if($met['type'] === 'Cueilleur A')
+                        @if($metabolicType === 'Cueilleur')
                             Profil Cueilleur dominant — régime plutôt végétalien, faible en graisses saturées.
-                        @elseif($met['type'] === 'Chasseur B')
+                        @elseif($metabolicType === 'Chasseur')
                             Profil Chasseur dominant — régime riche en protéines animales et graisses de qualité.
                         @else
                             Profil Mixte — régime équilibré, adapté aux deux tendances.
@@ -742,12 +747,12 @@ $diathTips = [
                 </div>
 
                 {{-- Guide d'interprétation Métaboltyping --}}
-                @if(isset($metTips[$met['type']]))
+                @if(isset($metTips[$metabolicType]))
                 <div class="tip-box tip-box--metabol">
                     <div class="tip-title">
-                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $met['type'] }}
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $metabolicType }}
                     </div>
-                    @foreach($metTips[$met['type']] as $bloc)
+                    @foreach($metTips[$metabolicType] as $bloc)
                     <div class="tip-section-title">{{ $bloc['section'] }}</div>
                     <ul class="tip-list">
                         @foreach($bloc['items'] as $line)
@@ -822,12 +827,18 @@ $diathTips = [
                     $dom    = $sorted->first();
                     $sec    = $sorted->skip(1)->first();
                 @endphp
-                <div class="mt-3 ayurveda-summary">
-                    <strong>Profil dominant :</strong>
-                    <span class="{{ $dom['text'] }} fw-semibold">{{ $dom['label'] }}</span>
-                    — {{ $dom['label'] }} {{ $ay[$dom['key']] }} pts ·
-                    <span class="{{ $sec['text'] }} fw-semibold">{{ $sec['label'] }}</span>
-                    {{ $ay[$sec['key']] }} pts
+                @php
+                    $ayurvedaType = $scores['ayurveda_type'] ?? $dom['label'];
+                @endphp
+                <div class="mt-3 ayurveda-summary d-flex align-items-center gap-3 flex-wrap">
+                    <div>
+                        <strong>Profil dominant :</strong>
+                        <span class="{{ $dom['text'] }} fw-semibold">{{ $dom['label'] }}</span>
+                        — {{ $dom['label'] }} {{ $ay[$dom['key']] }} pts ·
+                        <span class="{{ $sec['text'] }} fw-semibold">{{ $sec['label'] }}</span>
+                        {{ $ay[$sec['key']] }} pts
+                    </div>
+                    <span class="badge rounded-pill text-bg-secondary ms-auto">{{ $ayurvedaType }}</span>
                 </div>
 
                 {{-- Guide d'interprétation Ayurveda --}}

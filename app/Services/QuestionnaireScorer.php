@@ -8,7 +8,7 @@ class QuestionnaireScorer
 {
     public function calculate(array $answers): array
     {
-        return [
+        $scores = [
             'metabolique' => $this->scoreMetabolique($answers),
             'ayurveda'    => $this->scoreAyurveda($answers),
             'julia_ross'  => $this->scoreJuliaRoss($answers),
@@ -16,6 +16,54 @@ class QuestionnaireScorer
             'hormones'    => $this->scoreHormones($answers),
             'canaris'     => $this->scoreCanaris($answers),
         ];
+
+        $scores['metabolic_type'] = $this->interpretMetabolic($scores['metabolique']);
+        $scores['ayurveda_type']  = $this->interpretAyurveda($scores['ayurveda']);
+
+        return $scores;
+    }
+
+    public function interpretMetabolic(array $scores): string
+    {
+        $chasseur  = $scores['chasseur']  ?? 0;
+        $cueilleur = $scores['cueilleur'] ?? 0;
+        $mixte     = $scores['mixte']     ?? 0;
+
+        if ($chasseur >= $cueilleur + 5 && $chasseur >= $mixte + 5) {
+            return 'Chasseur';
+        }
+
+        if ($cueilleur >= $chasseur + 5 && $cueilleur >= $mixte + 5) {
+            return 'Cueilleur';
+        }
+
+        return 'Mixte';
+    }
+
+    public function interpretAyurveda(array $scores): string
+    {
+        $doshas = [
+            'Vata'  => $scores['vata']  ?? 0,
+            'Pitta' => $scores['pitta'] ?? 0,
+            'Kapha' => $scores['kapha'] ?? 0,
+        ];
+
+        arsort($doshas);
+        $sorted = array_keys($doshas);
+        $vals   = array_values($doshas);
+
+        [$first, $second, $third] = $sorted;
+        [$s1, $s2, $s3]           = $vals;
+
+        if (($s1 - $s3) <= 12) {
+            return 'Tridosha';
+        }
+
+        if (($s1 - $s2) <= 12) {
+            return "{$first}-{$second}";
+        }
+
+        return $first;
     }
 
     private function scoreMetabolique(array $answers): array
@@ -43,7 +91,14 @@ class QuestionnaireScorer
             ? ($met_a > $met_b ? 'Cueilleur A' : 'Chasseur B')
             : 'Mixte';
 
-        return ['a' => $met_a, 'b' => $met_b, 'type' => $met_type];
+        return [
+            'a'         => $met_a,
+            'b'         => $met_b,
+            'cueilleur' => $met_a,
+            'chasseur'  => $met_b,
+            'mixte'     => 0,
+            'type'      => $met_type,
+        ];
     }
 
     private function scoreAyurveda(array $answers): array
