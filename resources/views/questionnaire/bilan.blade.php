@@ -773,6 +773,9 @@ $diathTips = [
                             Profil Mixte — régime équilibré, adapté aux deux tendances.
                         @endif
                     </p>
+                    <p class="text-muted-pa" style="font-size:11px;margin-top:4px;">
+                        Dominant si écart Cueilleur / Chasseur ≥ 5 points — sinon Mixte.
+                    </p>
                 </div>
 
                 {{-- Guide d'interprétation Métaboltyping --}}
@@ -866,6 +869,9 @@ $diathTips = [
                         — {{ $dom['label'] }} {{ $ay[$dom['key']] }} pts ·
                         <span class="{{ $sec['text'] }} fw-semibold">{{ $sec['label'] }}</span>
                         {{ $ay[$sec['key']] }} pts
+                        <div class="text-muted-pa mt-1" style="font-size:11px;">
+                            Tridosha si écart max-min ≤ 12 · Double dosha si écart 1er-2ème ≤ 12 · Sinon dosha unique.
+                        </div>
                     </div>
                     <span class="badge rounded-pill text-bg-secondary ms-auto">{{ $ayurvedaType }}</span>
                 </div>
