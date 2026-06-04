@@ -12,147 +12,200 @@ $answers = $questionnaire->answers ?? [];
 /* ── Tips Julia Ross (jr1→jr8) ───────────────────────────────── */
 $jrTips = [
     'jr1' => [
-        'label' => 'Sérotonine',
+        'label' => 'Classe 1 – Neuromédiateurs',
         'tips'  => [
-            'Carence probable en sérotonine.',
-            'Tendance à l\'anxiété, aux ruminations, au perfectionnisme.',
-            'Difficultés d\'endormissement. Envie de glucides en soirée.',
-            'Priorité : sommeil, gestion du stress, protéines de qualité, éventuellement soutien en tryptophane.',
+            'Possible déficit en neurotransmetteurs impliqués dans le sommeil, l\'humeur et la gestion du stress.',
+            'Priorités : protéines de qualité, bonnes graisses, sommeil.',
         ],
     ],
     'jr2' => [
-        'label' => 'Catécholamines',
+        'label' => 'Classe 2 – Régimes',
         'tips'  => [
-            'Manque de motivation ou d\'énergie mentale. Difficultés de concentration.',
-            'Fatigue au réveil. Baisse de l\'élan et de la motivation.',
-            'Priorité : protéines suffisantes, gestion du stress chronique.',
+            'Historique probable de restrictions alimentaires répétées.',
+            'Priorités : retrouver la satiété, abandonner la logique de régime.',
         ],
     ],
     'jr3' => [
-        'label' => 'GABA',
+        'label' => 'Classe 3 – Glycémie',
         'tips'  => [
-            'Nervosité, tension, hypervigilance.',
-            'Difficulté à se détendre. Sensation d\'être constamment sous pression.',
-            'Priorité : ralentir, restaurer le système nerveux.',
+            'Glycémie instable pouvant provoquer fatigue, fringales et variations d\'humeur.',
+            'Priorités : protéines à chaque repas, réduction des sucres rapides, repas réguliers.',
+            'Cure suggérée : Décrochez des sucres.',
         ],
     ],
     'jr4' => [
-        'label' => 'Endorphines',
+        'label' => 'Classe 4 – Thyroïde',
         'tips'  => [
-            'Sensibilité émotionnelle. Recherche de réconfort alimentaire.',
-            'Difficulté à gérer les émotions.',
-            'Priorité : soutien émotionnel et stabilisation glycémique.',
+            'Terrain évoquant un ralentissement du métabolisme.',
+            'Priorités : soutien thyroïdien, gestion du stress, alimentation nourrissante.',
         ],
     ],
     'jr5' => [
-        'label' => 'Glycémie',
+        'label' => 'Classe 5 – Allergies',
         'tips'  => [
-            'Glycémie instable. Fringales. Coups de pompe.',
-            'Irritabilité lorsque les repas sont retardés.',
-            'Priorité : protéines et bonnes graisses à chaque repas, réduction des sucres rapides.',
+            'Terrain réactif pouvant être associé à des sensibilités alimentaires ou environnementales.',
+            'Priorités : rechercher les déclencheurs, diminuer la charge inflammatoire.',
         ],
     ],
     'jr6' => [
-        'label' => 'Hormones féminines',
+        'label' => 'Classe 6 – Hormones',
         'tips'  => [
-            'Déséquilibre hormonal possible.',
-            'Syndrome prémenstruel, périménopause ou ménopause.',
-            'Vérifier le statut hormonal et les apports en acides gras essentiels.',
+            'Possible déséquilibre hormonal.',
+            'Priorités : sommeil, gestion du stress, soutien hormonal.',
         ],
     ],
     'jr7' => [
-        'label' => 'Allergies / hypersensibilités',
+        'label' => 'Classe 7 – Intestins',
         'tips'  => [
-            'Terrain inflammatoire ou hypersensible. Intolérances alimentaires possibles.',
-            'Envisager une enquête alimentaire ou un carnet des sentinelles.',
+            'Terrain digestif fragilisé.',
+            'Priorités : flore intestinale, digestion, inflammation.',
+            'Cure suggérée : Nouvelle Flore.',
         ],
     ],
     'jr8' => [
-        'label' => 'Thyroïde',
+        'label' => 'Classe 8 – Carences en acides gras essentiels',
         'tips'  => [
-            'Ralentissement métabolique possible. Fatigue, frilosité, prise de poids.',
-            'Vérifier le contexte thyroïdien.',
+            'Apports insuffisants ou mauvaise utilisation des bonnes graisses.',
+            'Priorités : huiles vierges, poissons gras, œufs, avocat.',
         ],
     ],
 ];
 
+/* ── Sous-profils neuromédiateurs (affichés quand jr1 dépassé) ── */
+$jrSubProfiles = [
+    ['label' => 'Sérotonine', 'tips' => [
+        'Carence probable en sérotonine.',
+        'Signes fréquents : anxiété, ruminations, perfectionnisme, difficultés d\'endormissement, envies de glucides en soirée.',
+        'Priorités : sommeil, protéines, gestion du stress.',
+    ]],
+    ['label' => 'GABA', 'tips' => [
+        'Système de relaxation insuffisamment actif.',
+        'Signes fréquents : tension, nervosité, hypervigilance.',
+        'Priorités : ralentir, restaurer le système nerveux.',
+    ]],
+    ['label' => 'Dopamine', 'tips' => [
+        'Possible déficit en dopamine.',
+        'Signes fréquents : manque de motivation, procrastination, fatigue mentale.',
+        'Priorités : protéines, activité physique, objectifs stimulants.',
+    ]],
+    ['label' => 'Endorphines', 'tips' => [
+        'Possible déficit en endorphines.',
+        'Signes fréquents : hypersensibilité émotionnelle, besoin de réconfort alimentaire.',
+        'Priorités : stabilité glycémique, soutien émotionnel.',
+    ]],
+];
+
 /* ── Tips Métaboltyping ───────────────────────────────────────── */
 $metTips = [
-    'Cueilleur A' => [
-        'Tolère mieux les glucides. Peut sauter un repas plus facilement.',
-        'Préférence pour les portions plus petites.',
-        'Favoriser : légumes, féculents de qualité, protéines modérées.',
-    ],
     'Chasseur B' => [
-        'Besoin plus élevé en protéines. Supporte mal le jeûne. Faim rapide.',
-        'Favoriser : protéines, légumes, bonnes graisses.',
-        'Limiter les repas très riches en sucres et féculents seuls.',
+        ['section' => 'Interprétation', 'items' => [
+            'Votre métabolisme fonctionne généralement mieux avec une proportion plus importante de protéines et de graisses naturelles.',
+        ]],
+        ['section' => 'Aliments généralement favorables', 'items' => [
+            'Œufs', 'Viandes', 'Poissons', 'Volailles', 'Avocat', 'Olives', 'Huiles vierges', 'Légumes',
+        ]],
+        ['section' => 'À surveiller', 'items' => [
+            'Excès de céréales', 'Sucres rapides', 'Jus de fruits', 'Repas très riches en glucides',
+        ]],
+        ['section' => 'Conseil principal', 'items' => [
+            'Chaque repas devrait contenir une source de protéines.',
+        ]],
+    ],
+    'Cueilleur A' => [
+        ['section' => 'Interprétation', 'items' => [
+            'Votre métabolisme est souvent mieux adapté à une alimentation comprenant davantage de glucides complexes.',
+        ]],
+        ['section' => 'Aliments généralement favorables', 'items' => [
+            'Riz', 'Quinoa', 'Sarrasin', 'Légumineuses', 'Légumes', 'Fruits selon tolérance',
+        ]],
+        ['section' => 'À surveiller', 'items' => [
+            'Excès de protéines animales', 'Excès de graisses',
+        ]],
+        ['section' => 'Conseil principal', 'items' => [
+            'Maintenir une alimentation variée et riche en végétaux.',
+        ]],
     ],
     'Mixte' => [
-        'Équilibre entre protéines, lipides et glucides.',
-        'Adapter selon les symptômes.',
+        ['section' => 'Interprétation', 'items' => [
+            'Votre métabolisme semble apprécier un équilibre entre protéines, glucides et bonnes graisses.',
+        ]],
+        ['section' => 'Conseil principal', 'items' => [
+            'Éviter les extrêmes alimentaires.',
+        ]],
     ],
 ];
 
 /* ── Tips Ayurveda ────────────────────────────────────────────── */
 $ayTips = [
     'Vâta'  => [
-        'Favoriser : chaud, cuit, gras, onctueux, repas réguliers, soupes, mijotés.',
-        'Limiter : froid, crudités excessives, jeûne, alimentation sèche, irrégularité des repas.',
+        ['section' => 'Interprétation', 'items' => [
+            'Terrain sensible au stress, au froid et à l\'irrégularité.',
+        ]],
+        ['section' => 'Priorités', 'items' => [
+            'Repas réguliers', 'Aliments cuits', 'Chaleur', 'Bonnes graisses',
+        ]],
+        ['section' => 'À limiter', 'items' => [
+            'Jeûnes', 'Crudités excessives', 'Repas sautés',
+        ]],
     ],
     'Pitta' => [
-        'Favoriser : aliments rafraîchissants, légumes verts, douceur, modération.',
-        'Limiter : alcool, piments, excès d\'épices, excès de café.',
+        ['section' => 'Interprétation', 'items' => [
+            'Terrain intense, volontaire, avec un métabolisme souvent puissant.',
+        ]],
+        ['section' => 'Priorités', 'items' => [
+            'Modération', 'Hydratation', 'Aliments rafraîchissants',
+        ]],
+        ['section' => 'À limiter', 'items' => [
+            'Alcool', 'Aliments très épicés', 'Excitants',
+        ]],
     ],
     'Kapha' => [
-        'Favoriser : léger, épicé modérément, légumes, activité physique.',
-        'Limiter : excès de sucres, excès de laitages, excès de féculents, repas trop copieux.',
+        ['section' => 'Interprétation', 'items' => [
+            'Terrain stable avec tendance au ralentissement métabolique.',
+        ]],
+        ['section' => 'Priorités', 'items' => [
+            'Mouvement', 'Alimentation légère', 'Épices digestives',
+        ]],
+        ['section' => 'À limiter', 'items' => [
+            'Excès de sucres', 'Excès de laitages', 'Sédentarité',
+        ]],
     ],
 ];
 
 /* ── Tips Diathèse ────────────────────────────────────────────── */
 $diathTips = [
     1 => [
-        ['section' => 'Terrain', 'items' => [
-            'Bonne vitalité générale.',
-            'Forte capacité d\'adaptation.',
-            'Réactions vives mais récupération rapide.',
-            'Terrain encore dynamique.',
+        ['section' => 'Terrain robuste', 'items' => [
+            'Bonne énergie.',
+            'Bonne résistance au stress.',
+            'Récupération rapide.',
+            'Bonne tolérance aux changements alimentaires.',
         ]],
         ['section' => 'Conseils', 'items' => [
-            'Peut entreprendre directement une cure alimentaire.',
-            'Supporte généralement bien les changements alimentaires.',
-            'Peut suivre une cure plus intensive si nécessaire.',
-            'Prévention avant tout.',
+            'Peut entreprendre directement une cure ciblée.',
+            'Réponse généralement rapide aux changements alimentaires.',
+            'Maintenir un mode de vie équilibré.',
         ]],
-        ['section' => 'Objectif', 'items' => [
-            'Corriger les excès avant qu\'ils ne s\'installent.',
+        ['section' => 'Priorité', 'items' => [
+            'Passer directement à l\'interprétation des autres profils.',
         ]],
     ],
     2 => [
-        ['section' => 'Terrain', 'items' => [
-            'Début d\'épuisement des capacités d\'adaptation.',
-            'Fatigue plus fréquente.',
-            'Récupération moins rapide.',
-            'Sensibilité au stress.',
+        ['section' => 'Terrain fragilisé', 'items' => [
+            'Fatigue plus présente.',
+            'Récupération plus lente.',
+            'Sensibilité accrue au stress.',
+            'Fragilité digestive ou nerveuse.',
         ]],
         ['section' => 'Conseils', 'items' => [
-            'Préparer le terrain avant une cure intensive.',
-            'Soutien des minéraux, vitamines et protéines.',
-            'Réduction progressive des excitants.',
-            'Éviter les cures trop radicales d\'emblée.',
+            'Renforcer les réserves avant toute cure intensive.',
+            'Privilégier le repos.',
+            'Augmenter les aliments ressourçants.',
+            'Stabiliser les repas.',
         ]],
-        ['section' => 'Objectif', 'items' => [
-            'Recharger les batteries avant de mobiliser les capacités d\'élimination.',
+        ['section' => 'Priorité', 'items' => [
+            'Ressourcer avant de corriger.',
         ]],
-    ],
-    3 => [
-        ['section' => 'Terrain', 'items' => ['Fatigue installée.']],
-        ['section' => 'Conseils', 'items' => ['Besoin de récupération et de reconstruction.']],
-    ],
-    4 => [
-        ['section' => 'Terrain', 'items' => ['Terrain de blocage chronique.']],
-        ['section' => 'Conseils', 'items' => ['Approche progressive et prudente.']],
     ],
 ];
 @endphp
@@ -694,11 +747,14 @@ $diathTips = [
                     <div class="tip-title">
                         <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $met['type'] }}
                     </div>
+                    @foreach($metTips[$met['type']] as $bloc)
+                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
                     <ul class="tip-list">
-                        @foreach($metTips[$met['type']] as $line)
+                        @foreach($bloc['items'] as $line)
                         <li>{{ $line }}</li>
                         @endforeach
                     </ul>
+                    @endforeach
                     @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
@@ -780,11 +836,14 @@ $diathTips = [
                     <div class="tip-title">
                         <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $dom['label'] }}
                     </div>
+                    @foreach($ayTips[$dom['label']] as $bloc)
+                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
                     <ul class="tip-list">
-                        @foreach($ayTips[$dom['label']] as $line)
+                        @foreach($bloc['items'] as $line)
                         <li>{{ $line }}</li>
                         @endforeach
                     </ul>
+                    @endforeach
                     @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
@@ -898,6 +957,19 @@ $diathTips = [
                                 <li>{{ $line }}</li>
                                 @endforeach
                             </ul>
+                            @if($classe['id'] === 'jr1')
+                            <div class="tip-section-title" style="color:#3b82f6;margin-top:8px;">Sous-profils neuromédiateurs</div>
+                            @foreach($jrSubProfiles as $sub)
+                            <div class="tip-jr-block" style="margin-top:6px;padding-left:12px;border-left:2px solid rgba(59,130,246,.3);">
+                                <div class="tip-jr-label" style="font-size:10px;">{{ $sub['label'] }}</div>
+                                <ul class="tip-list">
+                                    @foreach($sub['tips'] as $line)
+                                    <li>{{ $line }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endforeach
+                            @endif
                         </div>
                         @endif
                         @endforeach
@@ -984,18 +1056,12 @@ $diathTips = [
                 @php
                     $col1Total = $di['c1_d1'] + $di['c1_d2'];
                     $col2Total = $di['c2_d1'] + $di['c2_d2'];
-                    $d1Dom     = $totalD1 >= $totalD2;
-                    $col1Dom   = $col1Total >= $col2Total;
-                    $diathNum  = match(true) {
-                        $d1Dom  && $col1Dom  => 1,
-                        !$d1Dom && $col1Dom  => 2,
-                        $d1Dom  && !$col1Dom => 3,
-                        default              => 4,
-                    };
+                    $d1Dom    = $totalD1 >= $totalD2;
+                    $diathNum = $d1Dom ? 1 : 2;
                 @endphp
                 <div class="tip-box tip-box--diathese">
                     <div class="tip-title">
-                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — Diathèse {{ $diathNum }}
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $diathNum === 1 ? 'Terrain robuste' : 'Terrain fragilisé' }}
                     </div>
                     @foreach($diathTips[$diathNum] as $bloc)
                     <div class="tip-section-title">{{ $bloc['section'] }}</div>
@@ -1127,12 +1193,47 @@ $diathTips = [
                 {{-- Tip box --}}
                 <div class="tip-box tip-box--canaris">
                     <div class="tip-title">
-                        <i class="bi bi-exclamation-triangle-fill"></i>Protocole d'éviction — règle fondamentale
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — Canaris
                     </div>
+                    @if(in_array($can['grade'], ['grade_2', 'grade_3']))
+                    <div class="tip-section-title">Profil compatible avec un terrain Canari</div>
+                    <ul class="tip-list">
+                        <li>Allergies</li>
+                        <li>Migraines</li>
+                        <li>Fatigue chronique</li>
+                        <li>Troubles du sommeil</li>
+                        <li>Hypersensibilité aux odeurs</li>
+                        <li>Troubles digestifs</li>
+                        <li>Eczéma</li>
+                        <li>Sinusites</li>
+                    </ul>
+                    <div class="tip-section-title">Priorités</div>
+                    <ul class="tip-list">
+                        <li>Réduire les additifs</li>
+                        <li>Soutenir le foie</li>
+                        <li>Rechercher les sensibilités individuelles</li>
+                    </ul>
+                    <div class="tip-section-title">Cure suggérée</div>
+                    <ul class="tip-list">
+                        <li>Mes Nerfs en Paix</li>
+                    </ul>
+                    <hr class="tip-separator">
+                    <div class="tip-section-title">Protocole d'éviction — règle fondamentale</div>
                     <ul class="tip-list">
                         <li>Ne pas cumuler les évictions. Commencer par les additifs alimentaires avant d'envisager salicylates ou amines.</li>
                         <li>Tout protocole d'éviction doit être accompagné par un thérapeute.</li>
                     </ul>
+                    @elseif($can['grade'] === 'grade_1')
+                    <ul class="tip-list">
+                        <li>Certaines sensibilités alimentaires ou environnementales peuvent être présentes.</li>
+                        <li>Alimentation simple.</li>
+                        <li>Réduction des additifs.</li>
+                    </ul>
+                    @else
+                    <ul class="tip-list">
+                        <li>Peu d'éléments évoquent une hypersensibilité biochimique importante.</li>
+                    </ul>
+                    @endif
                     @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
