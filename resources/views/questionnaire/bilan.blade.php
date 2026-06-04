@@ -137,6 +137,17 @@ $metTips = [
 
 /* ── Tips Ayurveda ────────────────────────────────────────────── */
 $ayTips = [
+    'Tridosha' => [
+        ['section' => 'Interprétation', 'items' => [
+            'Les trois doshas sont équilibrés — profil Tridosha.',
+            'Grande flexibilité alimentaire : la plupart des aliments conviennent.',
+        ]],
+        ['section' => 'Conseils', 'items' => [
+            'Maintenir un mode de vie équilibré.',
+            'Éviter les excès prolongés dans un sens ou dans l\'autre.',
+            'Rester à l\'écoute des signaux du corps.',
+        ]],
+    ],
     'Vâta'  => [
         ['section' => 'Interprétation', 'items' => [
             'Terrain sensible au stress, au froid et à l\'irrégularité.',
@@ -170,6 +181,20 @@ $ayTips = [
             'Excès de sucres', 'Excès de laitages', 'Sédentarité',
         ]],
     ],
+];
+
+/* ── Correspondance ayurveda_type → clé $ayTips ──────────────── */
+$ayTypeToTipKey = [
+    'Tridosha'    => 'Tridosha',
+    'Vata'        => 'Vâta',
+    'Pitta'       => 'Pitta',
+    'Kapha'       => 'Kapha',
+    'Vata-Pitta'  => 'Vâta',
+    'Pitta-Vata'  => 'Pitta',
+    'Pitta-Kapha' => 'Pitta',
+    'Kapha-Pitta' => 'Kapha',
+    'Vata-Kapha'  => 'Vâta',
+    'Kapha-Vata'  => 'Kapha',
 ];
 
 /* ── Tips Diathèse ────────────────────────────────────────────── */
@@ -846,12 +871,21 @@ $diathTips = [
                 </div>
 
                 {{-- Guide d'interprétation Ayurveda --}}
-                @if(isset($ayTips[$dom['label']]))
+                @php
+                    $isDouble  = str_contains($ayurvedaType, '-') && $ayurvedaType !== 'Tridosha';
+                    $tipKey1   = $ayTypeToTipKey[$ayurvedaType] ?? $dom['label'];
+                    $tipKey2   = null;
+                    if ($isDouble) {
+                        $parts   = explode('-', $ayurvedaType);
+                        $tipKey2 = $ayTypeToTipKey[$parts[1]] ?? null;
+                    }
+                @endphp
+                @if(isset($ayTips[$tipKey1]))
                 <div class="tip-box tip-box--ayurveda">
                     <div class="tip-title">
-                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $dom['label'] }}
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $ayurvedaType }}
                     </div>
-                    @foreach($ayTips[$dom['label']] as $bloc)
+                    @foreach($ayTips[$tipKey1] as $bloc)
                     <div class="tip-section-title">{{ $bloc['section'] }}</div>
                     <ul class="tip-list">
                         @foreach($bloc['items'] as $line)
@@ -859,6 +893,18 @@ $diathTips = [
                         @endforeach
                     </ul>
                     @endforeach
+                    @if($isDouble && $tipKey2 && isset($ayTips[$tipKey2]))
+                    <hr class="tip-separator">
+                    <div class="tip-section-title" style="color:var(--color-primary);">{{ $tipKey2 }} (dosha secondaire)</div>
+                    @foreach($ayTips[$tipKey2] as $bloc)
+                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
+                    <ul class="tip-list">
+                        @foreach($bloc['items'] as $line)
+                        <li>{{ $line }}</li>
+                        @endforeach
+                    </ul>
+                    @endforeach
+                    @endif
                     @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>
