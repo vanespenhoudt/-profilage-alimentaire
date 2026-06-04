@@ -258,6 +258,48 @@
     </div>
 </div>
 
+{{-- Modal nouvelle session --}}
+@if($client->questionnaire)
+<div class="modal fade" id="nouvelleSessionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content modal-content-rounded">
+            <div class="modal-header modal-header-navy">
+                <h5 class="modal-title modal-title-syne">
+                    <i class="bi bi-plus-circle me-2"></i>Nouvelle session
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ route('questionnaire.nouvelle-session', $client) }}">
+                @csrf
+                <div class="modal-body modal-body-card">
+                    <p class="text-muted-pa fs-13 mb-3">
+                        La session actuelle sera archivée. Une nouvelle session vierge sera créée pour ce client.
+                    </p>
+                    <div class="mb-3">
+                        <label class="form-label" for="newSessionLabel">Nom de la session <span class="text-muted-pa">(optionnel)</span></label>
+                        <input type="text" class="form-control" id="newSessionLabel"
+                               name="session_label" placeholder="ex : Suivi 3 mois, Bilan 2025…">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               name="previous_answers" value="1" id="prefillAnswers">
+                        <label class="form-check-label form-check-label-navy" for="prefillAnswers">
+                            Pré-remplir avec les réponses de la session précédente
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer modal-footer-card">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Créer la session
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+
 <div class="mt-3 d-flex gap-2 flex-wrap">
     <a href="{{ route('questionnaire.show', $client) }}" class="btn btn-primary">
         <i class="bi bi-clipboard2-pulse me-1"></i>
@@ -267,6 +309,10 @@
     <a href="{{ route('questionnaire.bilan', $client) }}" class="btn btn-outline-secondary">
         <i class="bi bi-bar-chart-line me-1"></i>Voir le bilan
     </a>
+    <button type="button" class="btn btn-outline-secondary"
+            data-bs-toggle="modal" data-bs-target="#nouvelleSessionModal">
+        <i class="bi bi-plus-circle me-1"></i>Nouvelle session
+    </button>
     @endif
     <a href="{{ route('clients.edit', $client) }}" class="btn btn-outline-secondary">
         <i class="bi bi-pencil me-1"></i>Modifier le profil
