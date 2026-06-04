@@ -631,11 +631,15 @@ $diathTips = [
         </div>
 
         @if(isset($allSessions) && $allSessions->count() > 1)
+        @php
+            $defaultAId = $allSessions->first(fn($s) => $s->is_active)?->id;
+            $defaultBId = $allSessions->first(fn($s) => !$s->is_active)?->id;
+        @endphp
         <form action="{{ route('questionnaire.comparer', $client) }}" method="GET"
               class="d-flex align-items-center gap-2 ms-auto">
             <select name="session_a" class="form-select form-select-sm" style="width:auto">
                 @foreach($allSessions as $s)
-                <option value="{{ $s->id }}" @selected($s->is_active)>
+                <option value="{{ $s->id }}" @selected($s->id === $defaultAId)>
                     {{ $s->session_label ?? 'Session initiale' }} ({{ $s->updated_at?->format('d/m/Y') }})
                 </option>
                 @endforeach
@@ -643,7 +647,7 @@ $diathTips = [
             <span class="text-muted small">vs</span>
             <select name="session_b" class="form-select form-select-sm" style="width:auto">
                 @foreach($allSessions as $s)
-                <option value="{{ $s->id }}" @selected(!$s->is_active && $loop->first)>
+                <option value="{{ $s->id }}" @selected($s->id === $defaultBId)>
                     {{ $s->session_label ?? 'Session initiale' }} ({{ $s->updated_at?->format('d/m/Y') }})
                 </option>
                 @endforeach

@@ -7,6 +7,14 @@ use App\Data\QuestionnaireData;
 $sc = $questionnaire->scores ?? [];
 @endphp
 
+@if(empty($sc))
+<div class="alert d-flex align-items-center gap-2 py-2 px-3"
+     style="background:#f8f9fa;border:1px solid #dee2e6;border-radius:10px;">
+    <i class="bi bi-hourglass text-muted"></i>
+    <span class="small text-muted">Questionnaire non encore soumis — aucun score disponible.</span>
+</div>
+@else
+
 {{-- ── Typage Métabolique ─────────────────────────────── --}}
 @if(!empty($sc['metabolique']))
 @php
@@ -136,4 +144,5 @@ $sc = $questionnaire->scores ?? [];
         </div>
     </div>
 </div>
+@endif
 @endif
