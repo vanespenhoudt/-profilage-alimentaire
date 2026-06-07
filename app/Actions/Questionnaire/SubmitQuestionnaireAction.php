@@ -28,9 +28,10 @@ final class SubmitQuestionnaireAction
             unset($answers['aliments_text']);
         }
 
-        $scores = (new QuestionnaireScorer())->calculate($answers);
+        $mergedAnswers = Questionnaire::mergeAnswers($questionnaire->answers ?? [], $answers);
+        $scores        = (new QuestionnaireScorer())->calculate($mergedAnswers);
 
-        $questionnaire->answers      = Questionnaire::mergeAnswers($questionnaire->answers ?? [], $answers);
+        $questionnaire->answers      = $mergedAnswers;
         $questionnaire->scores       = $scores;
         $questionnaire->submitted_at = now();
         $questionnaire->updated_at   = now();
