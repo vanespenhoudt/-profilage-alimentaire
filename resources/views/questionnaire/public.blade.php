@@ -299,21 +299,21 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                     @foreach(QuestionnaireData::$diathese_col1 as $q)
                     <div class="q-row">
                         <div class="q-num mb-2">Question {{ $loop->iteration }}</div>
-                        <div class="row g-2">
+                        <div class="row g-2 align-items-stretch">
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d1"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_d1" data-section="s3"
                                        @checked(($answers[$q['id']] ?? '') === 'd1')>
-                                <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
-                                    <strong class="d1-label">D1</strong>{{ $q['d1'] }}
+                                <label class="btn btn-outline-primary btn-sm w-100 h-100 text-start" for="{{ $q['id'] }}_d1" style="white-space:normal;display:flex;align-items:center;gap:6px;">
+                                    <strong class="d1-label flex-shrink-0">D1</strong><span>{{ $q['d1'] }}</span>
                                 </label>
                             </div>
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d2"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_d2" data-section="s3"
                                        @checked(($answers[$q['id']] ?? '') === 'd2')>
-                                <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
-                                    <strong class="d1-label">D2</strong>{{ $q['d2'] }}
+                                <label class="btn btn-outline-secondary btn-sm w-100 h-100 text-start" for="{{ $q['id'] }}_d2" style="white-space:normal;display:flex;align-items:center;gap:6px;">
+                                    <strong class="d1-label flex-shrink-0">D2</strong><span>{{ $q['d2'] }}</span>
                                 </label>
                             </div>
                         </div>
@@ -325,21 +325,21 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                     @foreach(QuestionnaireData::$diathese_col2 as $q)
                     <div class="q-row">
                         <div class="q-num mb-2">Question {{ $loop->iteration }}</div>
-                        <div class="row g-2">
+                        <div class="row g-2 align-items-stretch">
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d1"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_d1" data-section="s3"
                                        @checked(($answers[$q['id']] ?? '') === 'd1')>
-                                <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_d1">
-                                    <strong class="d1-label">D1</strong>{{ $q['d1'] }}
+                                <label class="btn btn-outline-primary btn-sm w-100 h-100 text-start" for="{{ $q['id'] }}_d1" style="white-space:normal;display:flex;align-items:center;gap:6px;">
+                                    <strong class="d1-label flex-shrink-0">D1</strong><span>{{ $q['d1'] }}</span>
                                 </label>
                             </div>
                             <div class="col-md-6">
                                 <input type="radio" name="{{ $q['id'] }}" value="d2"
                                        class="btn-check radio-q" id="{{ $q['id'] }}_d2" data-section="s3"
                                        @checked(($answers[$q['id']] ?? '') === 'd2')>
-                                <label class="btn btn-outline-secondary btn-sm w-100 text-start" for="{{ $q['id'] }}_d2">
-                                    <strong class="d1-label">D2</strong>{{ $q['d2'] }}
+                                <label class="btn btn-outline-secondary btn-sm w-100 h-100 text-start" for="{{ $q['id'] }}_d2" style="white-space:normal;display:flex;align-items:center;gap:6px;">
+                                    <strong class="d1-label flex-shrink-0">D2</strong><span>{{ $q['d2'] }}</span>
                                 </label>
                             </div>
                         </div>
