@@ -4,6 +4,68 @@ namespace App\Data;
 
 class QuestionnaireData
 {
+    /**
+     * Structure 3 colonnes (source : Taty Lauwers).
+     * options['A'] = Cueilleur, options['B'] = Chasseur, options['M'] = Mixte.
+     * null = pas d'option pour cette colonne.
+     *
+     * ⚠️ Mapping à valider avec Marc avant déploiement en production.
+     */
+    public static array $metabolique = [
+        ['id'=>'mb_01','label'=>'Apparence','options'=>['A'=>'Plus âgé que les gens de mon âge','B'=>'Plus jeune que les gens de mon âge','M'=>null]],
+        ['id'=>'mb_02','label'=>'Réserve sociale','options'=>['A'=>"Distant, plus solitaire, je me fais des amis lentement",'B'=>"Chaleureux, ouvert, je m'exprime, je fais facilement des amis",'M'=>null]],
+        ['id'=>'mb_03','label'=>'Oppression thoracique','options'=>['A'=>null,'B'=>null,'M'=>'Ma tendance']],
+        ['id'=>'mb_04','label'=>'Climat','options'=>['A'=>"J'adore les saisons chaudes",'B'=>'Je me sens mieux par temps frais/froid, je n\'aime pas la chaleur','M'=>null]],
+        ['id'=>'mb_05','label'=>'Cicatrices, marques','options'=>['A'=>null,'B'=>"J'en ai facilement",'M'=>null]],
+        ['id'=>'mb_06','label'=>'Appétit','options'=>['A'=>"Peu d'appétit",'B'=>'Grand appétit, excessif, je mange beaucoup','M'=>null]],
+        ['id'=>'mb_07','label'=>'Toux','options'=>['A'=>null,'B'=>null,'M'=>'Je tousse souvent']],
+        ['id'=>'mb_08','label'=>'Pellicules','options'=>['A'=>null,'B'=>null,'M'=>'Ma tendance']],
+        ['id'=>'mb_09','label'=>'La peau crevasse','options'=>['A'=>null,'B'=>null,'M'=>'Ma tendance (par tous les temps)']],
+        ['id'=>'mb_10','label'=>'Digestion','options'=>['A'=>'Je digère lentement, pas tout, pas très bien','B'=>'Je digère tout, assez vite','M'=>null]],
+        ['id'=>'mb_11','label'=>'Rapport à la nourriture','options'=>['A'=>"Il faut bien manger pour vivre. Je ne suis pas très intéressé par la nourriture ; je peux oublier de manger.",'B'=>"J'adore manger ; la nourriture est un élément central de ma vie ; je dois manger souvent pour me sentir au mieux",'M'=>null]],
+        ['id'=>'mb_12','label'=>'Expression des émotions','options'=>['A'=>"J'exprime mes émotions avec difficulté, je ne suis pas démonstratif",'B'=>"J'exprime facilement mes émotions",'M'=>null]],
+        ['id'=>'mb_13','label'=>'Émotions','options'=>['A'=>"Sous contrôle, je suis un profil non émotionnel, je garde mes émotions pour moi",'B'=>"J'ai le cœur en bandoulière, on sait toujours ce que je ressens",'M'=>null]],
+        ['id'=>'mb_14','label'=>'Yeux','options'=>['A'=>"J'ai les yeux plutôt secs",'B'=>"J'ai les yeux plutôt humides, parfois larmoyants",'M'=>null]],
+        ['id'=>'mb_15','label'=>'Coloration du visage','options'=>['A'=>'Pâle, crayeuse','B'=>'Rosée, rougeurs parfois','M'=>null]],
+        ['id'=>'mb_16','label'=>'Teint du visage','options'=>['A'=>'Facilement terne, brouillé','B'=>'Clair, lumineux','M'=>null]],
+        ['id'=>'mb_17','label'=>'Aliments gras (goût)','options'=>['A'=>"Je préfère m'en passer",'B'=>"J'adore ces aliments, je voudrais en manger souvent",'M'=>null]],
+        ['id'=>'mb_18','label'=>'Réaction aux aliments gras','options'=>['A'=>'Diminue mon énergie, mon bien-être','B'=>'Améliore ma sensation de bien-être','M'=>null]],
+        ['id'=>'mb_19','label'=>'Ongles','options'=>['A'=>'Durs, épais, forts','B'=>'Fins, fragiles, mous','M'=>null]],
+        ['id'=>'mb_20','label'=>'Si je passe plus de 4 heures sans manger','options'=>['A'=>'Cela ne fait rien','B'=>'Je suis irritable, je me sens faible ou déprimé','M'=>null]],
+        ['id'=>'mb_21','label'=>'Chair de poule','options'=>['A'=>null,'B'=>"J'ai facilement la chair de poule",'M'=>null]],
+        ['id'=>'mb_22','label'=>'Mes gencives saignent','options'=>['A'=>null,'B'=>'Quand je me brosse les dents','M'=>null]],
+        ['id'=>'mb_23','label'=>'Couleur des gencives','options'=>['A'=>'Claires, pâles','B'=>'Foncées, roses, rouges','M'=>null]],
+        ['id'=>'mb_24','label'=>'Sensation de faim','options'=>['A'=>'Ça passe vite, je peux rester longtemps sans manger','B'=>'J\'ai souvent faim, je dois manger souvent et régulièrement','M'=>null]],
+        ['id'=>'mb_25','label'=>'Piqûres d\'insectes','options'=>['A'=>'Réaction faible, disparaît vite','B'=>'Réaction forte, qui met du temps à disparaître','M'=>null]],
+        ['id'=>'mb_26','label'=>'Irritation des yeux','options'=>['A'=>null,'B'=>null,'M'=>'Ça m\'arrive (souvent)']],
+        ['id'=>'mb_27','label'=>'Démangeaisons de peau','options'=>['A'=>null,'B'=>null,'M'=>'Ça m\'arrive (souvent)']],
+        ['id'=>'mb_28','label'=>'Jeûne hydrique ou au jus','options'=>['A'=>'Ça me réussit très bien, je me sens bien','B'=>'Je me sens vraiment mal','M'=>null]],
+        ['id'=>'mb_29','label'=>'Portions','options'=>['A'=>'Je préfère de petites portions','B'=>'Je mange de grandes portions ; ou je mange souvent','M'=>null]],
+        ['id'=>'mb_30','label'=>"Jus d'orange en dehors d'un repas",'options'=>['A'=>"Ça me donne de l'énergie, je suis satisfait",'B'=>'Cela me donne parfois faim, peut me rendre nauséeux ou nerveux','M'=>null]],
+        ['id'=>'mb_31','label'=>'Pommes de terre','options'=>['A'=>'Je n\'en suis pas fan','B'=>"J'en mangerais tous les jours, j'adore",'M'=>null]],
+        ['id'=>'mb_32','label'=>'Avec de la viande rouge (steak ou rôti de bœuf)','options'=>['A'=>'Je me sens moins énergique, je me sens moins bien','B'=>'Je me sens plus énergique, je me sens mieux','M'=>null]],
+        ['id'=>'mb_33','label'=>'Quantité de salive','options'=>['A'=>"J'ai plutôt la bouche sèche",'B'=>'Je produis beaucoup de salive','M'=>null]],
+        ['id'=>'mb_34','label'=>'Texture de salive','options'=>['A'=>'Plutôt épaisse, visqueuse','B'=>'Plutôt aqueuse, diluée','M'=>null]],
+        ['id'=>'mb_35','label'=>'Aliments salés','options'=>['A'=>'Les aliments sont souvent trop salés','B'=>"J'adore ce qui est salé (jusqu'à la compulsion)",'M'=>null]],
+        ['id'=>'mb_36','label'=>'Cicatrisation','options'=>['A'=>'Je cicatrise lentement','B'=>'Je cicatrise vite','M'=>null]],
+        ['id'=>'mb_37','label'=>'Peau','options'=>['A'=>"J'ai la peau sèche",'B'=>"J'ai la peau grasse",'M'=>null]],
+        ['id'=>'mb_38','label'=>'Quand je dois sauter un repas','options'=>['A'=>"Ok, pas d'impact négatif",'B'=>'Je dois manger souvent ou régulièrement','M'=>null]],
+        ['id'=>'mb_39','label'=>'Collations entre les repas','options'=>['A'=>'Rarement envie','B'=>'Souvent envie','M'=>null]],
+        ['id'=>'mb_40','label'=>'Éternuements','options'=>['A'=>null,'B'=>null,'M'=>'Tendance à éternuer tous les jours']],
+        ['id'=>'mb_41','label'=>'Aliments acides (vinaigre, citron, choucroute, yaourt)','options'=>['A'=>"Ça m'est égal, je n'en suis pas fou",'B'=>"J'aime beaucoup",'M'=>null]],
+        ['id'=>'mb_42','label'=>'Sucreries, bonbons, douceurs','options'=>['A'=>"J'adore les sucreries, j'en ai besoin à chaque repas pour être satisfait",'B'=>'Les desserts me sont égaux ; je préfère en collation un aliment gras et/ou salé (fromage, chips, popcorn)','M'=>null]],
+        ['id'=>'mb_43','label'=>'Un repas végétarien','options'=>['A'=>'Me satisfait','B'=>'Ne me satisfait pas (ou je me sens moins bien), j\'ai vite faim','M'=>null]],
+        ['id'=>'mb_44','label'=>'Respiration sifflante','options'=>['A'=>null,'B'=>null,'M'=>"Ça m'arrive régulièrement"]],
+        ['id'=>'mb_45','label'=>'Protéines animales au petit-déjeuner','options'=>['A'=>"Je suis léthargique après, fatigué, j'ai soif en cours de matinée",'B'=>"Je me sens énergisé, je peux tenir jusqu'au déjeuner si pas plus tard",'M'=>null]],
+        ['id'=>'mb_46','label'=>'Protéines animales à midi','options'=>['A'=>"Je suis léthargique après, fatigué, je n'ai plus d'énergie pour l'après-midi",'B'=>"Je me sens énergisé, je peux tenir jusqu'au soir",'M'=>null]],
+        ['id'=>'mb_47','label'=>'En manque d\'énergie en milieu d\'après-midi, je me sens mieux si…','options'=>['A'=>"J'ai mangé des fruits, des pâtisseries, des bonbons",'B'=>"J'ai mangé du fromage, des noix, du jambon (les fruits/pâtisseries donnent un coup de boost… que je reperd vite)",'M'=>null]],
+        ['id'=>'mb_48','label'=>'En société','options'=>['A'=>'Je suis introverti, timide, calme, je parle peu','B'=>"Extraverti, sociable, je m'exprime, j'entame facilement les conversations",'M'=>null]],
+    ];
+
+    /**
+     * Conservation des anciens tableaux v1 pour compatibilité avec les données existantes.
+     * Utilisé comme fallback dans QuestionnaireScorer si aucune réponse v2 n'est détectée.
+     */
     public static array $metabolique_binaire = [
         ['id'=>'mb1', 'label'=>'Apparence', 'a'=>'Plus âgé que les gens de mon âge', 'b'=>'Plus jeune que les gens de mon âge'],
         ['id'=>'mb2', 'label'=>'Réserve sociale', 'a'=>'Distant, solitaire, amis lentement', 'b'=>'Chaleureux, ouvert, amis facilement'],

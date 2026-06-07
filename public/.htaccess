@@ -5,6 +5,9 @@
 
     RewriteEngine On
 
+    # Bloquer l'accès direct aux fichiers menu (fallback de sécurité)
+    RewriteRule ^storage/menus/ - [F,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

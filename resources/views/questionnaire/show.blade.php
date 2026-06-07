@@ -63,7 +63,9 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
         background: var(--color-navy); border-color: var(--color-navy); color: var(--color-text-on-green); font-weight: 600;
     }
     /* Boutons métabolique — text-align left */
-    .btn-outline-primary, .btn-outline-chasseur { text-align: left; }
+    .btn-outline-primary, .btn-outline-chasseur, .btn-outline-mixte { text-align: left; }
+    .btn-outline-mixte { color: #7c3aed; border-color: #7c3aed; }
+    .btn-outline-mixte:hover, .btn-check:checked + .btn-outline-mixte { background-color: #7c3aed; border-color: #7c3aed; color: #fff; }
 </style>
 
 <form method="POST" action="{{ route('questionnaire.store', $client) }}" id="questForm">
@@ -202,62 +204,62 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                         data-bs-toggle="collapse" data-bs-target="#s2">
                     <span class="section-icon"><i class="bi bi-activity"></i></span>
                     2. Métaboltyping
-                    <span class="badge-progress ms-3" id="badge-s2">0 / 37</span>
+                    <span class="badge-progress ms-3" id="badge-s2">0 / 48</span>
                 </button>
             </h2>
             <div id="s2" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
 
                     <div class="alert-section-info mb-3">
-                        <strong>A = Cueilleur</strong> · <strong>B = Chasseur</strong> · Laissez vide si aucune option ne vous correspond.
+                        <strong>A = Cueilleur</strong> · <strong>B = Chasseur</strong> · <strong>M = Mixte</strong> · Cochez ce qui vous correspond. Laissez vide si aucune option ne s'applique.
                     </div>
 
-                    @foreach(QuestionnaireData::$metabolique_binaire as $q)
-                    <div class="q-row">
-                        <div class="q-num">{{ $loop->iteration }}.</div>
-                        <div class="q-label mb-2">{{ $q['label'] }}</div>
-                        <div class="row g-2">
-                            <div class="col-md-6">
-                                <input type="radio" name="{{ $q['id'] }}" value="a"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_a"
-                                       data-section="s2"
-                                       @checked(($answers[$q['id']] ?? '') === 'a')>
-                                <label class="btn btn-outline-primary btn-sm w-100 text-start" for="{{ $q['id'] }}_a">
-                                    <strong class="me-1">A</strong>{{ $q['a'] }}
-                                </label>
+                    {{-- En-têtes colonnes --}}
+                    <div class="row g-0 mb-2 d-none d-md-flex sticky-top bg-white py-1 border-bottom" style="top:0;z-index:2;">
+                        <div class="col-md-1 col-2"></div>
+                        <div class="col-md-3 col-10 text-muted fw-semibold" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Question</div>
+                        <div class="col-md-8 col-12">
+                            <div class="row g-2">
+                                <div class="col-4 text-center text-muted fw-semibold" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Cueilleur (A)</div>
+                                <div class="col-4 text-center text-muted fw-semibold" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Chasseur (B)</div>
+                                <div class="col-4 text-center text-muted fw-semibold" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Mixte (M)</div>
                             </div>
-                            <div class="col-md-6">
-                                <input type="radio" name="{{ $q['id'] }}" value="b"
-                                       class="btn-check radio-q" id="{{ $q['id'] }}_b"
-                                       data-section="s2"
-                                       @checked(($answers[$q['id']] ?? '') === 'b')>
-                                <label class="btn btn-outline-chasseur btn-sm w-100 text-start" for="{{ $q['id'] }}_b">
-                                    <strong class="me-1">B</strong>{{ $q['b'] }}
-                                </label>
+                        </div>
+                    </div>
+
+                    @foreach(QuestionnaireData::$metabolique as $q)
+                    <div class="q-row mb-3" data-qid="{{ $q['id'] }}">
+                        <div class="row g-0 align-items-start">
+                            <div class="col-md-1 col-2">
+                                <div class="q-num">{{ $loop->iteration }}.</div>
+                            </div>
+                            <div class="col-md-3 col-10">
+                                <div class="q-label mb-md-0 mb-2 pe-3">{{ $q['label'] }}</div>
+                            </div>
+                            <div class="col-md-8 col-12">
+                                <div class="row g-2">
+                                    @foreach(['A' => 'btn-outline-primary', 'B' => 'btn-outline-chasseur', 'M' => 'btn-outline-mixte'] as $col => $btnClass)
+                                    <div class="col-4">
+                                        @if($q['options'][$col] !== null)
+                                        <input type="checkbox"
+                                               name="{{ $q['id'] }}_{{ $col }}" value="1"
+                                               class="btn-check"
+                                               id="{{ $q['id'] }}_{{ $col }}"
+                                               data-section="s2"
+                                               data-qid="{{ $q['id'] }}"
+                                               @checked(!empty($answers[$q['id'] . '_' . $col]))>
+                                        <label class="btn {{ $btnClass }} btn-sm w-100 text-start" for="{{ $q['id'] }}_{{ $col }}" style="font-size:12px;min-height:36px;display:flex;align-items:center;gap:4px;">
+                                            <strong>{{ $col }}</strong>
+                                            <span>{{ $q['options'][$col] }}</span>
+                                        </label>
+                                        @endif
+                                    </div>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
                     @endforeach
-
-                    <hr class="my-4 hr-section">
-                    <p class="fw-semibold mb-3 sub-header">
-                        <i class="bi bi-check2-square me-2"></i>Symptômes unilatéraux (Chasseur B)
-                    </p>
-
-                    <div class="row g-2">
-                        @foreach(QuestionnaireData::$metabolique_symptomes as $q)
-                        <div class="col-md-6">
-                            <div class="form-check check-item p-3 rounded">
-                                <input class="form-check-input" type="checkbox"
-                                       name="{{ $q['id'] }}" value="1"
-                                       id="{{ $q['id'] }}"
-                                       data-section="s2-sym"
-                                       @checked(!empty($answers[$q['id']])) >
-                                <label class="form-check-label form-check-label-navy" for="{{ $q['id'] }}">{{ $q['label'] }}</label>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
 
                 </div>
             </div>
@@ -619,8 +621,8 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                     <div class="fw-semibold fs-13">{{ $questionnaire->menu_file_name }}</div>
                     <div class="fs-12 text-muted-pa">Fichier attaché</div>
                 </div>
-                <a href="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($questionnaire->menu_file) }}"
-                   target="_blank" class="btn btn-outline-secondary btn-sm">
+                <a href="{{ route('questionnaire.menu.download', $client) }}"
+                   class="btn btn-outline-secondary btn-sm">
                     <i class="bi bi-download me-1"></i>Télécharger
                 </a>
             </div>
@@ -694,8 +696,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 (function () {
     const sections = {
         s1:      { type: 'check', total: @json($totalJuliaRoss),      badgeId: 'badge-s1' },
-        s2:      { type: 'radio', total: 37,                          badgeId: 'badge-s2' },
-        's2-sym':{ type: 'check', total: 11,                          badgeId: null },
+        s2:      { type: 'question', total: 48,                        badgeId: 'badge-s2' },
         s3:      { type: 'radio', total: 14,                          badgeId: 'badge-s3' },
         s4:      { type: 'radio', total: 59,                          badgeId: 'badge-s4' },
         s5:      { type: 'radio', total: 1,                           badgeId: 'badge-s5' },
@@ -717,6 +718,16 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
     function countSection(key) {
         const cfg    = sections[key];
         const inputs = document.querySelectorAll(`[data-section="${key}"]`);
+        if (cfg.type === 'question') {
+            // Compte les questions distinctes (data-qid) ayant au moins une case cochée
+            const groups = {};
+            inputs.forEach(el => {
+                const qid = el.dataset.qid;
+                if (!groups[qid]) groups[qid] = false;
+                if (el.checked) groups[qid] = true;
+            });
+            return Object.values(groups).filter(Boolean).length;
+        }
         if (cfg.type === 'radio' || cfg.type === 'mixed') {
             const groups = {};
             inputs.forEach(el => {
@@ -737,7 +748,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 
     function updateBadges() {
         let totalAnswered = 0;
-        const totalAll   = 37 + 59 + 14 + 1;
+        const totalAll   = 48 + 59 + 14 + 1;
 
         Object.entries(sections).forEach(([key, cfg]) => {
             const count = countSection(key);
@@ -745,7 +756,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                 const badge = document.getElementById(cfg.badgeId);
                 if (badge) badge.textContent = count + ' / ' + cfg.total;
             }
-            if (cfg.type === 'radio') totalAnswered += count;
+            if (cfg.type === 'radio' || cfg.type === 'question') totalAnswered += count;
         });
 
         const pct = totalAll > 0 ? Math.round((totalAnswered / totalAll) * 100) : 0;

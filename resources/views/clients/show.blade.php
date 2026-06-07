@@ -290,7 +290,7 @@
                 </div>
                 <div class="modal-footer modal-footer-card">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" dusk="btn-submit-nouvelle-session">
                         <i class="bi bi-plus-lg me-1"></i>Créer la session
                     </button>
                 </div>
@@ -310,7 +310,8 @@
         <i class="bi bi-bar-chart-line me-1"></i>Voir le bilan
     </a>
     <button type="button" class="btn btn-outline-secondary"
-            data-bs-toggle="modal" data-bs-target="#nouvelleSessionModal">
+            data-bs-toggle="modal" data-bs-target="#nouvelleSessionModal"
+            dusk="btn-open-nouvelle-session">
         <i class="bi bi-plus-circle me-1"></i>Nouvelle session
     </button>
     @endif

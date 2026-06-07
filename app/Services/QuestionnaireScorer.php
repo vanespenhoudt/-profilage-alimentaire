@@ -52,7 +52,7 @@ class QuestionnaireScorer
         $sorted = array_keys($doshas);
         $vals   = array_values($doshas);
 
-        [$first, $second, $third] = $sorted;
+        [$first, $second] = $sorted;
         [$s1, $s2, $s3]           = $vals;
 
         if (($s1 - $s3) <= 12) {
@@ -70,33 +70,41 @@ class QuestionnaireScorer
     {
         $met_a = 0;
         $met_b = 0;
+        $met_m = 0;
 
-        foreach (QuestionnaireData::$metabolique_binaire as $q) {
-            $val = $answers[$q['id']] ?? null;
-            if ($val === 'a') {
-                $met_a++;
-            } elseif ($val === 'b') {
-                $met_b++;
+        // Format v2 : champs mb_01_A / mb_01_B / mb_01_M
+        foreach (QuestionnaireData::$metabolique as $q) {
+            if (!empty($answers[$q['id'] . '_A'])) $met_a++;
+            if (!empty($answers[$q['id'] . '_B'])) $met_b++;
+            if (!empty($answers[$q['id'] . '_M'])) $met_m++;
+        }
+
+        // Fallback v1 : anciens champs mb1..mb37 (valeur 'a'/'b') + ms1..ms11 (checkbox)
+        // Activé uniquement si aucune réponse v2 n'est détectée.
+        if ($met_a + $met_b + $met_m === 0) {
+            foreach (QuestionnaireData::$metabolique_binaire as $q) {
+                $val = $answers[$q['id']] ?? null;
+                if ($val === 'a') $met_a++;
+                elseif ($val === 'b') $met_b++;
+            }
+            foreach (QuestionnaireData::$metabolique_symptomes as $q) {
+                if (!empty($answers[$q['id']])) $met_b++;
             }
         }
 
-        foreach (QuestionnaireData::$metabolique_symptomes as $q) {
-            if (!empty($answers[$q['id']])) {
-                $met_b++;
-            }
-        }
-
-        $diff = abs($met_a - $met_b);
-        $met_type = $diff >= 5
-            ? ($met_a > $met_b ? 'Cueilleur A' : 'Chasseur B')
-            : 'Mixte';
+        $met_type = match(true) {
+            $met_a >= $met_b + 5 && $met_a >= $met_m + 5 => 'Cueilleur A',
+            $met_b >= $met_a + 5 && $met_b >= $met_m + 5 => 'Chasseur B',
+            default                                        => 'Mixte',
+        };
 
         return [
             'a'         => $met_a,
             'b'         => $met_b,
+            'm'         => $met_m,
             'cueilleur' => $met_a,
             'chasseur'  => $met_b,
-            'mixte'     => 0,
+            'mixte'     => $met_m,
             'type'      => $met_type,
         ];
     }

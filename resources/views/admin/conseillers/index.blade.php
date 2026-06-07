@@ -8,7 +8,8 @@
         <i class="bi bi-person-badge me-2"></i>Conseillers
     </h1>
     <div class="d-flex gap-2">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inviteModal">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inviteModal"
+                dusk="btn-open-invite-modal">
             <i class="bi bi-envelope-plus me-1"></i>Inviter un conseiller
         </button>
         <a href="{{ route('admin.conseillers.create') }}" class="btn btn-outline-secondary">
@@ -194,7 +195,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     @method('PATCH')
                                     <button type="submit"
                                             class="btn btn-sm {{ $conseiller->active ? 'btn-outline-warning' : 'btn-outline-success' }}"
-                                            title="{{ $conseiller->active ? 'Désactiver' : 'Activer' }}">
+                                            title="{{ $conseiller->active ? 'Désactiver' : 'Activer' }}"
+                                            dusk="btn-toggle-conseiller-{{ $conseiller->id }}">
                                         <i class="bi bi-{{ $conseiller->active ? 'pause-circle' : 'play-circle' }}"></i>
                                     </button>
                                 </form>

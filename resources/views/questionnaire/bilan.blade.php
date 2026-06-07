@@ -714,224 +714,13 @@ $diathTips = [
 <div class="row g-3">
 
     {{-- ════════════════════════════════════════════════════
-         CARD 1 — TYPAGE MÉTABOLIQUE
-    ════════════════════════════════════════════════════ --}}
-    <div class="col-12">
-        <div class="card">
-            <div class="section-header">
-                <i class="bi bi-activity"></i>
-                <span>1. Typage Métabolique</span>
-            </div>
-            <div class="card-body p-4">
-                @php
-                    $met          = $scores['metabolique'] ?? ['a' => 0, 'b' => 0, 'type' => 'Mixte'];
-                    $metabolicType = $scores['metabolic_type'] ?? match($met['type']) {
-                        'Chasseur B'  => 'Chasseur',
-                        'Cueilleur A' => 'Cueilleur',
-                        default       => 'Mixte',
-                    };
-                    $total = $met['a'] + $met['b'];
-                    $pctA  = $total > 0 ? round(($met['a'] / $total) * 100) : 50;
-                    $pctB  = $total > 0 ? round(($met['b'] / $total) * 100) : 50;
-                @endphp
-
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="score-num text-cueilleur">{{ $met['a'] }}</div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between mb-1 fs-13">
-                            <span class="text-cueilleur fw-semibold">Cueilleur A ({{ $pctA }}%)</span>
-                            <span class="text-chasseur fw-semibold">Chasseur B ({{ $pctB }}%)</span>
-                        </div>
-                        <div class="progress progress-18">
-                            <div class="progress-bar bar-cueilleur" style="width:{{ $pctA }}%;"></div>
-                            <div class="progress-bar bar-chasseur"  style="width:{{ $pctB }}%;"></div>
-                        </div>
-                    </div>
-                    <div class="score-num text-chasseur">{{ $met['b'] }}</div>
-                </div>
-
-                <div class="text-center">
-                    @if($metabolicType === 'Cueilleur')
-                        <span class="badge-cueilleur">
-                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
-                        </span>
-                    @elseif($metabolicType === 'Chasseur')
-                        <span class="badge-chasseur">
-                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
-                        </span>
-                    @else
-                        <span class="badge-mixte">
-                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
-                        </span>
-                    @endif
-                    <p class="profil-desc">
-                        @if($metabolicType === 'Cueilleur')
-                            Profil Cueilleur dominant — régime plutôt végétalien, faible en graisses saturées.
-                        @elseif($metabolicType === 'Chasseur')
-                            Profil Chasseur dominant — régime riche en protéines animales et graisses de qualité.
-                        @else
-                            Profil Mixte — régime équilibré, adapté aux deux tendances.
-                        @endif
-                    </p>
-                    <p class="text-muted-pa" style="font-size:11px;margin-top:4px;">
-                        Dominant si écart Cueilleur / Chasseur ≥ 5 points — sinon Mixte.
-                    </p>
-                </div>
-
-                {{-- Guide d'interprétation Métaboltyping --}}
-                @if(isset($metTips[$metabolicType]))
-                <div class="tip-box tip-box--metabol">
-                    <div class="tip-title">
-                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $metabolicType }}
-                    </div>
-                    @foreach($metTips[$metabolicType] as $bloc)
-                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
-                    <ul class="tip-list">
-                        @foreach($bloc['items'] as $line)
-                        <li>{{ $line }}</li>
-                        @endforeach
-                    </ul>
-                    @endforeach
-                    @unless($clientView ?? false)
-                    <hr class="tip-separator">
-                    <div class="tip-notes-label">Notes du conseiller</div>
-                    <textarea name="notes[metabolique]" form="notesForm"
-                              class="tip-textarea"
-                              placeholder="Ajouter des observations personnalisées...">{{ $notes['metabolique'] ?? '' }}</textarea>
-                    @endunless
-                </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    {{-- ════════════════════════════════════════════════════
-         CARD 2 — AYURVEDA
-    ════════════════════════════════════════════════════ --}}
-    <div class="col-12">
-        <div class="card">
-            <div class="section-header">
-                <i class="bi bi-yin-yang"></i>
-                <span>2. Ayurveda</span>
-            </div>
-            <div class="card-body p-4">
-                @php
-                    $ay = $scores['ayurveda'] ?? ['vata' => 0, 'pitta' => 0, 'kapha' => 0];
-                    $doshas = [
-                        ['label' => 'Vâta',  'key' => 'vata',  'max' => 114, 'bar' => 'bar-vata',  'text' => 'text-vata'],
-                        ['label' => 'Pitta', 'key' => 'pitta', 'max' => 120, 'bar' => 'bar-pitta', 'text' => 'text-pitta'],
-                        ['label' => 'Kapha', 'key' => 'kapha', 'max' => 120, 'bar' => 'bar-kapha', 'text' => 'text-kapha'],
-                    ];
-                    $maxScore = max($ay['vata'], $ay['pitta'], $ay['kapha']);
-                @endphp
-
-                <div class="row g-3">
-                    @foreach($doshas as $d)
-                    @php
-                        $score    = $ay[$d['key']];
-                        $pct      = $d['max'] > 0 ? round(($score / $d['max']) * 100) : 0;
-                        $dominant = $score === $maxScore && $maxScore > 0;
-                    @endphp
-                    <div class="col-md-4">
-                        <div class="card h-100 {{ $dominant ? 'card-dosha-dominant' : '' }}">
-                            <div class="card-body text-center py-4">
-                                @if($dominant)
-                                <div class="badge-dominant mb-2 d-inline-block">
-                                    <i class="bi bi-star-fill me-1"></i>Dominant
-                                </div>
-                                @endif
-                                <div class="fw-bold fs-5 {{ $d['text'] }} font-syne">{{ $d['label'] }}</div>
-                                <div class="fw-bold my-2 score-value">{{ $score }}</div>
-                                <div class="mb-3 score-pts">/ {{ $d['max'] }} pts</div>
-                                <div class="progress mb-2">
-                                    <div class="progress-bar {{ $d['bar'] }}" role="progressbar"
-                                         style="width:{{ $pct }}%;"></div>
-                                </div>
-                                <div class="{{ $d['text'] }} score-pct-lbl">{{ $pct }}%</div>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-
-                @php
-                    $sorted = collect($doshas)->sortByDesc(fn($d) => $ay[$d['key']]);
-                    $dom    = $sorted->first();
-                    $sec    = $sorted->skip(1)->first();
-                @endphp
-                @php
-                    $ayurvedaType = $scores['ayurveda_type'] ?? $dom['label'];
-                @endphp
-                <div class="mt-3 ayurveda-summary d-flex align-items-center gap-3 flex-wrap">
-                    <div>
-                        <strong>Profil dominant :</strong>
-                        <span class="{{ $dom['text'] }} fw-semibold">{{ $dom['label'] }}</span>
-                        — {{ $dom['label'] }} {{ $ay[$dom['key']] }} pts ·
-                        <span class="{{ $sec['text'] }} fw-semibold">{{ $sec['label'] }}</span>
-                        {{ $ay[$sec['key']] }} pts
-                        <div class="text-muted-pa mt-1" style="font-size:11px;">
-                            Tridosha si écart max-min ≤ 12 · Double dosha si écart 1er-2ème ≤ 12 · Sinon dosha unique.
-                        </div>
-                    </div>
-                    <span class="badge rounded-pill text-bg-secondary ms-auto">{{ $ayurvedaType }}</span>
-                </div>
-
-                {{-- Guide d'interprétation Ayurveda --}}
-                @php
-                    $isDouble  = str_contains($ayurvedaType, '-') && $ayurvedaType !== 'Tridosha';
-                    $tipKey1   = $ayTypeToTipKey[$ayurvedaType] ?? $dom['label'];
-                    $tipKey2   = null;
-                    if ($isDouble) {
-                        $parts   = explode('-', $ayurvedaType);
-                        $tipKey2 = $ayTypeToTipKey[$parts[1]] ?? null;
-                    }
-                @endphp
-                @if(isset($ayTips[$tipKey1]))
-                <div class="tip-box tip-box--ayurveda">
-                    <div class="tip-title">
-                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $ayurvedaType }}
-                    </div>
-                    @foreach($ayTips[$tipKey1] as $bloc)
-                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
-                    <ul class="tip-list">
-                        @foreach($bloc['items'] as $line)
-                        <li>{{ $line }}</li>
-                        @endforeach
-                    </ul>
-                    @endforeach
-                    @if($isDouble && $tipKey2 && isset($ayTips[$tipKey2]))
-                    <hr class="tip-separator">
-                    <div class="tip-section-title" style="color:var(--color-primary);">{{ $tipKey2 }} (dosha secondaire)</div>
-                    @foreach($ayTips[$tipKey2] as $bloc)
-                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
-                    <ul class="tip-list">
-                        @foreach($bloc['items'] as $line)
-                        <li>{{ $line }}</li>
-                        @endforeach
-                    </ul>
-                    @endforeach
-                    @endif
-                    @unless($clientView ?? false)
-                    <hr class="tip-separator">
-                    <div class="tip-notes-label">Notes du conseiller</div>
-                    <textarea name="notes[ayurveda]" form="notesForm"
-                              class="tip-textarea"
-                              placeholder="Ajouter des observations personnalisées...">{{ $notes['ayurveda'] ?? '' }}</textarea>
-                    @endunless
-                </div>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    {{-- ════════════════════════════════════════════════════
-         CARD 3 — JULIA ROSS
+         CARD 1 — JULIA ROSS
     ════════════════════════════════════════════════════ --}}
     <div class="col-12">
         <div class="card">
             <div class="section-header">
                 <i class="bi bi-brain"></i>
-                <span>3. Julia Ross — Classes de déséquilibre</span>
+                <span>1. Julia Ross — Classes de déséquilibre</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -1055,13 +844,106 @@ $diathTips = [
     </div>
 
     {{-- ════════════════════════════════════════════════════
-         CARD 4 — DIATHÈSE DE MÉNÉTRIER
+         CARD 2 — TYPAGE MÉTABOLIQUE
     ════════════════════════════════════════════════════ --}}
-    <div class="col-md-6">
-        <div class="card h-100">
+    <div class="col-12">
+        <div class="card">
+            <div class="section-header">
+                <i class="bi bi-activity"></i>
+                <span>2. Typage Métabolique</span>
+            </div>
+            <div class="card-body p-4">
+                @php
+                    $met          = $scores['metabolique'] ?? ['a' => 0, 'b' => 0, 'm' => 0, 'type' => 'Mixte'];
+                    $metabolicType = $scores['metabolic_type'] ?? match($met['type']) {
+                        'Chasseur B'  => 'Chasseur',
+                        'Cueilleur A' => 'Cueilleur',
+                        default       => 'Mixte',
+                    };
+                    $metM  = $met['m'] ?? 0;
+                    $total = $met['a'] + $met['b'] + $metM;
+                    $pctA  = $total > 0 ? round(($met['a'] / $total) * 100) : 34;
+                    $pctB  = $total > 0 ? round(($met['b'] / $total) * 100) : 33;
+                    $pctM  = $total > 0 ? (100 - $pctA - $pctB) : 33;
+                @endphp
+
+                {{-- Barre 3 colonnes A / M / B --}}
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-1 fs-13">
+                        <span class="text-cueilleur fw-semibold">Cueilleur A — {{ $met['a'] }} pts ({{ $pctA }}%)</span>
+                        <span class="fw-semibold" style="color:#7c3aed;">Mixte M — {{ $metM }} pts ({{ $pctM }}%)</span>
+                        <span class="text-chasseur fw-semibold">Chasseur B — {{ $met['b'] }} pts ({{ $pctB }}%)</span>
+                    </div>
+                    <div class="progress progress-18">
+                        <div class="progress-bar bar-cueilleur" style="width:{{ $pctA }}%;"></div>
+                        <div class="progress-bar" style="width:{{ $pctM }}%;background:#7c3aed;"></div>
+                        <div class="progress-bar bar-chasseur"  style="width:{{ $pctB }}%;"></div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    @if($metabolicType === 'Cueilleur' || str_starts_with($metabolicType, 'Cueilleur'))
+                        <span class="badge-cueilleur">
+                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
+                        </span>
+                    @elseif($metabolicType === 'Chasseur' || str_starts_with($metabolicType, 'Chasseur'))
+                        <span class="badge-chasseur">
+                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
+                        </span>
+                    @else
+                        <span class="badge-mixte">
+                            <i class="bi bi-person-badge me-2"></i>{{ $metabolicType }}
+                        </span>
+                    @endif
+                    <p class="profil-desc">
+                        @if(str_starts_with($metabolicType, 'Cueilleur'))
+                            Profil Cueilleur dominant — régime plutôt végétalien, faible en graisses saturées.
+                        @elseif(str_starts_with($metabolicType, 'Chasseur'))
+                            Profil Chasseur dominant — régime riche en protéines animales et graisses de qualité.
+                        @else
+                            Profil Mixte — régime équilibré, adapté aux deux tendances.
+                        @endif
+                    </p>
+                    <p class="text-muted-pa" style="font-size:11px;margin-top:4px;">
+                        Dominant si écart Cueilleur / Chasseur ≥ 5 points — sinon Mixte.
+                    </p>
+                </div>
+
+                {{-- Guide d'interprétation Métaboltyping --}}
+                @if(isset($metTips[$metabolicType]))
+                <div class="tip-box tip-box--metabol">
+                    <div class="tip-title">
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $metabolicType }}
+                    </div>
+                    @foreach($metTips[$metabolicType] as $bloc)
+                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
+                    <ul class="tip-list">
+                        @foreach($bloc['items'] as $line)
+                        <li>{{ $line }}</li>
+                        @endforeach
+                    </ul>
+                    @endforeach
+                    @unless($clientView ?? false)
+                    <hr class="tip-separator">
+                    <div class="tip-notes-label">Notes du conseiller</div>
+                    <textarea name="notes[metabolique]" form="notesForm"
+                              class="tip-textarea"
+                              placeholder="Ajouter des observations personnalisées...">{{ $notes['metabolique'] ?? '' }}</textarea>
+                    @endunless
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    {{-- ════════════════════════════════════════════════════
+         CARD 3 — DIATHÈSE DE MÉNÉTRIER
+    ════════════════════════════════════════════════════ --}}
+    <div class="col-12">
+        <div class="card">
             <div class="section-header">
                 <i class="bi bi-diagram-3"></i>
-                <span>4. Diathèse de Ménétrier</span>
+                <span>3. Diathèse de Ménétrier</span>
             </div>
             <div class="card-body p-4">
                 @php $di = $scores['diathese'] ?? ['c1_d1' => 0, 'c1_d2' => 0, 'c2_d1' => 0, 'c2_d2' => 0]; @endphp
@@ -1151,13 +1033,234 @@ $diathTips = [
     </div>
 
     {{-- ════════════════════════════════════════════════════
-         CARD 5 — BILAN HORMONAL
+         CARD 4 — AYURVEDA
     ════════════════════════════════════════════════════ --}}
-    <div class="col-md-6">
-        <div class="card h-100">
+    <div class="col-12">
+        <div class="card">
+            <div class="section-header">
+                <i class="bi bi-yin-yang"></i>
+                <span>4. Ayurveda</span>
+            </div>
+            <div class="card-body p-4">
+                @php
+                    $ay = $scores['ayurveda'] ?? ['vata' => 0, 'pitta' => 0, 'kapha' => 0];
+                    $doshas = [
+                        ['label' => 'Vâta',  'key' => 'vata',  'max' => 114, 'bar' => 'bar-vata',  'text' => 'text-vata'],
+                        ['label' => 'Pitta', 'key' => 'pitta', 'max' => 120, 'bar' => 'bar-pitta', 'text' => 'text-pitta'],
+                        ['label' => 'Kapha', 'key' => 'kapha', 'max' => 120, 'bar' => 'bar-kapha', 'text' => 'text-kapha'],
+                    ];
+                    $maxScore = max($ay['vata'], $ay['pitta'], $ay['kapha']);
+                @endphp
+
+                <div class="row g-3">
+                    @foreach($doshas as $d)
+                    @php
+                        $score    = $ay[$d['key']];
+                        $pct      = $d['max'] > 0 ? round(($score / $d['max']) * 100) : 0;
+                        $dominant = $score === $maxScore && $maxScore > 0;
+                    @endphp
+                    <div class="col-md-4">
+                        <div class="card h-100 {{ $dominant ? 'card-dosha-dominant' : '' }}">
+                            <div class="card-body text-center py-4">
+                                @if($dominant)
+                                <div class="badge-dominant mb-2 d-inline-block">
+                                    <i class="bi bi-star-fill me-1"></i>Dominant
+                                </div>
+                                @endif
+                                <div class="fw-bold fs-5 {{ $d['text'] }} font-syne">{{ $d['label'] }}</div>
+                                <div class="fw-bold my-2 score-value">{{ $score }}</div>
+                                <div class="mb-3 score-pts">/ {{ $d['max'] }} pts</div>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar {{ $d['bar'] }}" role="progressbar"
+                                         style="width:{{ $pct }}%;"></div>
+                                </div>
+                                <div class="{{ $d['text'] }} score-pct-lbl">{{ $pct }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
+                @php
+                    $sorted = collect($doshas)->sortByDesc(fn($d) => $ay[$d['key']]);
+                    $dom    = $sorted->first();
+                    $sec    = $sorted->skip(1)->first();
+                @endphp
+                @php
+                    $ayurvedaType = $scores['ayurveda_type'] ?? $dom['label'];
+                @endphp
+                <div class="mt-3 ayurveda-summary d-flex align-items-center gap-3 flex-wrap">
+                    <div>
+                        <strong>Profil dominant :</strong>
+                        <span class="{{ $dom['text'] }} fw-semibold">{{ $dom['label'] }}</span>
+                        — {{ $dom['label'] }} {{ $ay[$dom['key']] }} pts ·
+                        <span class="{{ $sec['text'] }} fw-semibold">{{ $sec['label'] }}</span>
+                        {{ $ay[$sec['key']] }} pts
+                        <div class="text-muted-pa mt-1" style="font-size:11px;">
+                            Tridosha si écart max-min ≤ 12 · Double dosha si écart 1er-2ème ≤ 12 · Sinon dosha unique.
+                        </div>
+                    </div>
+                    <span class="badge rounded-pill text-bg-secondary ms-auto">{{ $ayurvedaType }}</span>
+                </div>
+
+                {{-- Guide d'interprétation Ayurveda --}}
+                @php
+                    $isDouble  = str_contains($ayurvedaType, '-') && $ayurvedaType !== 'Tridosha';
+                    $tipKey1   = $ayTypeToTipKey[$ayurvedaType] ?? $dom['label'];
+                    $tipKey2   = null;
+                    if ($isDouble) {
+                        $parts   = explode('-', $ayurvedaType);
+                        $tipKey2 = $ayTypeToTipKey[$parts[1]] ?? null;
+                    }
+                @endphp
+                @if(isset($ayTips[$tipKey1]))
+                <div class="tip-box tip-box--ayurveda">
+                    <div class="tip-title">
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $ayurvedaType }}
+                    </div>
+                    @foreach($ayTips[$tipKey1] as $bloc)
+                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
+                    <ul class="tip-list">
+                        @foreach($bloc['items'] as $line)
+                        <li>{{ $line }}</li>
+                        @endforeach
+                    </ul>
+                    @endforeach
+                    @if($isDouble && $tipKey2 && isset($ayTips[$tipKey2]))
+                    <hr class="tip-separator">
+                    <div class="tip-section-title" style="color:var(--color-primary);">{{ $tipKey2 }} (dosha secondaire)</div>
+                    @foreach($ayTips[$tipKey2] as $bloc)
+                    <div class="tip-section-title">{{ $bloc['section'] }}</div>
+                    <ul class="tip-list">
+                        @foreach($bloc['items'] as $line)
+                        <li>{{ $line }}</li>
+                        @endforeach
+                    </ul>
+                    @endforeach
+                    @endif
+                    @unless($clientView ?? false)
+                    <hr class="tip-separator">
+                    <div class="tip-notes-label">Notes du conseiller</div>
+                    <textarea name="notes[ayurveda]" form="notesForm"
+                              class="tip-textarea"
+                              placeholder="Ajouter des observations personnalisées...">{{ $notes['ayurveda'] ?? '' }}</textarea>
+                    @endunless
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    {{-- ════════════════════════════════════════════════════
+         CARD 5 — GROUPE SANGUIN
+    ════════════════════════════════════════════════════ --}}
+    @php
+        $gs = $answers['groupe_sanguin'] ?? null;
+        $gsTips = [
+            'O'  => [
+                'label'     => 'Groupe O',
+                'icon'      => 'bi-droplet-fill',
+                'color'     => '#dc2626',
+                'resume'    => 'Le plus ancien groupe. Métabolisme orienté protéines et graisses animales.',
+                'favoris'   => ['Viandes rouges, volaille', 'Poissons (sauf certains)', 'Légumes verts', 'Fruits (sauf orange, fraise, mûre)'],
+                'surveiller'=> ['Gluten (blé, épeautre)', 'Laitages en grande quantité', 'Légumineuses (haricots, lentilles)', 'Maïs'],
+            ],
+            'A'  => [
+                'label'     => 'Groupe A',
+                'icon'      => 'bi-droplet-fill',
+                'color'     => '#2563eb',
+                'resume'    => 'Métabolisme adapté à une alimentation végétarienne ou végane.',
+                'favoris'   => ['Tofu, soja', 'Légumineuses', 'Céréales (riz, épeautre)', 'Légumes et fruits variés'],
+                'surveiller'=> ['Viandes rouges', 'Laitages (surtout lait de vache)', 'Blé en excès', 'Haricots rouges'],
+            ],
+            'B'  => [
+                'label'     => 'Groupe B',
+                'icon'      => 'bi-droplet-fill',
+                'color'     => '#7c3aed',
+                'resume'    => 'Le plus flexible. S\'adapte bien aux produits laitiers et à une alimentation omnivore équilibrée.',
+                'favoris'   => ['Viandes (sauf poulet)', 'Produits laitiers', 'Poissons', 'Légumes verts, œufs'],
+                'surveiller'=> ['Poulet', 'Maïs', 'Lentilles', 'Blé (en excès)', 'Arachides'],
+            ],
+            'AB' => [
+                'label'     => 'Groupe AB',
+                'icon'      => 'bi-droplet-fill',
+                'color'     => '#059669',
+                'resume'    => 'Le plus rare. Combine les caractéristiques des groupes A et B.',
+                'favoris'   => ['Tofu, poissons', 'Produits laitiers (modéré)', 'Légumes verts', 'Ananas, raisins'],
+                'surveiller'=> ['Viandes rouges en excès', 'Maïs', 'Haricots rouges', 'Poivrons'],
+            ],
+        ];
+        $gsData = $gs && isset($gsTips[$gs]) ? $gsTips[$gs] : null;
+    @endphp
+
+    @if($gs)
+    <div class="col-12">
+        <div class="card">
             <div class="section-header">
                 <i class="bi bi-droplet-half"></i>
-                <span>5. Bilan Hormonal</span>
+                <span>5. Groupe sanguin</span>
+            </div>
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="score-num" style="color: {{ $gsData['color'] ?? 'var(--color-primary)' }}; font-size: 2rem;">
+                        {{ $gs }}
+                    </div>
+                    @if($gsData)
+                    <div>
+                        <div class="fw-semibold" style="color: {{ $gsData['color'] }};">{{ $gsData['label'] }}</div>
+                        <div class="fs-13 text-muted-pa mt-1">{{ $gsData['resume'] }}</div>
+                    </div>
+                    @else
+                    <div class="fs-13 text-muted-pa">Groupe renseigné — pas de fiche disponible.</div>
+                    @endif
+                </div>
+                @if($gsData)
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded" style="background: rgba(5,150,105,.06); border-left: 3px solid #059669;">
+                            <div class="fw-semibold fs-13 mb-2" style="color:#059669;">
+                                <i class="bi bi-check-circle me-1"></i>Aliments généralement favorables
+                            </div>
+                            <ul class="mb-0 ps-3" style="font-size:13px; color: var(--color-navy);">
+                                @foreach($gsData['favoris'] as $item)
+                                    <li>{{ $item }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded" style="background: rgba(220,38,38,.06); border-left: 3px solid #dc2626;">
+                            <div class="fw-semibold fs-13 mb-2" style="color:#dc2626;">
+                                <i class="bi bi-exclamation-circle me-1"></i>À surveiller
+                            </div>
+                            <ul class="mb-0 ps-3" style="font-size:13px; color: var(--color-navy);">
+                                @foreach($gsData['surveiller'] as $item)
+                                    <li>{{ $item }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                @endif
+                @unless($clientView ?? false)
+                <div class="tip-notes-label mt-4">Notes du conseiller</div>
+                <textarea name="notes[groupe_sanguin]" form="notesForm"
+                          class="tip-textarea"
+                          placeholder="Ajouter des observations sur le groupe sanguin...">{{ $notes['groupe_sanguin'] ?? '' }}</textarea>
+                @endunless
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- ════════════════════════════════════════════════════
+         CARD 6 — BILAN HORMONAL
+    ════════════════════════════════════════════════════ --}}
+    <div class="col-12">
+        <div class="card">
+            <div class="section-header">
+                <i class="bi bi-droplet-half"></i>
+                <span>6. Bilan Hormonal</span>
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
@@ -1189,7 +1292,7 @@ $diathTips = [
     </div>
 
     {{-- ════════════════════════════════════════════════════
-         CARD 6 — CANARIS
+         CARD 7 — CANARIS
     ════════════════════════════════════════════════════ --}}
     <div class="col-12">
         @php
@@ -1199,7 +1302,7 @@ $diathTips = [
         <div class="card">
             <div class="section-header">
                 <i class="bi bi-feather"></i>
-                <span>6. Canaris</span>
+                <span>7. Canaris</span>
             </div>
             <div class="card-body p-4">
 
@@ -1355,8 +1458,8 @@ $diathTips = [
                         <div class="fw-semibold fs-13">{{ $questionnaire->menu_file_name }}</div>
                         <div class="fs-12 text-muted-pa">Fichier attaché</div>
                     </div>
-                    <a href="{{ Storage::disk('public')->url($questionnaire->menu_file) }}"
-                       target="_blank" class="btn btn-outline-secondary btn-sm">
+                    <a href="{{ route('questionnaire.menu.download', $client) }}"
+                       class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-download me-1"></i>Télécharger
                     </a>
                 </div>

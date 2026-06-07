@@ -55,6 +55,7 @@ Route::middleware(['auth', 'role:conseiller'])->group(function () {
     Route::post('/clients/{client}/questionnaire/nouvelle-session', [QuestionnaireController::class, 'nouvelleSession'])->name('questionnaire.nouvelle-session');
     Route::get('/clients/{client}/bilan/comparer', [QuestionnaireController::class, 'comparer'])->name('questionnaire.comparer');
     Route::post('/clients/{client}/menu', [QuestionnaireController::class, 'saveMenu'])->name('questionnaire.menu.save');
+    Route::get('/clients/{client}/menu/download', [QuestionnaireController::class, 'downloadMenu'])->name('questionnaire.menu.download');
     Route::post('/clients/{client}/aliments', [QuestionnaireController::class, 'saveAliments'])->name('questionnaire.aliments.save');
 });
 

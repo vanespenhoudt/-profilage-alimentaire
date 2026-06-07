@@ -214,10 +214,10 @@ class QuestionnaireController extends Controller
 
         if ($request->hasFile('menu_file') && $request->file('menu_file')->isValid()) {
             if ($questionnaire->menu_file) {
-                Storage::disk('public')->delete($questionnaire->menu_file);
+                Storage::disk('local')->delete($questionnaire->menu_file);
             }
             $file = $request->file('menu_file');
-            $questionnaire->menu_file      = $file->store('menus', 'public');
+            $questionnaire->menu_file      = $file->store('menus', 'local');
             $questionnaire->menu_file_name = $file->getClientOriginalName();
         }
 
@@ -226,6 +226,30 @@ class QuestionnaireController extends Controller
         return redirect()
             ->route('questionnaire.bilan', $client)
             ->with('success', 'Menu enregistré.');
+    }
+
+    // -----------------------------------------------------------------------
+    // Téléchargement sécurisé du fichier menu
+    // -----------------------------------------------------------------------
+
+    public function downloadMenu(Request $request, Client $client): \Symfony\Component\HttpFoundation\StreamedResponse|\Illuminate\Http\RedirectResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $questionnaire = $client->questionnaire;
+
+        if (! $questionnaire || ! $questionnaire->menu_file) {
+            abort(404);
+        }
+
+        if (! Storage::disk('local')->exists($questionnaire->menu_file)) {
+            abort(404);
+        }
+
+        return Storage::disk('local')->download(
+            $questionnaire->menu_file,
+            $questionnaire->menu_file_name ?? basename($questionnaire->menu_file)
+        );
     }
 
     // -----------------------------------------------------------------------

@@ -85,17 +85,20 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('clients.show', $client) }}" class="btn btn-sm btn-outline-secondary me-1">
+                                <a href="{{ route('clients.show', $client) }}" class="btn btn-sm btn-outline-secondary me-1"
+                                   dusk="btn-show-client-{{ $client->id }}">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="{{ route('clients.edit', $client) }}" class="btn btn-sm btn-outline-secondary me-1">
+                                <a href="{{ route('clients.edit', $client) }}" class="btn btn-sm btn-outline-secondary me-1"
+                                   dusk="btn-edit-client-{{ $client->id }}">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form method="POST" action="{{ route('clients.destroy', $client) }}" class="d-inline"
                                       onsubmit="return confirm('Supprimer ce client ?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary btn-delete">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary btn-delete"
+                                            dusk="btn-delete-client-{{ $client->id }}">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
