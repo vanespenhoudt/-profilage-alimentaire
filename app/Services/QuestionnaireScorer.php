@@ -72,23 +72,45 @@ class QuestionnaireScorer
         $met_b = 0;
         $met_m = 0;
 
-        // Format v2 : champs mb_01_A / mb_01_B / mb_01_M
-        foreach (QuestionnaireData::$metabolique as $q) {
-            if (!empty($answers[$q['id'] . '_A'])) $met_a++;
-            if (!empty($answers[$q['id'] . '_B'])) $met_b++;
-            if (!empty($answers[$q['id'] . '_M'])) $met_m++;
-        }
+        // Mapping des symptômes ms* vers leur colonne correcte (source : Taty Lauwers)
+        $msMapping = [
+            'ms2'  => 'B',  // Cicatrices, marques
+            'ms3'  => 'M',  // Oppression thoracique / Toux
+            'ms5'  => 'M',  // Peau crevasse
+            'ms6'  => 'A',  // Chair de poule
+            'ms7'  => 'B',  // Gencives saignent
+            'ms9'  => 'M',  // Démangeaisons de peau
+            'ms10' => 'M',  // Éternuements
+            'ms11' => 'M',  // Respiration sifflante
+        ];
 
-        // Fallback v1 : anciens champs mb1..mb37 (valeur 'a'/'b') + ms1..ms11 (checkbox)
-        // Activé uniquement si aucune réponse v2 n'est détectée.
-        if ($met_a + $met_b + $met_m === 0) {
-            foreach (QuestionnaireData::$metabolique_binaire as $q) {
-                $val = $answers[$q['id']] ?? null;
-                if ($val === 'a') $met_a++;
-                elseif ($val === 'b') $met_b++;
+        // Détection du format : v1 si des clés mb1..mb37 sont présentes
+        $isV1 = collect(array_keys($answers))->contains(
+            fn ($k) => (bool) preg_match('/^mb\d+$/', $k)
+        );
+
+        if ($isV1) {
+            // Format v1 : mb1..mb37 valeur 'a'/'b' + symptômes ms* valeur '1'
+            foreach ($answers as $key => $value) {
+                if (preg_match('/^mb\d+$/', $key)) {
+                    if ($value === 'a') $met_a++;
+                    elseif ($value === 'b') $met_b++;
+                }
+                if (isset($msMapping[$key]) && $value == '1') {
+                    match ($msMapping[$key]) {
+                        'A' => $met_a++,
+                        'B' => $met_b++,
+                        'M' => $met_m++,
+                    };
+                }
             }
-            foreach (QuestionnaireData::$metabolique_symptomes as $q) {
-                if (!empty($answers[$q['id']])) $met_b++;
+        } else {
+            // Format v2 : mb_XX_A / mb_XX_B / mb_XX_M
+            foreach ($answers as $key => $value) {
+                if (! $value) continue;
+                if (preg_match('/^mb_\d+_A$/', $key)) $met_a++;
+                elseif (preg_match('/^mb_\d+_B$/', $key)) $met_b++;
+                elseif (preg_match('/^mb_\d+_M$/', $key)) $met_m++;
             }
         }
 
