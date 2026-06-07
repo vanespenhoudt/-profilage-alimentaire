@@ -301,28 +301,27 @@
 @endif
 
 <div class="mt-3 d-flex gap-2 flex-wrap">
-    <a href="{{ route('questionnaire.show', $client) }}" class="btn btn-primary text-center justify-content-center">
-        <i class="bi bi-clipboard2-pulse me-1"></i>
-        {{ $client->questionnaire ? 'Modifier le questionnaire' : 'Remplir le questionnaire' }}
+    <a href="{{ route('questionnaire.show', $client) }}" class="btn btn-primary d-inline-flex align-items-center justify-content-center">
+        <i class="bi bi-clipboard2-pulse me-1"></i>{{ $client->questionnaire ? 'Modifier le questionnaire' : 'Remplir le questionnaire' }}
     </a>
     @if($client->questionnaire)
-    <a href="{{ route('questionnaire.bilan', $client) }}" class="btn btn-outline-secondary text-center justify-content-center">
+    <a href="{{ route('questionnaire.bilan', $client) }}" class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
         <i class="bi bi-bar-chart-line me-1"></i>Voir le bilan
     </a>
-    <button type="button" class="btn btn-outline-secondary text-center justify-content-center"
+    <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center"
             data-bs-toggle="modal" data-bs-target="#nouvelleSessionModal"
             dusk="btn-open-nouvelle-session">
         <i class="bi bi-plus-circle me-1"></i>Nouvelle évaluation
     </button>
     @endif
-    <a href="{{ route('clients.edit', $client) }}" class="btn btn-outline-secondary text-center justify-content-center">
+    <a href="{{ route('clients.edit', $client) }}" class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
         <i class="bi bi-pencil me-1"></i>Modifier le profil
     </a>
     <form method="POST" action="{{ route('clients.destroy', $client) }}"
           onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?')">
         @csrf
         @method('DELETE')
-        <button type="submit" class="btn btn-outline-secondary btn-delete text-center justify-content-center">
+        <button type="submit" class="btn btn-outline-secondary btn-delete d-inline-flex align-items-center justify-content-center">
             <i class="bi bi-trash me-1"></i>Supprimer
         </button>
     </form>
