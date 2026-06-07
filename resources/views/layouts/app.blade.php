@@ -143,6 +143,12 @@
 
     </div><!-- /content-panel -->
 
+    @if(auth()->check() && !auth()->user()->isSuperAdmin())
+    <footer class="text-center py-3" style="font-size:11px;color:var(--color-text-muted);">
+        <a href="{{ route('politique.conseillers') }}" class="link-green-dark" target="_blank">Politique de confidentialité</a>
+    </footer>
+    @endif
+
     <!-- Barre bas fixe (optionnelle par vue) -->
     <div id="bottom-bar">@yield('bottom-bar')</div>
 

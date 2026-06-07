@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class);
 
 Route::get('/politique-de-confidentialite', fn () => view('politique'))->name('politique');
+Route::get('/politique-conseillers', fn () => view('politique-conseillers'))->name('politique.conseillers');
 
 // Inscription conseiller via invitation (sans authentification)
 Route::get('/inscription/{token}', [InvitationController::class, 'show'])->name('invitation.show');

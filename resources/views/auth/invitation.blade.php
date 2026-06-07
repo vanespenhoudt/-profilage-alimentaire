@@ -87,6 +87,22 @@
                         </div>
                     </div>
 
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input @error('politique') is-invalid @enderror"
+                                   type="checkbox" name="politique" id="politique" value="1"
+                                   {{ old('politique') ? 'checked' : '' }} required>
+                            <label class="form-check-label fs-13" for="politique">
+                                J'ai lu et j'accepte la
+                                <a href="{{ route('politique.conseillers') }}" target="_blank" class="link-green-dark">politique de confidentialité</a>
+                                <span class="required-star">*</span>
+                            </label>
+                        </div>
+                        @error('politique')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-lg fw-semibold">
                             <i class="bi bi-check-circle me-2"></i>Créer mon compte

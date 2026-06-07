@@ -92,8 +92,11 @@ class InvitationController extends Controller
         }
 
         $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'password' => ['required', 'confirmed', Password::defaults()],
+            'name'      => ['required', 'string', 'max:255'],
+            'password'  => ['required', 'confirmed', Password::defaults()],
+            'politique' => ['accepted'],
+        ], [
+            'politique.accepted' => "Vous devez accepter la politique de confidentialité pour créer votre compte.",
         ]);
 
         $user = User::create([
