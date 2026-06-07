@@ -262,7 +262,8 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-title); font-weight: 700; color
 .text-green   { color: var(--green) !important; }
 .text-green-dark { color: var(--green-dark) !important; }
 .text-muted-pa { color: var(--text-muted) !important; }
-.text-orange  { color: var(--color-accent-orange); }
+.text-orange   { color: var(--color-accent-orange); }
+.text-warning-pa { color: var(--color-text-warning) !important; }
 .bg-tint      { background: var(--color-bg-tint) !important; }
 .border-tint  { border-color: var(--color-border-tint) !important; }
 .mw-320 { max-width: 320px; }

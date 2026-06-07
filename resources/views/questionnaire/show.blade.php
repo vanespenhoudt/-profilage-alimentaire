@@ -673,7 +673,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 {{-- Barre flottante bas ──────────────────────────────────────────── --}}
 <div class="position-fixed bottom-0 end-0 p-4 zi-1050">
     <div class="d-flex gap-2 align-items-center float-bar">
-        <span style="font-size:12px;font-weight:600;color:var(--color-text-warning);">
+        <span class="fs-12 fw-semibold text-warning-pa">
             <i class="bi bi-exclamation-triangle-fill me-1"></i>N'oubliez pas d'enregistrer avant de quitter.
         </span>
         @if($questionnaire)
