@@ -242,15 +242,17 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
                     @foreach(QuestionnaireData::$metabolique as $q)
                     <div class="q-row" data-qid="{{ $q['id'] }}">
-                        <div class="row g-0 align-items-start">
-                            <div class="col-md-4 col-12">
-                                <div class="q-num d-inline me-1">{{ $loop->iteration }}.</div>
-                                <span class="q-label">{{ $q['label'] }}</span>
+                        <div class="row g-0 align-items-stretch">
+                            <div class="col-md-4 col-12 d-flex align-items-center pe-2">
+                                <div>
+                                    <span class="q-num me-1">{{ $loop->iteration }}.</span>
+                                    <span class="q-label">{{ $q['label'] }}</span>
+                                </div>
                             </div>
                             <div class="col-12 col-md-8 mt-2 mt-md-0">
-                                <div class="row g-2">
+                                <div class="row g-1 h-100 align-items-stretch">
                                     @foreach(['A' => 'btn-outline-primary', 'B' => 'btn-outline-chasseur', 'M' => 'btn-outline-mixte'] as $col => $btnClass)
-                                    <div class="col-4">
+                                    <div class="col-4 d-flex">
                                         @if($q['options'][$col] !== null)
                                         <input type="checkbox"
                                                name="{{ $q['id'] }}_{{ $col }}" value="1"
@@ -259,7 +261,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                                                data-section="s2"
                                                data-qid="{{ $q['id'] }}"
                                                @checked(!empty($answers[$q['id'] . '_' . $col]))>
-                                        <label class="btn {{ $btnClass }} btn-sm w-100 text-start" for="pub_{{ $q['id'] }}_{{ $col }}" style="font-size:12px;min-height:34px;white-space:normal;">
+                                        <label class="btn {{ $btnClass }} btn-sm w-100 text-start h-100" for="pub_{{ $q['id'] }}_{{ $col }}" style="font-size:12px;white-space:normal;display:flex;align-items:center;">
                                             {{ $q['options'][$col] }}
                                         </label>
                                         @endif

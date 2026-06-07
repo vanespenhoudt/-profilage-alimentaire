@@ -229,17 +229,17 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 
                     @foreach(QuestionnaireData::$metabolique as $q)
                     <div class="q-row" data-qid="{{ $q['id'] }}">
-                        <div class="row g-0 align-items-start">
-                            <div class="col-md-1 col-2">
+                        <div class="row g-0 align-items-stretch">
+                            <div class="col-md-1 col-2 d-flex align-items-center">
                                 <div class="q-num">{{ $loop->iteration }}.</div>
                             </div>
-                            <div class="col-md-3 col-10">
-                                <div class="q-label pe-2">{{ $q['label'] }}</div>
+                            <div class="col-md-3 col-10 d-flex align-items-center pe-2">
+                                <div class="q-label">{{ $q['label'] }}</div>
                             </div>
                             <div class="col-12 col-md-8 mt-2 mt-md-0">
-                                <div class="row g-2">
-                                    @foreach(['A' => ['class'=>'btn-outline-primary','label'=>'A'], 'B' => ['class'=>'btn-outline-chasseur','label'=>'B'], 'M' => ['class'=>'btn-outline-mixte','label'=>'M']] as $col => $cfg)
-                                    <div class="col-4">
+                                <div class="row g-1 h-100 align-items-stretch">
+                                    @foreach(['A' => 'btn-outline-primary', 'B' => 'btn-outline-chasseur', 'M' => 'btn-outline-mixte'] as $col => $btnClass)
+                                    <div class="col-4 d-flex">
                                         @if($q['options'][$col] !== null)
                                         <input type="checkbox"
                                                name="{{ $q['id'] }}_{{ $col }}" value="1"
@@ -248,7 +248,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                                                data-section="s2"
                                                data-qid="{{ $q['id'] }}"
                                                @checked(!empty($answers[$q['id'] . '_' . $col]))>
-                                        <label class="btn {{ $cfg['class'] }} btn-sm w-100 text-start" for="{{ $q['id'] }}_{{ $col }}" style="font-size:12px;min-height:34px;white-space:normal;">
+                                        <label class="btn {{ $btnClass }} btn-sm w-100 text-start h-100" for="{{ $q['id'] }}_{{ $col }}" style="font-size:12px;white-space:normal;display:flex;align-items:center;">
                                             {{ $q['options'][$col] }}
                                         </label>
                                         @endif
