@@ -831,6 +831,15 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
         if (e.target.matches('input[type="text"],input[type="number"],textarea,[contenteditable]')) triggerSave();
     });
     document.addEventListener('DOMContentLoaded', updateBadges);
+
+    // Scroll vers le haut de la section ouverte une fois l'animation terminée
+    document.getElementById('questAccordion').addEventListener('shown.bs.collapse', function (e) {
+        const item = e.target.closest('.accordion-item');
+        if (!item) return;
+        const offset = 80; // hauteur de la navbar verte
+        const top    = item.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+    });
 })();
 </script>
 

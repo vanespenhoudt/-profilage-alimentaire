@@ -920,12 +920,12 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     document.addEventListener('input',  (e) => { if (e.target.matches('textarea, input[type="text"]')) scheduleAutoSave(); });
     document.addEventListener('DOMContentLoaded', () => { updateBadges(); updateCanarisBlocks(); });
 
-    document.querySelectorAll('.accordion-collapse').forEach(el => {
-        el.addEventListener('shown.bs.collapse', function () {
-            const btn = this.previousElementSibling.querySelector('button');
-            const y   = btn.getBoundingClientRect().top + window.scrollY - 8;
-            window.scrollTo({ top: y, behavior: 'instant' });
-        });
+    document.getElementById('questAccordion').addEventListener('shown.bs.collapse', function (e) {
+        const item   = e.target.closest('.accordion-item');
+        if (!item) return;
+        const offset = 72;
+        const top    = item.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
     });
 })();
 </script>
