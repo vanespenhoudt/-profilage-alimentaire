@@ -146,16 +146,14 @@
                         <td class="small">{{ $inv->created_at->format('d/m/Y') }}</td>
                         <td class="small">{{ $inv->expires_at?->format('d/m/Y') ?? '—' }}</td>
                         <td>
-                            @if($inv->isPending())
                             <form method="POST" action="{{ route('invitations.destroy', $inv) }}"
-                                  onsubmit="return confirm('Révoquer cette invitation ?')">
+                                  onsubmit="return confirm('Supprimer cette invitation ?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary btn-delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
-                            @endif
                         </td>
                     </tr>
                     @endforeach
