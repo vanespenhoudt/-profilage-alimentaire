@@ -49,7 +49,9 @@ class QuestionnaireController extends Controller
                 'answers'   => [],
             ]);
 
-        $questionnaire->answers    = Questionnaire::mergeAnswers($questionnaire->answers ?? [], $incoming);
+        $merged                    = Questionnaire::mergeAnswers($questionnaire->answers ?? [], $incoming);
+        $questionnaire->answers    = $merged;
+        $questionnaire->scores     = (new QuestionnaireScorer())->calculate($merged);
         $questionnaire->updated_at = now();
 
         if ($request->has('menu_text')) {

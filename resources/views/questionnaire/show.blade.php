@@ -673,6 +673,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 {{-- Barre flottante bas ──────────────────────────────────────────── --}}
 <div class="position-fixed bottom-0 end-0 p-4 zi-1050">
     <div class="d-flex gap-2 align-items-center float-bar">
+        <span class="text-muted-pa" style="font-size:11px;">N'oubliez pas d'enregistrer avant de changer de page.</span>
         @if($questionnaire)
         <a href="{{ route('questionnaire.bilan', $client) }}" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-bar-chart me-1"></i>Voir bilan
