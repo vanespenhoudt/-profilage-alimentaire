@@ -351,8 +351,8 @@ dt { font-family: var(--font-body); }
 .q-header-inner   { max-width: 1100px; margin: 0 auto; padding: 12px 20px 16px; }
 .q-header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .q-title          { font-size: 15px; color: var(--color-text-on-green); margin: 0; }
-.q-header-badge   { background: var(--color-white-15); border-radius: 20px; padding: 3px 12px; font-size: 12px; color: var(--color-text-on-green); }
-.q-save-status    { margin-left: auto; font-size: 12px; color: var(--color-white-70); display: flex; align-items: center; gap: 6px; }
+.q-header-badge   { background: var(--color-white-30); border-radius: 20px; padding: 3px 12px; font-size: 12px; font-weight: 600; color: var(--color-text-on-green); }
+.q-save-status    { margin-left: auto; font-size: 12px; color: var(--color-text-on-green); display: flex; align-items: center; gap: 6px; }
 .q-progress-row   { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
 .q-progress-label { font-size: 12px; color: rgba(255,255,255,0.9); min-width: 52px; text-align: right; }
 
