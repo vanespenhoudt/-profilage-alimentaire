@@ -75,7 +75,7 @@ class Questionnaire extends Model
     {
         // Mapping section → préfixes réels des champs HTML
         $prefixMap = [
-            'metabolique'    => ['mb', 'ms'],
+            'metabolique'    => ['mb_'],
             'julia_ross'     => ['jr'],
             'ayurveda'       => ['v', 'p', 'k'],
             'diathese'       => ['d1', 'd2'],
@@ -133,7 +133,7 @@ class Questionnaire extends Model
         $answers  = $this->answers ?? [];
         $keys     = array_keys($answers);
         $sections = [
-            'metabolique'    => ['mb', 'ms'],
+            'metabolique'    => ['mb_'],
             'julia_ross'     => ['jr'],
             'ayurveda'       => ['v', 'p', 'k'],
             'diathese'       => ['d1', 'd2'],
