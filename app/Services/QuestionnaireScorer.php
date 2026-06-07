@@ -66,6 +66,66 @@ class QuestionnaireScorer
         return $first;
     }
 
+    /**
+     * Convertit les réponses v1 (mb1='a', ms3='1'…) en clés v2 (mb_01_A='1'…)
+     * pour le pré-remplissage de la vue. Ne modifie pas la base.
+     */
+    public static function normalizeMetaboliqueAnswers(array $answers): array
+    {
+        $isV1 = collect(array_keys($answers))->contains(
+            fn ($k) => (bool) preg_match('/^mb\d+$/', $k)
+        );
+
+        if (! $isV1) {
+            return $answers; // déjà v2, rien à faire
+        }
+
+        // Questions binaires mb1..mb37 → mb_XX_A / mb_XX_B
+        $binaryMap = [
+            'mb1'  => 'mb_01', 'mb2'  => 'mb_02', 'mb3'  => 'mb_04',
+            'mb4'  => 'mb_06', 'mb5'  => 'mb_10', 'mb6'  => 'mb_11',
+            'mb7'  => 'mb_12', 'mb8'  => 'mb_13', 'mb9'  => 'mb_14',
+            'mb10' => 'mb_15', 'mb11' => 'mb_16', 'mb12' => 'mb_17',
+            'mb13' => 'mb_18', 'mb14' => 'mb_19', 'mb15' => 'mb_20',
+            'mb16' => 'mb_23', 'mb17' => 'mb_24', 'mb18' => 'mb_25',
+            'mb19' => 'mb_28', 'mb20' => 'mb_29', 'mb21' => 'mb_30',
+            'mb22' => 'mb_31', 'mb23' => 'mb_32', 'mb24' => 'mb_33',
+            'mb25' => 'mb_34', 'mb26' => 'mb_35', 'mb27' => 'mb_36',
+            'mb28' => 'mb_37', 'mb29' => 'mb_38', 'mb30' => 'mb_39',
+            'mb31' => 'mb_41', 'mb32' => 'mb_42', 'mb33' => 'mb_43',
+            'mb34' => 'mb_45', 'mb35' => 'mb_46', 'mb36' => 'mb_47',
+            'mb37' => 'mb_48',
+        ];
+
+        // Symptômes ms* → mb_XX_colonne
+        $symptomeMap = [
+            'ms2'  => 'mb_05_B',
+            'ms3'  => 'mb_03_M',
+            'ms5'  => 'mb_09_M',
+            'ms6'  => 'mb_21_A',
+            'ms7'  => 'mb_22_B',
+            'ms9'  => 'mb_27_M',
+            'ms10' => 'mb_40_M',
+            'ms11' => 'mb_44_M',
+        ];
+
+        $normalized = $answers;
+
+        foreach ($binaryMap as $oldId => $newId) {
+            $val = $answers[$oldId] ?? null;
+            if ($val === 'a') $normalized[$newId . '_A'] = '1';
+            if ($val === 'b') $normalized[$newId . '_B'] = '1';
+        }
+
+        foreach ($symptomeMap as $oldId => $newKey) {
+            if (! empty($answers[$oldId])) {
+                $normalized[$newKey] = '1';
+            }
+        }
+
+        return $normalized;
+    }
+
     private function scoreMetabolique(array $answers): array
     {
         $met_a = 0;

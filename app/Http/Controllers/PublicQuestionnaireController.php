@@ -21,7 +21,9 @@ class PublicQuestionnaireController extends Controller
             return view('questionnaire.merci', compact('questionnaire'));
         }
 
-        $answers  = $questionnaire->answers ?? [];
+        $answers  = \App\Services\QuestionnaireScorer::normalizeMetaboliqueAnswers(
+            $questionnaire->answers ?? []
+        );
         $allSects = ['julia_ross', 'metabolique', 'diathese', 'ayurveda', 'groupe_sanguin', 'hormones', 'canaris'];
         $sections = $questionnaire->sections ?? $allSects;
 

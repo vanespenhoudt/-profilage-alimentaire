@@ -25,7 +25,9 @@ class QuestionnaireController extends Controller
         $this->authorizeClientAccess($request->user(), $client);
 
         $questionnaire = $client->questionnaire;
-        $answers       = $questionnaire?->answers ?? [];
+        $answers       = \App\Services\QuestionnaireScorer::normalizeMetaboliqueAnswers(
+            $questionnaire?->answers ?? []
+        );
 
         return view('questionnaire.show', compact('client', 'questionnaire', 'answers'));
     }
