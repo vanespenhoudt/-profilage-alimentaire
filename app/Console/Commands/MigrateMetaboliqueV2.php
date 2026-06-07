@@ -66,17 +66,17 @@ class MigrateMetaboliqueV2 extends Command
      * Valeur '1' → colonne indiquée (B ou A selon le PDF).
      */
     private const SYMPTOME_MAP = [
-        'ms1'  => 'mb_03_B', // Oppression thoracique → B
-        'ms2'  => 'mb_05_B', // Cicatrices → B
-        'ms3'  => 'mb_07_B', // Toux → B
-        'ms4'  => 'mb_08_B', // Pellicules → B
-        'ms5'  => 'mb_09_B', // Peau crevasse → B
-        'ms6'  => 'mb_21_A', // Chair de poule → A (PDF)
+        'ms1'  => 'mb_03_M', // Oppression thoracique → M
+        'ms2'  => 'mb_05_B', // Cicatrices, marques → B
+        'ms3'  => 'mb_07_M', // Toux → M
+        'ms4'  => 'mb_08_M', // Pellicules → M
+        'ms5'  => 'mb_09_M', // Peau crevasse → M
+        'ms6'  => 'mb_21_A', // Chair de poule → A
         'ms7'  => 'mb_22_B', // Gencives saignent → B
-        'ms8'  => 'mb_26_B', // Irritation des yeux → B
-        'ms9'  => 'mb_27_B', // Démangeaisons de peau → B
-        'ms10' => 'mb_40_B', // Éternuements → B
-        'ms11' => 'mb_44_B', // Respiration sifflante → B
+        'ms8'  => 'mb_26_M', // Irritation des yeux → M
+        'ms9'  => 'mb_27_M', // Démangeaisons de peau → M
+        'ms10' => 'mb_40_M', // Éternuements → M
+        'ms11' => 'mb_44_M', // Respiration sifflante → M
     ];
 
     public function handle(): int
