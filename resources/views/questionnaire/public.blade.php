@@ -61,19 +61,6 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     <p class="text-muted-pa fs-13 mt-1">Cliquez sur <strong>Soumettre</strong> quand vous avez terminé.</p>
 </div>
 
-{{-- Progression globale ─────────────────────────────────────────── --}}
-<div class="card mb-3">
-    <div class="card-body py-3 d-flex align-items-center gap-3">
-        <span class="text-nowrap fs-12 text-muted-pa fw-medium">
-            <i class="bi bi-check2-circle me-1 text-green-dark"></i>Ma progression
-        </span>
-        <div class="progress on-panel flex-grow-1">
-            <div class="progress-bar" id="globalBar" role="progressbar" style="width:0%;"></div>
-        </div>
-        <span class="text-nowrap fw-semibold pub-progress-lbl" id="globalLabel">0 / 0</span>
-    </div>
-</div>
-
 {{-- Statut sauvegarde ───────────────────────────────────────────── --}}
 <div class="d-flex align-items-center gap-2 mb-3">
     <span class="pub-save-status" id="saveStatus">
@@ -773,9 +760,6 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             if (cfg.type === 'radio' || cfg.type === 'question') answered += count;
         });
         const pct = TOTAL_RADIO > 0 ? Math.round((answered / TOTAL_RADIO) * 100) : 0;
-        document.getElementById('globalBar').style.width = pct + '%';
-        document.getElementById('globalLabel').textContent =
-            TOTAL_RADIO > 0 ? answered + ' / ' + TOTAL_RADIO : '—';
 
         const floatBar = document.getElementById('floatBar');
         if (floatBar) floatBar.style.width = pct + '%';

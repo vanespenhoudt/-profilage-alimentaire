@@ -648,9 +648,9 @@ $diathTips = [
     <div class="card-body py-2 px-3 d-flex align-items-center gap-3 flex-wrap">
         <div class="d-flex align-items-center gap-2">
             <i class="bi bi-layers text-muted"></i>
-            <span class="small text-muted">Session :</span>
+            <span class="small text-muted">Évaluation :</span>
             <span class="fw-semibold small">
-                {{ $questionnaire->session_label ?? 'Session initiale' }}
+                {{ $questionnaire->session_label ?? 'Évaluation initiale' }}
                 — {{ $questionnaire->updated_at?->format('d/m/Y') ?? '—' }}
             </span>
         </div>
@@ -665,7 +665,7 @@ $diathTips = [
             <select name="session_a" class="form-select form-select-sm" style="width:auto">
                 @foreach($allSessions as $s)
                 <option value="{{ $s->id }}" @selected($s->id === $defaultAId)>
-                    {{ $s->session_label ?? 'Session initiale' }} ({{ $s->updated_at?->format('d/m/Y') }})
+                    {{ $s->session_label ?? 'Évaluation initiale' }} ({{ $s->updated_at?->format('d/m/Y') }})
                 </option>
                 @endforeach
             </select>
@@ -673,7 +673,7 @@ $diathTips = [
             <select name="session_b" class="form-select form-select-sm" style="width:auto">
                 @foreach($allSessions as $s)
                 <option value="{{ $s->id }}" @selected($s->id === $defaultBId)>
-                    {{ $s->session_label ?? 'Session initiale' }} ({{ $s->updated_at?->format('d/m/Y') }})
+                    {{ $s->session_label ?? 'Évaluation initiale' }} ({{ $s->updated_at?->format('d/m/Y') }})
                 </option>
                 @endforeach
             </select>
@@ -688,9 +688,9 @@ $diathTips = [
             @csrf
             <input type="text" name="session_label"
                    class="form-control form-control-sm" style="width:180px"
-                   placeholder="Nom de la session (optionnel)">
-            <button type="submit" class="btn btn-sm btn-outline-primary">
-                <i class="bi bi-plus-lg me-1"></i>Nouvelle session
+                   placeholder="Nom de l'évaluation (optionnel)">
+            <button type="submit" class="btn btn-sm btn-outline-primary text-center justify-content-center">
+                <i class="bi bi-plus-lg me-1"></i>Nouvelle évaluation
             </button>
         </form>
     </div>

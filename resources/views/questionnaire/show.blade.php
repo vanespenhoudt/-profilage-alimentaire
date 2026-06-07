@@ -23,13 +23,6 @@
         </span>
         <span class="spinner-border spinner-border-sm text-white d-none" id="saveSpinner" role="status"></span>
     </div>
-    {{-- Barre de progression globale dans la zone verte --}}
-    <div class="q-progress-row">
-        <div class="progress on-green flex-grow-1">
-            <div class="progress-bar" id="globalBar" role="progressbar" style="width:0%;"></div>
-        </div>
-        <span class="q-progress-label" id="globalLabel">0 / 0</span>
-    </div>
 </div>
 @endsection
 
@@ -759,8 +752,6 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
         });
 
         const pct = totalAll > 0 ? Math.round((totalAnswered / totalAll) * 100) : 0;
-        document.getElementById('globalBar').style.width = pct + '%';
-        document.getElementById('globalLabel').textContent = totalAnswered + ' / ' + totalAll;
     }
 
     // Auto-save

@@ -265,7 +265,7 @@
         <div class="modal-content modal-content-rounded">
             <div class="modal-header modal-header-navy">
                 <h5 class="modal-title modal-title-syne">
-                    <i class="bi bi-plus-circle me-2"></i>Nouvelle session
+                    <i class="bi bi-plus-circle me-2"></i>Nouvelle évaluation
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -273,10 +273,10 @@
                 @csrf
                 <div class="modal-body modal-body-card">
                     <p class="text-muted-pa fs-13 mb-3">
-                        La session actuelle sera archivée. Une nouvelle session vierge sera créée pour ce client.
+                        L'évaluation actuelle sera archivée. Une nouvelle évaluation vierge sera créée pour ce client.
                     </p>
                     <div class="mb-3">
-                        <label class="form-label" for="newSessionLabel">Nom de la session <span class="text-muted-pa">(optionnel)</span></label>
+                        <label class="form-label" for="newSessionLabel">Nom de l'évaluation <span class="text-muted-pa">(optionnel)</span></label>
                         <input type="text" class="form-control" id="newSessionLabel"
                                name="session_label" placeholder="ex : Suivi 3 mois, Bilan 2025…">
                     </div>
@@ -284,14 +284,14 @@
                         <input class="form-check-input" type="checkbox"
                                name="previous_answers" value="1" id="prefillAnswers">
                         <label class="form-check-label form-check-label-navy" for="prefillAnswers">
-                            Pré-remplir avec les réponses de la session précédente
+                            Pré-remplir avec les réponses de l'évaluation précédente
                         </label>
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-card">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary" dusk="btn-submit-nouvelle-session">
-                        <i class="bi bi-plus-lg me-1"></i>Créer la session
+                    <button type="submit" class="btn btn-primary text-center justify-content-center" dusk="btn-submit-nouvelle-session">
+                        <i class="bi bi-plus-lg me-1"></i>Créer l'évaluation
                     </button>
                 </div>
             </form>
@@ -301,28 +301,28 @@
 @endif
 
 <div class="mt-3 d-flex gap-2 flex-wrap">
-    <a href="{{ route('questionnaire.show', $client) }}" class="btn btn-primary">
+    <a href="{{ route('questionnaire.show', $client) }}" class="btn btn-primary text-center justify-content-center">
         <i class="bi bi-clipboard2-pulse me-1"></i>
         {{ $client->questionnaire ? 'Modifier le questionnaire' : 'Remplir le questionnaire' }}
     </a>
     @if($client->questionnaire)
-    <a href="{{ route('questionnaire.bilan', $client) }}" class="btn btn-outline-secondary">
+    <a href="{{ route('questionnaire.bilan', $client) }}" class="btn btn-outline-secondary text-center justify-content-center">
         <i class="bi bi-bar-chart-line me-1"></i>Voir le bilan
     </a>
-    <button type="button" class="btn btn-outline-secondary"
+    <button type="button" class="btn btn-outline-secondary text-center justify-content-center"
             data-bs-toggle="modal" data-bs-target="#nouvelleSessionModal"
             dusk="btn-open-nouvelle-session">
-        <i class="bi bi-plus-circle me-1"></i>Nouvelle session
+        <i class="bi bi-plus-circle me-1"></i>Nouvelle évaluation
     </button>
     @endif
-    <a href="{{ route('clients.edit', $client) }}" class="btn btn-outline-secondary">
+    <a href="{{ route('clients.edit', $client) }}" class="btn btn-outline-secondary text-center justify-content-center">
         <i class="bi bi-pencil me-1"></i>Modifier le profil
     </a>
     <form method="POST" action="{{ route('clients.destroy', $client) }}"
           onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?')">
         @csrf
         @method('DELETE')
-        <button type="submit" class="btn btn-outline-secondary btn-delete">
+        <button type="submit" class="btn btn-outline-secondary btn-delete text-center justify-content-center">
             <i class="bi bi-trash me-1"></i>Supprimer
         </button>
     </form>
