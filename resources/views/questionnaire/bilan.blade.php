@@ -1049,15 +1049,25 @@ $diathTips = [
                         ['label' => 'Pitta', 'key' => 'pitta', 'max' => 120, 'bar' => 'bar-pitta', 'text' => 'text-pitta'],
                         ['label' => 'Kapha', 'key' => 'kapha', 'max' => 120, 'bar' => 'bar-kapha', 'text' => 'text-kapha'],
                     ];
-                    $maxScore = max($ay['vata'], $ay['pitta'], $ay['kapha']);
+                    $maxScore     = max($ay['vata'], $ay['pitta'], $ay['kapha']);
+                    $sorted       = collect($doshas)->sortByDesc(fn($d) => $ay[$d['key']]);
+                    $dom          = $sorted->first();
+                    $sec          = $sorted->skip(1)->first();
+                    $ayurvedaType = $scores['ayurveda_type'] ?? $dom['label'];
                 @endphp
 
                 <div class="row g-3">
                     @foreach($doshas as $d)
                     @php
-                        $score    = $ay[$d['key']];
-                        $pct      = $d['max'] > 0 ? round(($score / $d['max']) * 100) : 0;
-                        $dominant = $score === $maxScore && $maxScore > 0;
+                        $score = $ay[$d['key']];
+                        $pct   = $d['max'] > 0 ? round(($score / $d['max']) * 100) : 0;
+                        if ($ayurvedaType === 'Tridosha') {
+                            $dominant = true;
+                        } elseif (str_contains($ayurvedaType, '-')) {
+                            $dominant = in_array(ucfirst($d['key']), explode('-', $ayurvedaType));
+                        } else {
+                            $dominant = $score === $maxScore && $maxScore > 0;
+                        }
                     @endphp
                     <div class="col-md-4">
                         <div class="card h-100 {{ $dominant ? 'card-dosha-dominant' : '' }}">
@@ -1081,14 +1091,6 @@ $diathTips = [
                     @endforeach
                 </div>
 
-                @php
-                    $sorted = collect($doshas)->sortByDesc(fn($d) => $ay[$d['key']]);
-                    $dom    = $sorted->first();
-                    $sec    = $sorted->skip(1)->first();
-                @endphp
-                @php
-                    $ayurvedaType = $scores['ayurveda_type'] ?? $dom['label'];
-                @endphp
                 <div class="mt-3 ayurveda-summary d-flex align-items-center gap-3 flex-wrap">
                     <div>
                         <strong>Profil dominant :</strong>
