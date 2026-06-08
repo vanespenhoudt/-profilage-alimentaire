@@ -119,6 +119,11 @@ class QuestionnaireController extends Controller
                 ->with('error', 'Aucun questionnaire enregistré pour ce client.');
         }
 
+        if (!empty($questionnaire->answers)) {
+            $questionnaire->scores = (new QuestionnaireScorer())->calculate($questionnaire->answers);
+            $questionnaire->saveQuietly();
+        }
+
         $allSessions = $client->questionnaires()->get(['id', 'session_label', 'updated_at', 'is_active']);
         $data        = QuestionnaireData::class;
 
