@@ -153,9 +153,9 @@ class QuestionnaireData
         "J'ai le sentiment d'être très efficace",
         "Dans mes activités, je suis extrêmement précis et ordonné",
         "Je suis entêté et j'aime plutôt utiliser la manière forte",
-        "Par temps chaud, je me fatigue plus facilement que la plupart des gens",
+        "Par temps chaud, je me sens mal à l'aise ou me fatigue plus facilement que la plupart des gens",
         "J'ai tendance à transpirer facilement",
-        "Même si je ne le montre pas, je deviens irritable ou en colère très facilement",
+        "Même si je ne le montre pas, je deviens irritable ou me mets en colère très facilement",
         "Si je saute un repas ou dois attendre pour manger, je ne me sens pas bien",
         "Cheveux : tendance à grisonner / calvitie précoce / fins / blonds ou roux",
         "J'ai bon appétit : si je le désire, je peux manger beaucoup",
@@ -242,7 +242,7 @@ class QuestionnaireData
             'questions' => [
                 ['t' => 'Les repas vous rendent-ils somnolents ?', 'w' => 3],
                 ['t' => 'Nerveux ou irritable par moments, plus calme après les repas ?', 'w' => 3],
-                ['t' => 'Si vous sautez un repas : fatigue, irritabilité, angoisse ou vertiges ?', 'w' => 3],
+                ['t' => 'Si vous sautez un repas : fatigue, irritabilité, maux de tête, angoisse ou vertiges ?', 'w' => 3],
                 ['t' => 'Rages de salé ou désir fréquent de sucre ?', 'w' => 4],
                 ['t' => 'Pouls rapide (>80) ? Palpitations cardiaques ?', 'w' => 3],
                 ['t' => "Baisses d'énergie ou d'humeur après café, sucreries ou alcool ?", 'w' => 4],
@@ -353,7 +353,7 @@ class QuestionnaireData
     ];
 
     public static array $diathese_col1 = [
-        ['id'=>'d1a', 'd1'=>"Avant 12 ans : allergies / inflammations (urticaire, eczéma, tendinites, asthme) ?", 'd2'=>"Plutôt des infections bactériennes ou virales (angines, otite, sinusite) ?"],
+        ['id'=>'d1a', 'd1'=>"Allergies / inflammations (urticaire, eczéma, tendinites, asthme) ?", 'd2'=>"Plutôt des infections bactériennes ou virales (angines, otite, sinusite) ?"],
         ['id'=>'d1b', 'd1'=>"Du mal à aller vous coucher tant vous étiez encore actif, ET du mal à vous lever ?", 'd2'=>"Vous endormiez-vous facilement pour vous réveiller frais et dispos ?"],
         ['id'=>'d1c', 'd1'=>"Difficultés à vous endormir (enfant et peut-être encore aujourd'hui) ?", 'd2'=>"Ou aviez-vous besoin de beaucoup dormir ?"],
         ['id'=>'d1d', 'd1'=>"Aviez-vous une mémoire défaillante ?", 'd2'=>"Ou plutôt des difficultés d'attention ?"],
