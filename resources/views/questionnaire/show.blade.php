@@ -602,7 +602,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
     <div class="card">
         <div class="section-header">
             <i class="bi bi-journal-richtext"></i>
-            <span>Menu 5 jours</span>
+            <span>Menu 3 journées</span>
         </div>
         <div class="card-body p-4">
 
@@ -625,7 +625,8 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                 @csrf
 
                 <div class="mb-3">
-                    <label class="form-label">Menu / Plan alimentaire</label>
+                    <label class="form-label">Menu / Plan alimentaire sur 3 journées</label>
+                    <p class="fs-12 text-muted-pa mb-2">Décrivez 3 journées alimentaires concrètes (petit-déjeuner, déjeuner, dîner, collations et boissons).</p>
                     <x-tiptap-editor name="menu_text" :value="$questionnaire?->menu_text ?? ''" />
                 </div>
 
@@ -658,9 +659,10 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                 @csrf
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Quels sont vos 10 aliments préférés ?</label>
+                    <p class="fs-12 text-muted-pa mb-2">Boissons et repas complets acceptés — un par ligne.</p>
                     <textarea name="aliments_text" rows="6"
                               class="form-control"
-                              placeholder="Listez les aliments préférés du client, un par ligne...">{{ $questionnaire?->aliments_text ?? '' }}</textarea>
+                              placeholder="Ex : Saumon, Avocat, Café, Smoothie banane-épinards, Pâtes bolognaise…">{{ $questionnaire?->aliments_text ?? '' }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm">
                     <i class="bi bi-save me-1"></i>Enregistrer
