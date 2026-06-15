@@ -840,7 +840,91 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
         dst.submit();
     }
 
+    // ── Bug 2 & 3 : validation avant soumission ──────────────────────────────
+
+    var AYURVEDA_NAMES_PUB = [];
+    for (var _ai = 0; _ai < 19; _ai++) AYURVEDA_NAMES_PUB.push('v' + _ai);
+    for (var _ai = 0; _ai < 20; _ai++) AYURVEDA_NAMES_PUB.push('p' + _ai);
+    for (var _ai = 0; _ai < 20; _ai++) AYURVEDA_NAMES_PUB.push('k' + _ai);
+
+    function getOrCreateAlertPub(id, insertFn) {
+        var el = document.getElementById(id);
+        if (!el) {
+            el = document.createElement('div');
+            el.id = id;
+            el.className = 'alert alert-danger mt-2 mb-0';
+            insertFn(el);
+        }
+        return el;
+    }
+
+    function checkAyurvedaPub() {
+        if (!sectionCfg.s4) return true;
+        var missing = AYURVEDA_NAMES_PUB.filter(function (name) {
+            return !document.querySelector('input[name="' + name + '"]:checked');
+        });
+        var alertEl = getOrCreateAlertPub('ayurveda-validation-alert', function (el) {
+            var s4body = document.querySelector('#s4 .accordion-body');
+            if (s4body) s4body.insertBefore(el, s4body.firstChild);
+        });
+        if (missing.length > 0) {
+            var s4 = document.getElementById('s4');
+            if (s4 && !s4.classList.contains('show')) {
+                bootstrap.Collapse.getOrCreateInstance(s4).show();
+            }
+            alertEl.textContent = '⚠️ Veuillez répondre à toutes les questions Ayurveda avant de soumettre. ' + missing.length + ' question(s) sans réponse.';
+            alertEl.style.display = '';
+            var firstInput = document.querySelector('input[name="' + missing[0] + '"]');
+            if (firstInput) {
+                setTimeout(function () {
+                    firstInput.closest('.q-row').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 350);
+            }
+            return false;
+        }
+        alertEl.style.display = 'none';
+        return true;
+    }
+
+    function checkAlimentsPub() {
+        var textarea = document.getElementById('aliments_text');
+        if (!textarea) return true;
+        var lines = (textarea.value || '').split('\n').filter(function (l) { return l.trim().length > 0; });
+        var alertEl = getOrCreateAlertPub('aliments-validation-alert', function (el) {
+            textarea.parentNode.insertBefore(el, textarea.nextSibling);
+        });
+        if (lines.length < 10) {
+            alertEl.textContent = '⚠️ Veuillez renseigner au moins 10 aliments préférés (' + lines.length + ' renseigné(s) sur 10).';
+            alertEl.style.display = '';
+            return false;
+        }
+        alertEl.style.display = 'none';
+        return true;
+    }
+
+    function checkMenuPub() {
+        var menuEl = document.getElementById('menu_text');
+        if (!menuEl) return true;
+        var stripped = (menuEl.value || '').replace(/<[^>]*>/g, '').trim();
+        var alertEl = getOrCreateAlertPub('menu-validation-alert', function (el) {
+            menuEl.parentNode.insertBefore(el, menuEl.nextSibling);
+        });
+        if (stripped.length === 0) {
+            alertEl.textContent = '⚠️ Veuillez décrire le menu / plan alimentaire sur 3 journées.';
+            alertEl.style.display = '';
+            return false;
+        }
+        alertEl.style.display = 'none';
+        return true;
+    }
+
     window.submitQuestionnaire = async function () {
+        // Bug 2 & 3 : validation contenu avant soumission
+        var ayOk      = checkAyurvedaPub();
+        var alimentsOk = checkAlimentsPub();
+        var menuOk    = checkMenuPub();
+        if (!ayOk || !alimentsOk || !menuOk) return;
+
         const rgpd = document.getElementById('rgpdConsent');
         if (!rgpd.checked) {
             document.getElementById('rgpdError').classList.remove('d-none');
@@ -900,7 +984,16 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
         if (ev.target.name === 'ctx1') updateCanarisBlocks();
     });
 
-    document.addEventListener('change', () => { updateBadges(); scheduleAutoSave(); });
+    document.addEventListener('change', function (e) {
+        // Bug 1 — Métaboltyping : 1 seule réponse par ligne (exclusivité par data-qid)
+        if (e.target.type === 'checkbox' && e.target.dataset.section === 's2' && e.target.checked) {
+            document.querySelectorAll('[data-section="s2"][data-qid="' + e.target.dataset.qid + '"]').forEach(function (cb) {
+                if (cb !== e.target) cb.checked = false;
+            });
+        }
+        updateBadges();
+        scheduleAutoSave();
+    });
     document.addEventListener('input',  (e) => { if (e.target.matches('textarea, input[type="text"]')) scheduleAutoSave(); });
     document.addEventListener('DOMContentLoaded', () => { updateBadges(); updateCanarisBlocks(); });
 
