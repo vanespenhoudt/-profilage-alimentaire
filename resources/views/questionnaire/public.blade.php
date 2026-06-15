@@ -84,7 +84,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
         <h2 class="sub-header">
             <i class="bi bi-person-vcard me-2"></i>Fiche d'identité
         </h2>
-        <p class="fs-12 text-muted-pa mb-3">Renseignez les informations de la personne.</p>
+        <p class="fs-12 text-muted-pa mb-3">Renseignez ici vos informations personnelles.</p>
         <div class="card">
             <div class="card-body p-4">
                 <div class="row g-3">
