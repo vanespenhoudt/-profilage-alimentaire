@@ -275,7 +275,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                 <div class="accordion-body pt-2 pb-4">
 
                     <div class="alert-section-info mb-3">
-                        Pour chaque paire, choisissez l'option qui vous correspond le mieux. Laissez vide si aucune des deux ne s'applique clairement.
+                        Cochez les cases D1 ou D2 ci-dessous pour évaluer ce qui vous décrit le mieux (parfois aucune réponse positive, ni D1 ni D2). Faites le total du nombre de D1 et D2 par colonne. Nous avons besoin des deux totaux respectifs D1 et D2 pour confirmer votre diathèse de Ménétrier de base (par ex : 3 D1 et 2 D2 en colonne 1 ; 4 D1 et 3 D2 en colonne 2), qui est une facette de votre profil alimentaire profond. Pour les enfants et ados : ne remplir que la colonne 1.
                     </div>
 
                     <h6 class="sub-header"><i class="bi bi-person-standing me-1"></i>Période enfance (avant 12–15 ans)</h6>
