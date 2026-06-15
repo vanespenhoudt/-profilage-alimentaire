@@ -929,9 +929,9 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
         if (!ayOk || !alimentsOk || !menuOk) e.preventDefault();
     });
 
-    var alimentsForm = document.querySelector('form[action*="aliments.save"]');
-    if (alimentsForm) {
-        alimentsForm.addEventListener('submit', function (e) {
+    var alimentsTextarea = document.querySelector('textarea[name="aliments_text"]');
+    if (alimentsTextarea) {
+        alimentsTextarea.closest('form').addEventListener('submit', function (e) {
             if (!checkAliments()) e.preventDefault();
         });
     }
