@@ -64,12 +64,16 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 <form method="POST" action="{{ route('questionnaire.store', $client) }}" id="questForm">
     @csrf
 
+    <p class="fs-13 text-muted-pa mb-4 fst-italic">
+        Ce questionnaire fait partie du Profilage Alimentaire®, une approche développée par Taty Lauwers, fondée sur l'individualisation nutritionnelle et l'utilisation des aliments comme levier thérapeutique.
+    </p>
+
     {{-- FICHE D'IDENTITÉ ──────────────────────────────────────────── --}}
     <div class="mb-3">
         <h2 class="sub-header mb-1">
             <i class="bi bi-person-vcard me-2"></i>Fiche d'identité
         </h2>
-        <p class="q-section-desc">Renseignez les informations du client.</p>
+        <p class="q-section-desc">Renseignez ici vos informations personnelles.</p>
         <div class="card">
             <div class="card-body p-4">
                 <div class="row g-3">
@@ -625,8 +629,8 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                 @csrf
 
                 <div class="mb-3">
-                    <label class="form-label">Menu / Plan alimentaire sur 3 journées</label>
-                    <p class="fs-12 text-muted-pa mb-2">Décrivez 3 journées alimentaires concrètes (petit-déjeuner, déjeuner, dîner, collations et boissons).</p>
+                    <label class="form-label">Décrivez 3 journées alimentaires complètes et concrètes</label>
+                    <p class="fs-12 text-muted-pa mb-2">Avec un maximum de détails — Ex : Déjeuner : Un plat de pâtes blanches (+/- 100g crues) avec une sauce aux légumes d'hiver, du gruyère râpé et du basilic frais. Boissons : De l'eau et un verre de vin rouge.</p>
                     <x-tiptap-editor name="menu_text" :value="$questionnaire?->menu_text ?? ''" />
                 </div>
 
@@ -658,11 +662,11 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
             <form method="POST" action="{{ route('questionnaire.aliments.save', $client) }}">
                 @csrf
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Quels sont vos 10 aliments préférés ?</label>
+                    <label class="form-label fw-semibold">Quels sont vos 10 aliments, boissons ou repas préférés ?</label>
                     <p class="fs-12 text-muted-pa mb-2">Boissons et repas complets acceptés — un par ligne.</p>
                     <textarea name="aliments_text" rows="6"
                               class="form-control"
-                              placeholder="Ex : Saumon, Avocat, Café, Smoothie banane-épinards, Pâtes bolognaise…">{{ $questionnaire?->aliments_text ?? '' }}</textarea>
+                              placeholder="Listez vos 10 aliments, boissons ou repas préférés, un par ligne…">{{ $questionnaire?->aliments_text ?? '' }}</textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm">
                     <i class="bi bi-save me-1"></i>Enregistrer

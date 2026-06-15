@@ -79,6 +79,10 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
     @php $sNum = 0; @endphp
 
+    <p class="fs-13 text-muted-pa mb-4 fst-italic">
+        Ce questionnaire fait partie du Profilage Alimentaire®, une approche développée par Taty Lauwers, fondée sur l'individualisation nutritionnelle et l'utilisation des aliments comme levier thérapeutique.
+    </p>
+
     {{-- FICHE D'IDENTITÉ ──────────────────────────────────────────── --}}
     <div class="mb-3">
         <h2 class="sub-header">
@@ -586,11 +590,10 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     <div class="card mt-3">
         <div class="card-body p-4">
             <label class="fw-semibold fs-13 mb-2 d-block text-navy" for="menu_text">
-                <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Votre plan alimentaire sur 3 journées
+                <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Décrivez 3 journées alimentaires complètes et concrètes
             </label>
-            <p class="fs-12 text-muted-pa mb-2">Décrivez 3 journées alimentaires concrètes (petit-déjeuner, déjeuner, dîner, collations et boissons).</p>
-            <textarea name="menu_text" id="menu_text" rows="10" class="form-control mb-3"
-                      placeholder="Ex :&#10;Jour 1 — Petit-déjeuner : yaourt nature, flocons d'avoine, café noir&#10;Jour 1 — Déjeuner : saumon grillé, riz complet, salade verte&#10;Jour 1 — Dîner : soupe de légumes, œufs brouillés, pain complet&#10;&#10;Jour 2 — Petit-déjeuner : ...">{{ $answers['menu_text'] ?? $questionnaire->menu_text ?? '' }}</textarea>
+            <textarea name="menu_text" id="menu_text" rows="12" class="form-control mb-3"
+                      placeholder="Décrivez 3 journées avec un maximum de détails.&#10;&#10;Exemple :&#10;Petit-déjeuner : ...&#10;Déjeuner : Un plat de pâtes blanches (+/- 100g crues) avec une sauce aux légumes d'hiver (carottes, oignons, butternut, sauce tomate), du gruyère râpé et du basilic frais.&#10;Collation : Une orange, une poignée d'amandes et 2 carrés de chocolat noir.&#10;Boissons : De l'eau et un verre de vin rouge.">{{ $answers['menu_text'] ?? $questionnaire->menu_text ?? '' }}</textarea>
             <label class="form-label fw-semibold fs-12 text-navy mb-1">
                 <i class="bi bi-paperclip me-1 text-green-dark"></i>Joindre un fichier
                 <span class="fw-normal text-muted-pa ms-1">(PDF, TXT, DOC, DOCX, JPG — max 10 Mo)</span>
@@ -604,11 +607,11 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     <div class="card mt-3">
         <div class="card-body p-4">
             <label class="fw-semibold fs-13 mb-2 d-block text-navy" for="aliments_text">
-                <i class="bi bi-heart me-2 text-green-dark"></i>Vos 10 aliments préférés
+                <i class="bi bi-heart me-2 text-green-dark"></i>Vos 10 aliments, boissons ou repas préférés
             </label>
             <p class="fs-12 text-muted-pa mb-2">Boissons et repas complets acceptés — un par ligne.</p>
             <textarea name="aliments_text" id="aliments_text" rows="6" class="form-control"
-                      placeholder="Ex : Saumon, Avocat, Café, Smoothie banane-épinards, Pâtes bolognaise…">{{ $answers['aliments_text'] ?? $questionnaire->aliments_text ?? '' }}</textarea>
+                      placeholder="Listez vos 10 aliments, boissons ou repas préférés, un par ligne…">{{ $answers['aliments_text'] ?? $questionnaire->aliments_text ?? '' }}</textarea>
         </div>
     </div>
     @endif
