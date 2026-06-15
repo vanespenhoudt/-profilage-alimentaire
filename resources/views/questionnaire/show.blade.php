@@ -820,7 +820,16 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
         delete label.dataset.wasChecked;
     });
 
-    document.addEventListener('change', function () { updateBadges(); triggerSave(); });
+    document.addEventListener('change', function (e) {
+        // Bug 1 — Métaboltyping : 1 seule réponse par ligne (exclusivité par data-qid)
+        if (e.target.type === 'checkbox' && e.target.dataset.section === 's2' && e.target.checked) {
+            document.querySelectorAll('[data-section="s2"][data-qid="' + e.target.dataset.qid + '"]').forEach(function (cb) {
+                if (cb !== e.target) cb.checked = false;
+            });
+        }
+        updateBadges();
+        triggerSave();
+    });
     document.addEventListener('input',  function (e) {
         if (e.target.matches('input[type="text"],input[type="number"],textarea,[contenteditable]')) triggerSave();
     });
@@ -834,6 +843,98 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
         const top    = item.getBoundingClientRect().top + window.scrollY - offset;
         window.scrollTo({ top, behavior: 'smooth' });
     });
+
+    // ── Bug 2 & 3 : Validation à la soumission finale ──────────────────────
+
+    var AYURVEDA_NAMES = [];
+    for (var _ai = 0; _ai < 19; _ai++) AYURVEDA_NAMES.push('v' + _ai); // v0–v18
+    for (var _ai = 0; _ai < 20; _ai++) AYURVEDA_NAMES.push('p' + _ai); // p0–p19
+    for (var _ai = 0; _ai < 20; _ai++) AYURVEDA_NAMES.push('k' + _ai); // k0–k19
+
+    function getOrCreateAlert(id, insertFn) {
+        var el = document.getElementById(id);
+        if (!el) {
+            el = document.createElement('div');
+            el.id = id;
+            el.className = 'alert alert-danger mt-2 mb-0';
+            insertFn(el);
+        }
+        return el;
+    }
+
+    function checkAyurveda() {
+        var missing = AYURVEDA_NAMES.filter(function (name) {
+            return !document.querySelector('input[name="' + name + '"]:checked');
+        });
+        var alertEl = getOrCreateAlert('ayurveda-validation-alert', function (el) {
+            var s4body = document.querySelector('#s4 .accordion-body');
+            s4body.insertBefore(el, s4body.firstChild);
+        });
+        if (missing.length > 0) {
+            var s4 = document.getElementById('s4');
+            if (!s4.classList.contains('show')) {
+                bootstrap.Collapse.getOrCreateInstance(s4).show();
+            }
+            alertEl.textContent = '⚠️ Veuillez répondre à toutes les questions Ayurveda avant d\'enregistrer. ' + missing.length + ' question(s) sans réponse.';
+            alertEl.style.display = '';
+            var firstInput = document.querySelector('input[name="' + missing[0] + '"]');
+            if (firstInput) {
+                setTimeout(function () {
+                    firstInput.closest('.q-row').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 350);
+            }
+            return false;
+        }
+        alertEl.style.display = 'none';
+        return true;
+    }
+
+    function checkAliments() {
+        var textarea = document.querySelector('textarea[name="aliments_text"]');
+        if (!textarea) return true;
+        var lines = (textarea.value || '').split('\n').filter(function (l) { return l.trim().length > 0; });
+        var alertEl = getOrCreateAlert('aliments-validation-alert', function (el) {
+            textarea.parentNode.insertBefore(el, textarea.nextSibling);
+        });
+        if (lines.length < 10) {
+            alertEl.textContent = '⚠️ Veuillez renseigner au moins 10 aliments préférés (' + lines.length + ' renseigné(s) sur 10).';
+            alertEl.style.display = '';
+            return false;
+        }
+        alertEl.style.display = 'none';
+        return true;
+    }
+
+    function checkMenu() {
+        var menuTextarea = document.querySelector('#menuForm textarea[name="menu_text"]');
+        if (!menuTextarea) return true;
+        var stripped = (menuTextarea.value || '').replace(/<[^>]*>/g, '').trim();
+        var alertEl = getOrCreateAlert('menu-validation-alert', function (el) {
+            var menuForm = document.getElementById('menuForm');
+            menuForm.insertBefore(el, menuForm.querySelector('button[type="submit"]'));
+        });
+        if (stripped.length === 0) {
+            alertEl.textContent = '⚠️ Veuillez décrire le menu / plan alimentaire sur 3 journées.';
+            alertEl.style.display = '';
+            return false;
+        }
+        alertEl.style.display = 'none';
+        return true;
+    }
+
+    document.getElementById('questForm').addEventListener('submit', function (e) {
+        var ayOk      = checkAyurveda();
+        var alimentsOk = checkAliments();
+        var menuOk    = checkMenu();
+        if (!ayOk || !alimentsOk || !menuOk) e.preventDefault();
+    });
+
+    var alimentsForm = document.querySelector('form[action*="aliments.save"]');
+    if (alimentsForm) {
+        alimentsForm.addEventListener('submit', function (e) {
+            if (!checkAliments()) e.preventDefault();
+        });
+    }
 })();
 </script>
 
