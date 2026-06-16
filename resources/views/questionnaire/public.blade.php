@@ -79,7 +79,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
     @php $sNum = 0; @endphp
 
-    <p class="fs-13 text-muted-pa mb-4 fst-italic">
+    <p class="mb-4 fs-5 fw-semibold text-dark">
         Ce questionnaire fait partie du Profilage Alimentaire®, une approche développée par Taty Lauwers, fondée sur l'individualisation nutritionnelle et l'utilisation des aliments comme levier thérapeutique.
     </p>
 
