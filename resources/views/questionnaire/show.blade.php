@@ -441,7 +441,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                         Sélectionnez le groupe sanguin du client.
                     </div>
 
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2" id="groupe-sanguin-wrap">
                         @foreach(['O', 'A', 'B', 'AB', 'Je ne sais pas'] as $gs)
                         <input type="radio" name="groupe_sanguin" value="{{ $gs }}"
                                class="btn-check radio-q" id="gs_{{ $loop->index }}"
@@ -942,11 +942,27 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
         return true;
     }
 
+    function checkGroupeSanguin() {
+        var checked = document.querySelector('input[name="groupe_sanguin"]:checked');
+        var wrap = document.getElementById('groupe-sanguin-wrap');
+        var alertEl = getOrCreateAlert('gs-validation-alert', function (el) {
+            wrap.parentNode.insertBefore(el, wrap.nextSibling);
+        });
+        if (!checked) {
+            alertEl.textContent = '⚠️ Veuillez sélectionner un groupe sanguin.';
+            alertEl.style.display = '';
+            return false;
+        }
+        alertEl.style.display = 'none';
+        return true;
+    }
+
     document.getElementById('questForm').addEventListener('submit', function (e) {
         var ayOk      = checkAyurveda();
         var alimentsOk = checkAliments();
         var menuOk    = checkMenu();
-        if (!ayOk || !alimentsOk || !menuOk) e.preventDefault();
+        var gsOk      = checkGroupeSanguin();
+        if (!ayOk || !alimentsOk || !menuOk || !gsOk) e.preventDefault();
     });
 
     var alimentsTextarea = document.querySelector('textarea[name="aliments_text"]');
