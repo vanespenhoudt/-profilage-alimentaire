@@ -904,12 +904,11 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     function checkAlimentsPub() {
         var textarea = document.getElementById('aliments_text');
         if (!textarea) return true;
-        var lines = (textarea.value || '').split('\n').filter(function (l) { return l.trim().length > 0; });
         var alertEl = getOrCreateAlertPub('aliments-validation-alert', function (el) {
             textarea.parentNode.insertBefore(el, textarea.nextSibling);
         });
-        if (lines.length < 10) {
-            alertEl.textContent = '⚠️ Veuillez renseigner au moins 10 aliments préférés (' + lines.length + ' renseigné(s) sur 10).';
+        if ((textarea.value || '').trim().length === 0) {
+            alertEl.textContent = '⚠️ Veuillez renseigner vos aliments préférés.';
             alertEl.style.display = '';
             return false;
         }
@@ -919,13 +918,15 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
     function checkMenuPub() {
         var menuEl = document.getElementById('menu_text');
+        var menuFile = document.getElementById('menuFileInput');
+        var hasFile = menuFile && menuFile.files && menuFile.files.length > 0;
         if (!menuEl) return true;
         var stripped = (menuEl.value || '').replace(/<[^>]*>/g, '').trim();
         var alertEl = getOrCreateAlertPub('menu-validation-alert', function (el) {
             menuEl.parentNode.insertBefore(el, menuEl.nextSibling);
         });
-        if (stripped.length === 0) {
-            alertEl.textContent = '⚠️ Veuillez décrire le menu / plan alimentaire sur 3 journées.';
+        if (stripped.length === 0 && !hasFile) {
+            alertEl.textContent = '⚠️ Veuillez décrire le menu ou joindre un fichier.';
             alertEl.style.display = '';
             return false;
         }
