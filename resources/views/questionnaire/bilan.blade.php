@@ -1160,36 +1160,59 @@ $diathTips = [
         $gs = $answers['groupe_sanguin'] ?? null;
         $gsTips = [
             'O'  => [
-                'label'     => 'Groupe O',
-                'icon'      => 'bi-droplet-fill',
-                'color'     => '#dc2626',
-                'resume'    => 'Le plus ancien groupe. Métabolisme orienté protéines et graisses animales.',
-                'favoris'   => ['Viandes rouges, volaille', 'Poissons (sauf certains)', 'Légumes verts', 'Fruits (sauf orange, fraise, mûre)'],
-                'surveiller'=> ['Gluten (blé, épeautre)', 'Laitages en grande quantité', 'Légumineuses (haricots, lentilles)', 'Maïs'],
+                'label'  => 'Groupe O',
+                'titre'  => 'Le chasseur',
+                'color'  => '#dc2626',
+                'description' => [
+                    "Nous l'appelons ici le chevalier. Le groupe O est un pionnier, qui arpente de nouveaux territoires le sabre à la main. Fonceur, il ne s'écoute pas. Il a des tendances aux addictions. Il a des difficultés à suivre une grille alimentaire stricte. Il profite d'exercices physiques intenses.",
+                    "Le groupe O est bien nourri par les nutriments qui viennent de l'animal : graisses animales, viandes, bouillon d'os.",
+                    "Il est plus adapté à un régime omnivore et est inadapté aux farineux en excès, surtout avec gluten, et aux sucres. Il produit trop d'acide chlorhydrique. Il aura des difficultés à maintenir sa santé avec un régime végétarien, il a besoin de protéines animales.",
+                    "Peter d'Adamo a établi toute une liste d'aliments à privilégier ou à éviter. Nous nous limiterons ici aux points suivants :",
+                ],
+                'points' => [
+                    "Grille de base omnivore",
+                    "En cas de soucis physique, éviter en premier lieu les sucres ajoutés (y compris les fruits) et le gluten (voire même tous les farineux)",
+                ],
             ],
             'A'  => [
-                'label'     => 'Groupe A',
-                'icon'      => 'bi-droplet-fill',
-                'color'     => '#2563eb',
-                'resume'    => 'Métabolisme adapté à une alimentation végétarienne ou végane.',
-                'favoris'   => ['Tofu, soja', 'Légumineuses', 'Céréales (riz, épeautre)', 'Légumes et fruits variés'],
-                'surveiller'=> ['Viandes rouges', 'Laitages (surtout lait de vache)', 'Blé en excès', 'Haricots rouges'],
+                'label'  => 'Groupe A',
+                'titre'  => 'L\'agriculteur',
+                'color'  => '#2563eb',
+                'description' => [
+                    "Nous l'appelons ici la princesse. Le sujet du groupe A a tendance à trop s'écouter, à être aux ordres de son corps. Il a besoin de grilles à suivre. Il profite d'exercices physiques doux de type relaxation, yoga,...",
+                    "Le groupe A assimile bien les nutriments qui viennent du végétal : légumes, graisses végétales, légumineuses, céréales.",
+                    "Il est plus adapté à un régime riche en végétaux. Il est inadapté aux viandes en excès et inadapté aux laitages. Il produit trop peu d'acide chlorhydrique. Son système digestif a tendance à être sensible.",
+                    "Peter d'Adamo a établi toute une liste d'aliments à privilégier ou à éviter. Nous nous limiterons ici aux points suivants :",
+                ],
+                'points' => [
+                    "Grille de base semi-végétarienne",
+                    "En cas de soucis physique, éviter en premier lieu les laitages",
+                    "Eviter également les viandes de type bœuf et porc",
+                    "Les solanacées (pommes de terre, tomates, aubergines, poivrons) peuvent poser plus facilement des problèmes",
+                ],
             ],
             'B'  => [
-                'label'     => 'Groupe B',
-                'icon'      => 'bi-droplet-fill',
-                'color'     => '#7c3aed',
-                'resume'    => 'Le plus flexible. S\'adapte bien aux produits laitiers et à une alimentation omnivore équilibrée.',
-                'favoris'   => ['Viandes (sauf poulet)', 'Produits laitiers', 'Poissons', 'Légumes verts, œufs'],
-                'surveiller'=> ['Poulet', 'Maïs', 'Lentilles', 'Blé (en excès)', 'Arachides'],
+                'label'  => 'Groupe B',
+                'titre'  => 'Le nomade',
+                'color'  => '#7c3aed',
+                'description' => [
+                    "Nous l'appelons ici le magicien. Chez lui, l'alimentaire est secondaire. Il est très flexible sur le plan diététique. Ce sont plutôt les facteurs non alimentaires (stress, pollution) qui vont avoir un impact sur sa santé.",
+                    "Peter d'Adamo a établi toute une liste d'aliments à privilégier ou à éviter. Nous nous limiterons ici aux points suivants :",
+                ],
+                'points' => [
+                    "La gestion du stress est essentielle (méditation, sophrologie,...)",
+                    "Attention à la pollution électromagnétique",
+                    "Pour l'alimentaire, se référer aux autres outils de profilage (Metabolic Typing,...)",
+                ],
             ],
             'AB' => [
-                'label'     => 'Groupe AB',
-                'icon'      => 'bi-droplet-fill',
-                'color'     => '#059669',
-                'resume'    => 'Le plus rare. Combine les caractéristiques des groupes A et B.',
-                'favoris'   => ['Tofu, poissons', 'Produits laitiers (modéré)', 'Légumes verts', 'Ananas, raisins'],
-                'surveiller'=> ['Viandes rouges en excès', 'Maïs', 'Haricots rouges', 'Poivrons'],
+                'label'  => 'Groupe AB',
+                'titre'  => 'L\'énigme',
+                'color'  => '#059669',
+                'description' => [
+                    "Synthèse des groupes A et B.",
+                ],
+                'points' => [],
             ],
         ];
         $gsData = $gs && isset($gsTips[$gs]) ? $gsTips[$gs] : null;
@@ -1210,39 +1233,25 @@ $diathTips = [
                     @if($gsData)
                     <div>
                         <div class="fw-semibold" style="color: {{ $gsData['color'] }};">{{ $gsData['label'] }}</div>
-                        <div class="fs-13 text-muted-pa mt-1">{{ $gsData['resume'] }}</div>
+                        <div class="fs-13 text-muted-pa fst-italic mt-1">{{ $gsData['titre'] }}</div>
                     </div>
                     @else
                     <div class="fs-13 text-muted-pa">Groupe renseigné — pas de fiche disponible.</div>
                     @endif
                 </div>
                 @if($gsData)
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="p-3 rounded" style="background: rgba(5,150,105,.06); border-left: 3px solid #059669;">
-                            <div class="fw-semibold fs-13 mb-2" style="color:#059669;">
-                                <i class="bi bi-check-circle me-1"></i>Aliments généralement favorables
-                            </div>
-                            <ul class="mb-0 ps-3" style="font-size:13px; color: var(--color-navy);">
-                                @foreach($gsData['favoris'] as $item)
-                                    <li>{{ $item }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="p-3 rounded" style="background: rgba(220,38,38,.06); border-left: 3px solid #dc2626;">
-                            <div class="fw-semibold fs-13 mb-2" style="color:#dc2626;">
-                                <i class="bi bi-exclamation-circle me-1"></i>À surveiller
-                            </div>
-                            <ul class="mb-0 ps-3" style="font-size:13px; color: var(--color-navy);">
-                                @foreach($gsData['surveiller'] as $item)
-                                    <li>{{ $item }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
+                <div class="fs-13 mb-3" style="color: var(--color-navy); line-height: 1.6;">
+                    @foreach($gsData['description'] as $para)
+                        <p class="mb-2">{{ $para }}</p>
+                    @endforeach
                 </div>
+                @if(!empty($gsData['points']))
+                <ul class="mb-0 ps-4 fs-13" style="color: var(--color-navy); line-height: 1.6;">
+                    @foreach($gsData['points'] as $point)
+                        <li class="mb-1">{{ $point }}</li>
+                    @endforeach
+                </ul>
+                @endif
                 @endif
                 @unless($clientView ?? false)
                 <div class="tip-notes-label mt-4">Notes du conseiller</div>

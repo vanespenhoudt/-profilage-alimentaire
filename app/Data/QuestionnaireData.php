@@ -199,7 +199,9 @@ class QuestionnaireData
         [
             'id' => 'jr1',
             'titre' => 'Classe 1 – Chimie du cerveau',
+            'intro' => 'Cochez les chiffres correspondant à vos symptômes.',
             'seuil' => 10,
+            'seuil_texte' => 'Si le total dépasse 10, vous êtes victime d\'un déséquilibre de la chimie du cerveau.',
             'questions' => [
                 ['t' => 'Sensible à la douleur émotionnelle ou physique, pleurez facilement ?', 'w' => 4],
                 ['t' => 'Compensez par la nourriture (plaisir, récompense, atténuer douleurs mentales) ?', 'w' => 4],
@@ -221,6 +223,7 @@ class QuestionnaireData
             'id' => 'jr2',
             'titre' => 'Classe 2 – Régimes basses calories',
             'seuil' => 12,
+            'seuil_texte' => 'Si le total dépasse 12, vous pourriez être victime des régimes basses calories.',
             'questions' => [
                 ['t' => 'Obnubilé par la nourriture depuis les régimes ? Ou outremangeur ?', 'w' => 4],
                 ['t' => 'Reprenez du poids après un régime (parfois plus que les kilos perdus) ?', 'w' => 4],
@@ -239,6 +242,7 @@ class QuestionnaireData
             'id' => 'jr3',
             'titre' => 'Classe 3 – Glycémie instable',
             'seuil' => 15,
+            'seuil_texte' => 'Si le total dépasse 15, vous pourriez être victime de glycémie instable (mauvaise régulation du sucre sanguin).',
             'questions' => [
                 ['t' => 'Les repas vous rendent-ils somnolents ?', 'w' => 3],
                 ['t' => 'Nerveux ou irritable par moments, plus calme après les repas ?', 'w' => 3],
@@ -261,6 +265,7 @@ class QuestionnaireData
             'id' => 'jr4',
             'titre' => 'Classe 4 – Thyroïde',
             'seuil' => 15,
+            'seuil_texte' => 'Si le total dépasse 15, vous pourriez être victime d\'un problème de thyroïde non diagnostiqué.',
             'questions' => [
                 ['t' => 'Peu énergique ? Fatigué même au réveil ?', 'w' => 4],
                 ['t' => 'Facilement frileux (surtout mains et pieds) ?', 'w' => 4],
@@ -279,6 +284,7 @@ class QuestionnaireData
             'id' => 'jr5',
             'titre' => 'Classe 5 – Allergies cachées',
             'seuil' => 12,
+            'seuil_texte' => "Si le total dépasse 12, vous pourriez être victime d'allergies cachées liées à une assuétude au produit allergisant ; ou vivre une forme de sensibilité chimique multiple / intolérance à l'histamine typique des canaris de la modernité.",
             'questions' => [
                 ['t' => 'Fringales de lait, crème glacée, yaourt, fromage, pâtes/pains très régulièrement ?', 'w' => 3],
                 ['t' => 'Facilement ballonné après les repas ?', 'w' => 3],
@@ -300,7 +306,9 @@ class QuestionnaireData
         [
             'id' => 'jr6',
             'titre' => 'Classe 6 – Hormones (femmes uniquement)',
+            'intro' => 'Répondez aussi après la ménopause, tâchez de vous rappeler le passé.',
             'seuil' => 6,
+            'seuil_texte' => "Si le total dépasse 6, vous pourriez être victime d'un déséquilibre progestérone/oestrogènes.",
             'questions' => [
                 ['t' => "Avant les règles (3–10 j) : sautes d'humeur ou maux de tête ?", 'w' => 4],
                 ['t' => 'Avant les règles : épisodes de fringales alimentaires ?', 'w' => 4],
@@ -316,6 +324,7 @@ class QuestionnaireData
             'id' => 'jr7',
             'titre' => 'Classe 7 – Parasitose / Levures',
             'seuil' => 13,
+            'seuil_texte' => "Si le total dépasse 13, vous pourriez être victime de parasitose ou d'un envahissement par levure.",
             'questions' => [
                 ['t' => 'Souvent gonflé, gêné par des tensions abdominales ?', 'w' => 4],
                 ['t' => 'Confusion mentale ?', 'w' => 3],
@@ -337,6 +346,7 @@ class QuestionnaireData
             'id' => 'jr8',
             'titre' => 'Classe 8 – Carences acides gras',
             'seuil' => 12,
+            'seuil_texte' => "Si le total dépasse 12, vous pourriez être victime de carences en acides gras.",
             'questions' => [
                 ['t' => 'Fringales d\'aliments gras (chips, fromages, aliments riches en calories) ?', 'w' => 4],
                 ['t' => 'Historique familial d\'alcoolisme et dépression ?', 'w' => 3],
@@ -373,7 +383,7 @@ class QuestionnaireData
     ];
 
     public static array $hormones = [
-        ['id'=>'h1', 'titre'=>'Cat. 1 – Progestérone (femmes)', 'max'=>10, 'questions'=>[
+        ['id'=>'h1', 'titre'=>'FEMMES. Avez-vous une carence en progestérone ? (Répondez le cas échéant pour la période AVANT ménopause)', 'max'=>10, 'questions'=>[
             "Mes seins sont trop gros",
             "Avant les règles mes seins me font mal",
             "Avant les règles mon bas ventre est gonflé",
@@ -385,7 +395,7 @@ class QuestionnaireData
             "10–15 j avant les règles : je me sens plus anxieuse",
             "10–15 j avant les règles : sommeil plus léger et agité",
         ]],
-        ['id'=>'h2', 'titre'=>'Cat. 2 – Cortisol', 'max'=>10, 'questions'=>[
+        ['id'=>'h2', 'titre'=>'Avez-vous une carence en cortisol ?', 'max'=>10, 'questions'=>[
             "J'ai des problèmes digestifs",
             "Je souffre d'allergie",
             "Je suis stressé",
@@ -397,7 +407,7 @@ class QuestionnaireData
             "Mon visage est amaigri",
             "Je souffre d'eczéma, d'urticaire, de psoriasis ou d'allergie sur la peau",
         ]],
-        ['id'=>'h3', 'titre'=>'Cat. 3 – Œstradiol', 'max'=>11, 'questions'=>[
+        ['id'=>'h3', 'titre'=>'Avez-vous une carence en oestradiol ?', 'max'=>11, 'questions'=>[
             "Je perds mes cheveux sur le sommet de la tête",
             "Des poils apparaissent sur mon visage",
             "De fines rides sont apparues sur mon visage",
@@ -410,7 +420,7 @@ class QuestionnaireData
             "Mes seins s'affaissent",
             "Femmes sans règles : je n'ai plus envie de faire l'amour",
         ]],
-        ['id'=>'h4', 'titre'=>'Cat. 4 – Triiodothyronine', 'max'=>10, 'questions'=>[
+        ['id'=>'h4', 'titre'=>'Avez-vous une carence en triiodothyronine ?', 'max'=>10, 'questions'=>[
             "J'ai du mal à me lever le matin",
             "Le matin, visage bouffi ou paupières gonflées",
             "J'ai les mains et les pieds toujours froids",
@@ -422,7 +432,7 @@ class QuestionnaireData
             "J'ai l'impression de vivre au ralenti",
             "Mes articulations sont raides le matin",
         ]],
-        ['id'=>'h5', 'titre'=>'Cat. 5 – DHEA', 'max'=>10, 'questions'=>[
+        ['id'=>'h5', 'titre'=>'Avez-vous une carence en DHEA ?', 'max'=>10, 'questions'=>[
             "J'ai pris du ventre",
             "Mes muscles sont relâchés",
             "Mes cheveux sont secs et ternes",
@@ -434,21 +444,21 @@ class QuestionnaireData
             "Je manque d'odeurs naturelles (sexuelles)",
             "Je ne supporte plus le bruit",
         ]],
-        ['id'=>'h6', 'titre'=>'Cat. 6 – Insuline', 'max'=>5, 'questions'=>[
+        ['id'=>'h6', 'titre'=>'Avez-vous une carence en insuline ?', 'max'=>5, 'questions'=>[
             "J'ai constamment soif",
             "Je suis porté sur le sucre et les sucreries",
             "J'urine beaucoup, le jour comme la nuit",
             "J'ai du ventre mais des fesses maigres",
             "Je cicatrise très mal",
         ]],
-        ['id'=>'h7', 'titre'=>'Cat. 7 – Aldostérone', 'max'=>5, 'questions'=>[
+        ['id'=>'h7', 'titre'=>'Avez-vous une carence en aldostérone ?', 'max'=>5, 'questions'=>[
             "Ma tension artérielle est basse",
             "Au réveil, j'ai la tête qui tourne",
             "Je me sens bien lorsque je suis allongé",
             "J'aime ce qui est salé (nourriture, boisson...)",
             "J'urine plusieurs fois par jour",
         ]],
-        ['id'=>'h8', 'titre'=>'Cat. 8 – EPO', 'max'=>5, 'questions'=>[
+        ['id'=>'h8', 'titre'=>'Avez-vous une carence en EPO ?', 'max'=>5, 'questions'=>[
             "Le moindre effort m'essouffle",
             "Mon teint est particulièrement pâle",
             "Une anémie a été diagnostiquée dans une analyse sanguine",

@@ -79,6 +79,10 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
     @php $sNum = 0; @endphp
 
+    <p class="fs-13 text-muted-pa mb-4 fst-italic">
+        Ce questionnaire fait partie du Profilage Alimentaire®, une approche développée par Taty Lauwers, fondée sur l'individualisation nutritionnelle et l'utilisation des aliments comme levier thérapeutique.
+    </p>
+
     {{-- FICHE D'IDENTITÉ ──────────────────────────────────────────── --}}
     <div class="mb-3">
         <h2 class="sub-header">
@@ -143,7 +147,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             <div id="s1" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
-                        Cochez les affirmations qui vous correspondent.
+                        Cochez les chiffres correspondant à vos symptômes. Calculez le total par classe.
                     </div>
                     @foreach(QuestionnaireData::$julia_ross as $classe)
                     <div class="card mb-3 subsection-card">
@@ -151,6 +155,9 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                             <span>{{ $classe['titre'] }}</span>
                         </div>
                         <div class="card-body py-2 px-3">
+                            @if(!empty($classe['intro']))
+                            <p class="text-muted small mb-2 px-1 pt-2 fst-italic">{{ $classe['intro'] }}</p>
+                            @endif
                             @foreach($classe['questions'] as $qi => $q)
                             <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
                                 <input class="form-check-input" type="checkbox"
@@ -189,6 +196,9 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                             </div>
                             @endif
                             @endforeach
+                            @if(!empty($classe['seuil_texte']))
+                            <p class="text-muted small mt-2 mb-1 px-1 fst-italic border-top pt-2">{{ $classe['seuil_texte'] }}</p>
+                            @endif
                         </div>
                     </div>
                     @endforeach
@@ -212,7 +222,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             <div id="s2" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
-                        <strong>A = Cueilleur</strong> · <strong>B = Chasseur</strong> · <strong>M = Mixte</strong> · Cochez ce qui vous correspond. Laissez vide si aucune option ne s'applique.
+                        Prenez votre temps pour cocher les cases qui vous correspondent. Pour certaines questions, il est judicieux de demander l'avis d'un proche. Essayez de vous rappeler vos réactions aux aliments AVANT vos 18 ans, c'est souvent plus parlant que de répondre en fonction de la situation actuelle.
                     </div>
 
                     {{-- En-têtes colonnes --}}
@@ -259,6 +269,10 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                         </div>
                     </div>
                     @endforeach
+
+                    <div class="alert-section-info mt-3">
+                        Résultats : Si votre résultat à l'une ou l'autre classe est supérieur de minimum 5 points aux autres classes, vous êtes de ce type-là.
+                    </div>
                 </div>
             </div>
         </div>
@@ -279,7 +293,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             <div id="s3" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
-                        Pour chaque paire, choisissez l'option qui vous correspond le mieux. Laissez vide si aucune ne s'applique clairement.
+                        Cochez les cases D1 ou D2 ci-dessous pour évaluer ce qui vous décrit le mieux (parfois aucune réponse positive, ni D1 ni D2). Faites le total du nombre de D1 et D2 par colonne. Nous avons besoin des deux totaux respectifs D1 et D2 pour confirmer votre diathèse de Ménétrier de base (par ex : 3 D1 et 2 D2 en colonne 1 ; 4 D1 et 3 D2 en colonne 2), qui est une facette de votre profil alimentaire profond. Pour les enfants et ados : ne remplir que la colonne 1.
                     </div>
 
                     <h6 class="sub-header">Période enfance (avant 12–15 ans)</h6>
@@ -351,11 +365,8 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             </h2>
             <div id="s4" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
-                    <div class="alert-section-info mb-3">
-                        Évaluez chaque affirmation de <strong>1</strong> (pas du tout) à <strong>6</strong> (totalement vrai pour moi).
-                    </div>
-
                     <h6 class="sub-header"><i class="bi bi-water me-1"></i>Vâta <small class="sub-hint">(19 questions)</small></h6>
+                    <p class="text-muted small fst-italic mb-3">Évaluez votre proportion d'énergie vâta par un chiffre de 1 (ne s'applique pas du tout) à 6 (beaucoup).</p>
                     @foreach(QuestionnaireData::$vata as $i => $label)
                     <div class="q-row">
                         <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
@@ -372,6 +383,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
                     <hr class="my-4 hr-section">
                     <h6 class="sub-header"><i class="bi bi-fire me-1"></i>Pitta <small class="sub-hint">(20 questions)</small></h6>
+                    <p class="text-muted small fst-italic mb-3">Évaluez votre proportion d'énergie pitta par un chiffre de 1 (peu) à 6 (beaucoup). Calculez le total.</p>
                     @foreach(QuestionnaireData::$pitta as $i => $label)
                     <div class="q-row">
                         <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
@@ -388,6 +400,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
                     <hr class="my-4 hr-section">
                     <h6 class="sub-header"><i class="bi bi-cloud me-1"></i>Kapha <small class="sub-hint">(20 questions)</small></h6>
+                    <p class="text-muted small fst-italic mb-3">Évaluez votre proportion d'énergie kapha par un chiffre de 1 (peu) à 6 (beaucoup). Calculez le total.</p>
                     @foreach(QuestionnaireData::$kapha as $i => $label)
                     <div class="q-row">
                         <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
@@ -451,7 +464,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             <div id="s6" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
-                        Cochez les affirmations qui vous correspondent actuellement.
+                        Totalisez le nombre de réponses positives par catégorie.
                     </div>
                     <div class="row g-3">
                         @foreach(QuestionnaireData::$hormones as $cat)
@@ -586,11 +599,10 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     <div class="card mt-3">
         <div class="card-body p-4">
             <label class="fw-semibold fs-13 mb-2 d-block text-navy" for="menu_text">
-                <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Votre plan alimentaire sur 5 jours
+                <i class="bi bi-journal-richtext me-2 text-green-dark"></i>Décrivez 3 journées alimentaires complètes et concrètes
             </label>
-            <p class="fs-12 text-muted-pa mb-2">Décrivez vos repas typiques sur une semaine (petit-déjeuner, déjeuner, dîner, collations).</p>
-            <textarea name="menu_text" id="menu_text" rows="8" class="form-control mb-3"
-                      placeholder="Ex : Lundi – Petit-déjeuner : flocons d'avoine, fruits rouges…">{{ $answers['menu_text'] ?? $questionnaire->menu_text ?? '' }}</textarea>
+            <textarea name="menu_text" id="menu_text" rows="12" class="form-control mb-3"
+                      placeholder="Décrivez 3 journées avec un maximum de détails.&#10;&#10;Exemple :&#10;Petit-déjeuner : ...&#10;Déjeuner : Un plat de pâtes blanches (+/- 100g crues) avec une sauce aux légumes d'hiver (carottes, oignons, butternut, sauce tomate), du gruyère râpé et du basilic frais.&#10;Collation : Une orange, une poignée d'amandes et 2 carrés de chocolat noir.&#10;Boissons : De l'eau et un verre de vin rouge.">{{ $answers['menu_text'] ?? $questionnaire->menu_text ?? '' }}</textarea>
             <label class="form-label fw-semibold fs-12 text-navy mb-1">
                 <i class="bi bi-paperclip me-1 text-green-dark"></i>Joindre un fichier
                 <span class="fw-normal text-muted-pa ms-1">(PDF, TXT, DOC, DOCX, JPG — max 10 Mo)</span>
@@ -604,11 +616,11 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     <div class="card mt-3">
         <div class="card-body p-4">
             <label class="fw-semibold fs-13 mb-2 d-block text-navy" for="aliments_text">
-                <i class="bi bi-heart me-2 text-green-dark"></i>Vos 10 aliments préférés
+                <i class="bi bi-heart me-2 text-green-dark"></i>Vos 10 aliments, boissons ou repas préférés
             </label>
-            <p class="fs-12 text-muted-pa mb-2">Listez vos aliments préférés, un par ligne.</p>
+            <p class="fs-12 text-muted-pa mb-2">Boissons et repas complets acceptés — un par ligne.</p>
             <textarea name="aliments_text" id="aliments_text" rows="6" class="form-control"
-                      placeholder="Ex : Saumon, Avocat, Myrtilles…">{{ $answers['aliments_text'] ?? $questionnaire->aliments_text ?? '' }}</textarea>
+                      placeholder="Listez vos 10 aliments, boissons ou repas préférés, un par ligne…">{{ $answers['aliments_text'] ?? $questionnaire->aliments_text ?? '' }}</textarea>
         </div>
     </div>
     @endif
