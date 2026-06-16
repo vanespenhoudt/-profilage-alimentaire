@@ -64,7 +64,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 <form method="POST" action="{{ route('questionnaire.store', $client) }}" id="questForm">
     @csrf
 
-    <p class="mb-4 fs-5 fw-semibold text-dark">
+    <p class="mb-4" style="font-size:12px;color:#000;">
         Ce questionnaire fait partie du Profilage Alimentaire®, une approche développée par Taty Lauwers, fondée sur l'individualisation nutritionnelle et l'utilisation des aliments comme levier thérapeutique.
     </p>
 
