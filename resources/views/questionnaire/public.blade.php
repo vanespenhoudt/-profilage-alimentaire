@@ -439,7 +439,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                     <div class="alert-section-info mb-3">
                         Sélectionnez votre groupe sanguin.
                     </div>
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2" id="groupe-sanguin-wrap">
                         @foreach(['O', 'A', 'B', 'AB', 'Je ne sais pas'] as $gs)
                         <input type="radio" name="groupe_sanguin" value="{{ $gs }}"
                                class="btn-check radio-q" id="gs_{{ $loop->index }}" data-section="s5"
@@ -934,12 +934,28 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
         return true;
     }
 
+    function checkGroupeSanguinPub() {
+        var wrap = document.getElementById('groupe-sanguin-wrap');
+        if (!wrap) return true;
+        var checked = document.querySelector('input[name="groupe_sanguin"]:checked');
+        var alertEl = getOrCreateAlertPub('gs-validation-alert', function (el) {
+            wrap.parentNode.insertBefore(el, wrap.nextSibling);
+        });
+        if (!checked) {
+            alertEl.textContent = '⚠️ Veuillez sélectionner un groupe sanguin.';
+            alertEl.style.display = '';
+            return false;
+        }
+        alertEl.style.display = 'none';
+        return true;
+    }
+
     window.submitQuestionnaire = async function () {
-        // Bug 2 & 3 : validation contenu avant soumission
         var ayOk      = checkAyurvedaPub();
         var alimentsOk = checkAlimentsPub();
         var menuOk    = checkMenuPub();
-        if (!ayOk || !alimentsOk || !menuOk) return;
+        var gsOk      = checkGroupeSanguinPub();
+        if (!ayOk || !alimentsOk || !menuOk || !gsOk) return;
 
         const rgpd = document.getElementById('rgpdConsent');
         if (!rgpd.checked) {
