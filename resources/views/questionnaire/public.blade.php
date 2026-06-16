@@ -49,6 +49,9 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     .btn-outline-mixte:hover, .btn-check:checked + .btn-outline-mixte { background-color: #7c3aed; border-color: #7c3aed; color: #fff; }
     .subsection-card { border: none !important; border-radius: var(--radius-card); overflow: hidden; }
     .subsection-card .card-header { display: flex; justify-content: space-between; align-items: center; }
+    /* Lisibilité — tout le texte secondaire en noir */
+    #questForm .text-muted, #questForm .text-muted-pa, #questForm .fs-12.text-muted-pa,
+    #questForm p.fst-italic, #questForm p.text-muted { color: #000 !important; }
 </style>
 
 {{-- En-tête ─────────────────────────────────────────────────────── --}}

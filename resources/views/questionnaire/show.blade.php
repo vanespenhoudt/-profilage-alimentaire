@@ -59,6 +59,9 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
     .btn-outline-primary, .btn-outline-chasseur, .btn-outline-mixte { text-align: left; }
     .btn-outline-mixte { color: #7c3aed; border-color: #7c3aed; }
     .btn-outline-mixte:hover, .btn-check:checked + .btn-outline-mixte { background-color: #7c3aed; border-color: #7c3aed; color: #fff; }
+    /* Lisibilité — tout le texte secondaire en noir */
+    #questForm .text-muted, #questForm .text-muted-pa, #questForm .fs-12.text-muted-pa,
+    #questForm p.fst-italic, #questForm p.text-muted { color: #000 !important; }
 </style>
 
 <form method="POST" action="{{ route('questionnaire.store', $client) }}" id="questForm">
