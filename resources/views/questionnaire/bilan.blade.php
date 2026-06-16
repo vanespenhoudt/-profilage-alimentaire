@@ -642,6 +642,26 @@ $diathTips = [
     @endunless
 </div>
 
+{{-- Encadré ordre de priorité ──────────────────────────────────────── --}}
+<div class="card mb-4" style="border-left: 4px solid var(--color-primary); background: var(--color-bg-tint);">
+    <div class="card-body py-3 px-4">
+        <div class="fw-bold mb-2" style="font-family:'Syne',sans-serif; color: var(--color-navy); font-size: 15px;">
+            <i class="bi bi-sort-numeric-down me-2 text-green-dark"></i>Ordre de priorité d'interprétation
+        </div>
+        <p class="mb-2" style="font-size:13px; color:#000;">
+            <strong>Julia Ross — Neurotransmetteurs</strong><br>
+            À interpréter à part : ce questionnaire évalue l'état de santé actuel de la personne, ici et maintenant.
+        </p>
+        <p class="mb-1" style="font-size:13px; color:#000;">Pour les 4 autres piliers, du moins important au plus important :</p>
+        <ol class="mb-0 ps-3" style="font-size:13px; color:#000;">
+            <li>Groupe sanguin</li>
+            <li>Diathèse de Ménétrier</li>
+            <li>Ayurveda</li>
+            <li><strong>Métaboltyping</strong> <span class="text-muted">(le plus déterminant)</span></li>
+        </ol>
+    </div>
+</div>
+
 {{-- Bandeau session (conseiller uniquement) ────────────────────────── --}}
 @unless($clientView ?? false)
 <div class="card mb-3">
