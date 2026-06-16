@@ -147,7 +147,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             <div id="s1" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
-                        Cochez les affirmations qui vous correspondent.
+                        Cochez les chiffres correspondant à vos symptômes. Calculez le total par classe.
                     </div>
                     @foreach(QuestionnaireData::$julia_ross as $classe)
                     <div class="card mb-3 subsection-card">
@@ -155,6 +155,9 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                             <span>{{ $classe['titre'] }}</span>
                         </div>
                         <div class="card-body py-2 px-3">
+                            @if(!empty($classe['intro']))
+                            <p class="text-muted small mb-2 px-1 pt-2 fst-italic">{{ $classe['intro'] }}</p>
+                            @endif
                             @foreach($classe['questions'] as $qi => $q)
                             <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
                                 <input class="form-check-input" type="checkbox"
@@ -193,6 +196,9 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                             </div>
                             @endif
                             @endforeach
+                            @if(!empty($classe['seuil_texte']))
+                            <p class="text-muted small mt-2 mb-1 px-1 fst-italic border-top pt-2">{{ $classe['seuil_texte'] }}</p>
+                            @endif
                         </div>
                     </div>
                     @endforeach
@@ -216,7 +222,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             <div id="s2" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
-                        <strong>A = Cueilleur</strong> · <strong>B = Chasseur</strong> · <strong>M = Mixte</strong> · Cochez ce qui vous correspond. Laissez vide si aucune option ne s'applique.
+                        Prenez votre temps pour cocher les cases qui vous correspondent. Pour certaines questions, il est judicieux de demander l'avis d'un proche. Essayez de vous rappeler vos réactions aux aliments AVANT vos 18 ans, c'est souvent plus parlant que de répondre en fonction de la situation actuelle.
                     </div>
 
                     {{-- En-têtes colonnes --}}
@@ -263,6 +269,10 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
                         </div>
                     </div>
                     @endforeach
+
+                    <div class="alert-section-info mt-3">
+                        Résultats : Si votre résultat à l'une ou l'autre classe est supérieur de minimum 5 points aux autres classes, vous êtes de ce type-là.
+                    </div>
                 </div>
             </div>
         </div>
@@ -355,11 +365,8 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             </h2>
             <div id="s4" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
-                    <div class="alert-section-info mb-3">
-                        Évaluez chaque affirmation de <strong>1</strong> (pas du tout) à <strong>6</strong> (totalement vrai pour moi).
-                    </div>
-
                     <h6 class="sub-header"><i class="bi bi-water me-1"></i>Vâta <small class="sub-hint">(19 questions)</small></h6>
+                    <p class="text-muted small fst-italic mb-3">Évaluez votre proportion d'énergie vâta par un chiffre de 1 (ne s'applique pas du tout) à 6 (beaucoup).</p>
                     @foreach(QuestionnaireData::$vata as $i => $label)
                     <div class="q-row">
                         <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
@@ -376,6 +383,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
                     <hr class="my-4 hr-section">
                     <h6 class="sub-header"><i class="bi bi-fire me-1"></i>Pitta <small class="sub-hint">(20 questions)</small></h6>
+                    <p class="text-muted small fst-italic mb-3">Évaluez votre proportion d'énergie pitta par un chiffre de 1 (peu) à 6 (beaucoup). Calculez le total.</p>
                     @foreach(QuestionnaireData::$pitta as $i => $label)
                     <div class="q-row">
                         <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
@@ -392,6 +400,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
                     <hr class="my-4 hr-section">
                     <h6 class="sub-header"><i class="bi bi-cloud me-1"></i>Kapha <small class="sub-hint">(20 questions)</small></h6>
+                    <p class="text-muted small fst-italic mb-3">Évaluez votre proportion d'énergie kapha par un chiffre de 1 (peu) à 6 (beaucoup). Calculez le total.</p>
                     @foreach(QuestionnaireData::$kapha as $i => $label)
                     <div class="q-row">
                         <div class="q-label mb-2">{{ $i + 1 }}. {{ $label }}</div>
@@ -455,7 +464,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
             <div id="s6" class="accordion-collapse collapse {{ $sNum === 1 ? 'show' : '' }}" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
                     <div class="alert-section-info mb-3">
-                        Cochez les affirmations qui vous correspondent actuellement.
+                        Totalisez le nombre de réponses positives par catégorie.
                     </div>
                     <div class="row g-3">
                         @foreach(QuestionnaireData::$hormones as $cat)
