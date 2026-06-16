@@ -910,12 +910,11 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
     function checkAliments() {
         var textarea = document.querySelector('textarea[name="aliments_text"]');
         if (!textarea) return true;
-        var lines = (textarea.value || '').split('\n').filter(function (l) { return l.trim().length > 0; });
         var alertEl = getOrCreateAlert('aliments-validation-alert', function (el) {
             textarea.parentNode.insertBefore(el, textarea.nextSibling);
         });
-        if (lines.length < 10) {
-            alertEl.textContent = '⚠️ Veuillez renseigner au moins 10 aliments préférés (' + lines.length + ' renseigné(s) sur 10).';
+        if ((textarea.value || '').trim().length === 0) {
+            alertEl.textContent = '⚠️ Veuillez renseigner vos aliments préférés.';
             alertEl.style.display = '';
             return false;
         }
@@ -925,14 +924,17 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
 
     function checkMenu() {
         var menuTextarea = document.querySelector('#menuForm textarea[name="menu_text"]');
+        var menuFile = document.querySelector('#menuForm input[name="menu_file"]');
+        var hasFile = menuFile && menuFile.files && menuFile.files.length > 0;
+        var hasExistingFile = {{ $questionnaire?->menu_file ? 'true' : 'false' }};
         if (!menuTextarea) return true;
         var stripped = (menuTextarea.value || '').replace(/<[^>]*>/g, '').trim();
         var alertEl = getOrCreateAlert('menu-validation-alert', function (el) {
             var menuForm = document.getElementById('menuForm');
             menuForm.insertBefore(el, menuForm.querySelector('button[type="submit"]'));
         });
-        if (stripped.length === 0) {
-            alertEl.textContent = '⚠️ Veuillez décrire le menu / plan alimentaire sur 3 journées.';
+        if (stripped.length === 0 && !hasFile && !hasExistingFile) {
+            alertEl.textContent = '⚠️ Veuillez décrire le menu ou joindre un fichier.';
             alertEl.style.display = '';
             return false;
         }
