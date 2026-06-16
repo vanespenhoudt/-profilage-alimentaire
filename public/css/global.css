@@ -436,3 +436,11 @@ dt { font-family: var(--font-body); }
 .tiptap-readonly h3 { font-family: 'Syne', sans-serif; font-size: .875rem; font-weight: 700; margin: 10px 0 4px; }
 .tiptap-readonly ul, .tiptap-readonly ol { padding-left: 1.4rem; margin-bottom: 6px; }
 .tiptap-readonly blockquote { border-left: 3px solid var(--color-primary); padding-left: 10px; color: var(--color-text-muted); margin: 8px 0; }
+
+/* ─── QUESTIONNAIRE — lisibilité : tout en noir ───────────────── */
+#questForm .text-muted, #questForm .text-muted-pa,
+#questForm .form-label, #questForm label.form-label,
+#menuForm .text-muted, #menuForm .text-muted-pa,
+#menuForm .form-label, #menuForm label.form-label,
+#alimentsForm .text-muted, #alimentsForm .text-muted-pa,
+#alimentsForm .form-label, #alimentsForm label.form-label { color: #000 !important; }

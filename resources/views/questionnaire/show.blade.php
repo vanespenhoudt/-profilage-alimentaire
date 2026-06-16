@@ -671,7 +671,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
             <span>10 aliments préférés</span>
         </div>
         <div class="card-body p-4">
-            <form method="POST" action="{{ route('questionnaire.aliments.save', $client) }}">
+            <form method="POST" action="{{ route('questionnaire.aliments.save', $client) }}" id="alimentsForm">
                 @csrf
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Quels sont vos 10 aliments, boissons ou repas préférés ?</label>
