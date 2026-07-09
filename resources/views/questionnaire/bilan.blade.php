@@ -740,7 +740,7 @@ $diathTips = [
         <div class="card">
             <div class="section-header">
                 <i class="bi bi-brain"></i>
-                <span>1. Julia Ross — Classes de déséquilibre</span>
+                <span>5. Julia Ross — Classes de déséquilibre</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -870,7 +870,7 @@ $diathTips = [
         <div class="card">
             <div class="section-header">
                 <i class="bi bi-activity"></i>
-                <span>2. Typage Métabolique</span>
+                <span>4. Typage Métabolique</span>
             </div>
             <div class="card-body p-4">
                 @php
@@ -963,7 +963,7 @@ $diathTips = [
         <div class="card">
             <div class="section-header">
                 <i class="bi bi-diagram-3"></i>
-                <span>3. Diathèse de Ménétrier</span>
+                <span>2. Diathèse de Ménétrier</span>
             </div>
             <div class="card-body p-4">
                 @php $di = $scores['diathese'] ?? ['c1_d1' => 0, 'c1_d2' => 0, 'c2_d1' => 0, 'c2_d2' => 0]; @endphp
@@ -1059,7 +1059,7 @@ $diathTips = [
         <div class="card">
             <div class="section-header">
                 <i class="bi bi-yin-yang"></i>
-                <span>4. Ayurveda</span>
+                <span>3. Ayurveda</span>
             </div>
             <div class="card-body p-4">
                 @php
@@ -1243,7 +1243,7 @@ $diathTips = [
         <div class="card">
             <div class="section-header">
                 <i class="bi bi-droplet-half"></i>
-                <span>5. Groupe sanguin</span>
+                <span>1. Groupe sanguin</span>
             </div>
             <div class="card-body p-4">
                 <div class="d-flex align-items-center gap-3 mb-4">

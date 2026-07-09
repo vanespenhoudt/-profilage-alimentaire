@@ -125,162 +125,44 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
     {{-- ACCORDÉON ──────────────────────────────────────────────────── --}}
     <div class="accordion d-flex flex-column gap-2" id="questAccordion">
 
-        {{-- ══ SECTION 1 — JULIA ROSS — NEUROTRANSMETTEURS ══ --}}
-        <div class="accordion-item" id="wrap-s1">
+        {{-- ══ SECTION 1 — GROUPE SANGUIN ══ --}}
+        <div class="accordion-item" id="wrap-s5">
             <h2 class="accordion-header">
                 <button class="accordion-button" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s1" aria-expanded="true">
-                    <span class="section-icon"><i class="bi bi-brain"></i></span>
-                    1. Julia Ross — Neurotransmetteurs
-                    <span class="badge-progress ms-3" id="badge-s1">0 / {{ $totalJuliaRoss }}</span>
+                        data-bs-toggle="collapse" data-bs-target="#s5" aria-expanded="true">
+                    <span class="section-icon"><i class="bi bi-droplet-half"></i></span>
+                    1. Groupe sanguin
+                    <span class="badge-progress ms-3" id="badge-s5">0 / 1</span>
                 </button>
             </h2>
-            <div id="s1" class="accordion-collapse collapse show" data-bs-parent="#questAccordion">
+            <div id="s5" class="accordion-collapse collapse show" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
 
                     <div class="alert-section-info mb-3">
-                        Cochez les chiffres correspondant à vos symptômes. Calculez le total par classe.
+                        Sélectionnez le groupe sanguin du client.
                     </div>
 
-                    @foreach(QuestionnaireData::$julia_ross as $classe)
-                    <div class="card mb-3 subsection-card">
-                        <div class="card-header">
-                            <span>{{ $classe['titre'] }}</span>
-                            <span class="badge-tint">Seuil : {{ $classe['seuil'] }}</span>
-                        </div>
-                        <div class="card-body py-2 px-3">
-                            @if(!empty($classe['intro']))
-                            <p class="text-muted small mb-2 px-1 pt-2 fst-italic">{{ $classe['intro'] }}</p>
-                            @endif
-                            @foreach($classe['questions'] as $qi => $q)
-                            <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
-                                <input class="form-check-input" type="checkbox"
-                                       name="{{ $classe['id'] }}_{{ $qi }}" value="1"
-                                       id="{{ $classe['id'] }}_{{ $qi }}"
-                                       data-section="s1"
-                                       @checked(!empty($answers[$classe['id'].'_'.$qi]))>
-                                <label class="form-check-label form-check-label-navy d-flex justify-content-between" for="{{ $classe['id'] }}_{{ $qi }}">
-                                    <span>{{ $q['t'] }}</span>
-                                    <span class="badge-tint-bordered">+{{ $q['w'] }}</span>
-                                </label>
-                            </div>
-                            @if($classe['id'] === 'jr3' && $qi === 3)
-                            <div class="ms-4 mt-1 pb-2">
-                                <label for="jr_3_4_heures" class="form-label text-muted small mb-1">Option : à quelles heures ressentez-vous ces rages ?</label>
-                                <input type="text" name="jr_3_4_heures" id="jr_3_4_heures"
-                                       class="form-control form-control-sm"
-                                       placeholder="ex : en milieu d'après-midi, après le dîner…"
-                                       value="{{ $answers['jr_3_4_heures'] ?? '' }}">
-                            </div>
-                            @endif
-                            @if($classe['id'] === 'jr5' && $qi === 9)
-                            <div class="ms-4 mt-1 pb-2">
-                                <div class="mb-2">
-                                    <label for="jr_5_10_type" class="form-label text-muted small mb-1">Option : allergies réelles ou intolérances IgG ?</label>
-                                    <input type="text" name="jr_5_10_type" id="jr_5_10_type"
-                                           class="form-control form-control-sm"
-                                           placeholder="ex : allergie réelle / intolérance IgG"
-                                           value="{{ $answers['jr_5_10_type'] ?? '' }}">
-                                </div>
-                                <div>
-                                    <label for="jr_5_10_diagnostic" class="form-label text-muted small mb-1">Option : diagnostiquées comment ?</label>
-                                    <input type="text" name="jr_5_10_diagnostic" id="jr_5_10_diagnostic"
-                                           class="form-control form-control-sm"
-                                           placeholder="ex : test sanguin, test cutané, auto-diagnostic…"
-                                           value="{{ $answers['jr_5_10_diagnostic'] ?? '' }}">
-                                </div>
-                            </div>
-                            @endif
-                            @endforeach
-                            @if(!empty($classe['seuil_texte']))
-                            <p class="text-muted small mt-2 mb-1 px-1 fst-italic border-top pt-2">{{ $classe['seuil_texte'] }}</p>
-                            @endif
-                        </div>
-                    </div>
-                    @endforeach
-
-                </div>
-            </div>
-        </div>
-
-        {{-- ══ SECTION 2 — MÉTABOLTYPING ══ --}}
-        <div class="accordion-item" id="wrap-s2">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s2">
-                    <span class="section-icon"><i class="bi bi-activity"></i></span>
-                    2. Métaboltyping
-                    <span class="badge-progress ms-3" id="badge-s2">0 / 48</span>
-                </button>
-            </h2>
-            <div id="s2" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
-                <div class="accordion-body pt-2 pb-4">
-
-                    <div class="alert-section-info mb-3">
-                        Prenez votre temps pour cocher les cases qui vous correspondent. Pour certaines questions, il est judicieux de demander l'avis d'un proche. Essayez de vous rappeler vos réactions aux aliments AVANT vos 18 ans, c'est souvent plus parlant que de répondre en fonction de la situation actuelle.
-                    </div>
-
-                    {{-- En-têtes colonnes --}}
-                    <div class="row g-2 mb-2 d-none d-md-flex">
-                        <div class="col-md-1"></div>
-                        <div class="col-md-3"></div>
-                        <div class="col-md-8">
-                            <div class="row g-2 text-center fw-semibold" style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);">
-                                <div class="col-4">Cueilleur</div>
-                                <div class="col-4">Chasseur</div>
-                                <div class="col-4">Mixte</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    @foreach(QuestionnaireData::$metabolique as $q)
-                    <div class="q-row" data-qid="{{ $q['id'] }}">
-                        <div class="row g-0 align-items-stretch">
-                            <div class="col-md-1 col-2 d-flex align-items-center">
-                                <div class="q-num">{{ $loop->iteration }}.</div>
-                            </div>
-                            <div class="col-md-3 col-10 d-flex align-items-center pe-2">
-                                <div class="q-label">{{ $q['label'] }}</div>
-                            </div>
-                            <div class="col-12 col-md-8 mt-2 mt-md-0">
-                                <div class="row g-1 h-100 align-items-stretch">
-                                    @foreach(['A' => 'btn-outline-primary', 'B' => 'btn-outline-chasseur', 'M' => 'btn-outline-mixte'] as $col => $btnClass)
-                                    <div class="col-4 d-flex">
-                                        @if($q['options'][$col] !== null)
-                                        <input type="checkbox"
-                                               name="{{ $q['id'] }}_{{ $col }}" value="1"
-                                               class="btn-check"
-                                               id="{{ $q['id'] }}_{{ $col }}"
-                                               data-section="s2"
-                                               data-qid="{{ $q['id'] }}"
-                                               @checked(!empty($answers[$q['id'] . '_' . $col]))>
-                                        <label class="btn {{ $btnClass }} btn-sm w-100 text-start h-100" for="{{ $q['id'] }}_{{ $col }}" style="font-size:12px;white-space:normal;display:flex;align-items:center;">
-                                            {{ $q['options'][$col] }}
-                                        </label>
-                                        @endif
-                                    </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-
-                    <div class="alert-section-info mt-3">
-                        Résultats : Si votre résultat à l'une ou l'autre classe est supérieur de minimum 5 points aux autres classes, vous êtes de ce type-là.
+                    <div class="d-flex flex-wrap gap-2" id="groupe-sanguin-wrap">
+                        @foreach(['O', 'A', 'B', 'AB', 'Je ne sais pas'] as $gs)
+                        <input type="radio" name="groupe_sanguin" value="{{ $gs }}"
+                               class="btn-check radio-q" id="gs_{{ $loop->index }}"
+                               data-section="s5"
+                               @checked(($answers['groupe_sanguin'] ?? '') === $gs)>
+                        <label class="btn btn-outline-primary btn-sm" for="gs_{{ $loop->index }}">{{ $gs }}</label>
+                        @endforeach
                     </div>
 
                 </div>
             </div>
         </div>
 
-        {{-- ══ SECTION 3 — DIATHÈSES ══ --}}
+        {{-- ══ SECTION 2 — DIATHÈSES ══ --}}
         <div class="accordion-item" id="wrap-s3">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#s3">
                     <span class="section-icon"><i class="bi bi-diagram-3"></i></span>
-                    3. Diathèses
+                    2. Diathèses
                     <span class="badge-progress ms-3" id="badge-s3">0 / 14</span>
                 </button>
             </h2>
@@ -354,13 +236,13 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
             </div>
         </div>
 
-        {{-- ══ SECTION 4 — AYURVEDA ══ --}}
+        {{-- ══ SECTION 3 — AYURVEDA ══ --}}
         <div class="accordion-item" id="wrap-s4">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#s4">
                     <span class="section-icon"><i class="bi bi-yin-yang"></i></span>
-                    4. Ayurveda
+                    3. Ayurveda
                     <span class="badge-progress ms-3" id="badge-s4">0 / 59</span>
                 </button>
             </h2>
@@ -424,32 +306,150 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
             </div>
         </div>
 
-        {{-- ══ SECTION 5 — GROUPE SANGUIN ══ --}}
-        <div class="accordion-item" id="wrap-s5">
+        {{-- ══ SECTION 4 — MÉTABOLTYPING ══ --}}
+        <div class="accordion-item" id="wrap-s2">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#s5">
-                    <span class="section-icon"><i class="bi bi-droplet-half"></i></span>
-                    5. Groupe sanguin
-                    <span class="badge-progress ms-3" id="badge-s5">0 / 1</span>
+                        data-bs-toggle="collapse" data-bs-target="#s2">
+                    <span class="section-icon"><i class="bi bi-activity"></i></span>
+                    4. Métaboltyping
+                    <span class="badge-progress ms-3" id="badge-s2">0 / 48</span>
                 </button>
             </h2>
-            <div id="s5" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
+            <div id="s2" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
                 <div class="accordion-body pt-2 pb-4">
 
                     <div class="alert-section-info mb-3">
-                        Sélectionnez le groupe sanguin du client.
+                        Prenez votre temps pour cocher les cases qui vous correspondent. Pour certaines questions, il est judicieux de demander l'avis d'un proche. Essayez de vous rappeler vos réactions aux aliments AVANT vos 18 ans, c'est souvent plus parlant que de répondre en fonction de la situation actuelle.
                     </div>
 
-                    <div class="d-flex flex-wrap gap-2" id="groupe-sanguin-wrap">
-                        @foreach(['O', 'A', 'B', 'AB', 'Je ne sais pas'] as $gs)
-                        <input type="radio" name="groupe_sanguin" value="{{ $gs }}"
-                               class="btn-check radio-q" id="gs_{{ $loop->index }}"
-                               data-section="s5"
-                               @checked(($answers['groupe_sanguin'] ?? '') === $gs)>
-                        <label class="btn btn-outline-primary btn-sm" for="gs_{{ $loop->index }}">{{ $gs }}</label>
-                        @endforeach
+                    {{-- En-têtes colonnes --}}
+                    <div class="row g-2 mb-2 d-none d-md-flex">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-8">
+                            <div class="row g-2 text-center fw-semibold" style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-muted);">
+                                <div class="col-4">Cueilleur</div>
+                                <div class="col-4">Chasseur</div>
+                                <div class="col-4">Mixte</div>
+                            </div>
+                        </div>
                     </div>
+
+                    @foreach(QuestionnaireData::$metabolique as $q)
+                    <div class="q-row" data-qid="{{ $q['id'] }}">
+                        <div class="row g-0 align-items-stretch">
+                            <div class="col-md-1 col-2 d-flex align-items-center">
+                                <div class="q-num">{{ $loop->iteration }}.</div>
+                            </div>
+                            <div class="col-md-3 col-10 d-flex align-items-center pe-2">
+                                <div class="q-label">{{ $q['label'] }}</div>
+                            </div>
+                            <div class="col-12 col-md-8 mt-2 mt-md-0">
+                                <div class="row g-1 h-100 align-items-stretch">
+                                    @foreach(['A' => 'btn-outline-primary', 'B' => 'btn-outline-chasseur', 'M' => 'btn-outline-mixte'] as $col => $btnClass)
+                                    <div class="col-4 d-flex">
+                                        @if($q['options'][$col] !== null)
+                                        <input type="checkbox"
+                                               name="{{ $q['id'] }}_{{ $col }}" value="1"
+                                               class="btn-check"
+                                               id="{{ $q['id'] }}_{{ $col }}"
+                                               data-section="s2"
+                                               data-qid="{{ $q['id'] }}"
+                                               @checked(!empty($answers[$q['id'] . '_' . $col]))>
+                                        <label class="btn {{ $btnClass }} btn-sm w-100 text-start h-100" for="{{ $q['id'] }}_{{ $col }}" style="font-size:12px;white-space:normal;display:flex;align-items:center;">
+                                            {{ $q['options'][$col] }}
+                                        </label>
+                                        @endif
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+
+                    <div class="alert-section-info mt-3">
+                        Résultats : Si votre résultat à l'une ou l'autre classe est supérieur de minimum 5 points aux autres classes, vous êtes de ce type-là.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ══ SECTION 5 — JULIA ROSS — NEUROTRANSMETTEURS ══ --}}
+        <div class="accordion-item" id="wrap-s1">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#s1">
+                    <span class="section-icon"><i class="bi bi-brain"></i></span>
+                    5. Julia Ross — Neurotransmetteurs
+                    <span class="badge-progress ms-3" id="badge-s1">0 / {{ $totalJuliaRoss }}</span>
+                </button>
+            </h2>
+            <div id="s1" class="accordion-collapse collapse" data-bs-parent="#questAccordion">
+                <div class="accordion-body pt-2 pb-4">
+
+                    <div class="alert-section-info mb-3">
+                        Cochez les chiffres correspondant à vos symptômes. Calculez le total par classe.
+                    </div>
+
+                    @foreach(QuestionnaireData::$julia_ross as $classe)
+                    <div class="card mb-3 subsection-card">
+                        <div class="card-header">
+                            <span>{{ $classe['titre'] }}</span>
+                            <span class="badge-tint">Seuil : {{ $classe['seuil'] }}</span>
+                        </div>
+                        <div class="card-body py-2 px-3">
+                            @if(!empty($classe['intro']))
+                            <p class="text-muted small mb-2 px-1 pt-2 fst-italic">{{ $classe['intro'] }}</p>
+                            @endif
+                            @foreach($classe['questions'] as $qi => $q)
+                            <div class="form-check py-1 {{ !$loop->last ? 'border-bottom' : '' }}">
+                                <input class="form-check-input" type="checkbox"
+                                       name="{{ $classe['id'] }}_{{ $qi }}" value="1"
+                                       id="{{ $classe['id'] }}_{{ $qi }}"
+                                       data-section="s1"
+                                       @checked(!empty($answers[$classe['id'].'_'.$qi]))>
+                                <label class="form-check-label form-check-label-navy d-flex justify-content-between" for="{{ $classe['id'] }}_{{ $qi }}">
+                                    <span>{{ $q['t'] }}</span>
+                                    <span class="badge-tint-bordered">+{{ $q['w'] }}</span>
+                                </label>
+                            </div>
+                            @if($classe['id'] === 'jr3' && $qi === 3)
+                            <div class="ms-4 mt-1 pb-2">
+                                <label for="jr_3_4_heures" class="form-label text-muted small mb-1">Option : à quelles heures ressentez-vous ces rages ?</label>
+                                <input type="text" name="jr_3_4_heures" id="jr_3_4_heures"
+                                       class="form-control form-control-sm"
+                                       placeholder="ex : en milieu d'après-midi, après le dîner…"
+                                       value="{{ $answers['jr_3_4_heures'] ?? '' }}">
+                            </div>
+                            @endif
+                            @if($classe['id'] === 'jr5' && $qi === 9)
+                            <div class="ms-4 mt-1 pb-2">
+                                <div class="mb-2">
+                                    <label for="jr_5_10_type" class="form-label text-muted small mb-1">Option : allergies réelles ou intolérances IgG ?</label>
+                                    <input type="text" name="jr_5_10_type" id="jr_5_10_type"
+                                           class="form-control form-control-sm"
+                                           placeholder="ex : allergie réelle / intolérance IgG"
+                                           value="{{ $answers['jr_5_10_type'] ?? '' }}">
+                                </div>
+                                <div>
+                                    <label for="jr_5_10_diagnostic" class="form-label text-muted small mb-1">Option : diagnostiquées comment ?</label>
+                                    <input type="text" name="jr_5_10_diagnostic" id="jr_5_10_diagnostic"
+                                           class="form-control form-control-sm"
+                                           placeholder="ex : test sanguin, test cutané, auto-diagnostic…"
+                                           value="{{ $answers['jr_5_10_diagnostic'] ?? '' }}">
+                                </div>
+                            </div>
+                            @endif
+                            @endforeach
+                            @if(!empty($classe['seuil_texte']))
+                            <p class="text-muted small mt-2 mb-1 px-1 fst-italic border-top pt-2">{{ $classe['seuil_texte'] }}</p>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
 
                 </div>
             </div>
