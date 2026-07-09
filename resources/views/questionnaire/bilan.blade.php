@@ -662,6 +662,21 @@ $diathTips = [
     </div>
 </div>
 
+{{-- Note globale conseiller ─────────────────────────────────────────── --}}
+@unless($clientView ?? false)
+<div class="card mb-3" style="border-left: 4px solid var(--color-primary);">
+    <div class="card-body py-3 px-4">
+        <div class="fw-semibold mb-2" style="font-family:'Syne',sans-serif; color: var(--color-navy); font-size:14px;">
+            <i class="bi bi-pencil-square me-2 text-green-dark"></i>Note globale du conseiller
+        </div>
+        <textarea name="notes[global]" form="notesForm"
+                  class="tip-textarea"
+                  rows="3"
+                  placeholder="Synthèse globale, observations générales sur ce bilan…">{{ $notes['global'] ?? '' }}</textarea>
+    </div>
+</div>
+@endunless
+
 {{-- Bandeau session (conseiller uniquement) ────────────────────────── --}}
 @unless($clientView ?? false)
 <div class="card mb-3">
@@ -1140,6 +1155,9 @@ $diathTips = [
                     <div class="tip-title">
                         <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $ayurvedaType }}
                     </div>
+                    @if($isDouble)
+                    <div class="tip-section-title" style="color:var(--color-primary);">{{ $tipKey1 }} (dosha dominant)</div>
+                    @endif
                     @foreach($ayTips[$tipKey1] as $bloc)
                     <div class="tip-section-title">{{ $bloc['section'] }}</div>
                     <ul class="tip-list">
