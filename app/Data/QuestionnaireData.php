@@ -241,8 +241,8 @@ class QuestionnaireData
         [
             'id' => 'jr3',
             'titre' => 'Classe 3 – Glycémie instable',
-            'seuil' => 15,
-            'seuil_texte' => 'Si le total dépasse 15, vous pourriez être victime de glycémie instable (mauvaise régulation du sucre sanguin).',
+            'seuil' => 12,
+            'seuil_texte' => 'Si le total dépasse 12, vous pourriez être victime de glycémie instable (mauvaise régulation du sucre sanguin).',
             'questions' => [
                 ['t' => 'Les repas vous rendent-ils somnolents ?', 'w' => 3],
                 ['t' => 'Nerveux ou irritable par moments, plus calme après les repas ?', 'w' => 3],
@@ -307,8 +307,8 @@ class QuestionnaireData
             'id' => 'jr6',
             'titre' => 'Classe 6 – Hormones (femmes uniquement)',
             'intro' => 'Répondez aussi après la ménopause, tâchez de vous rappeler le passé.',
-            'seuil' => 6,
-            'seuil_texte' => "Si le total dépasse 6, vous pourriez être victime d'un déséquilibre progestérone/oestrogènes.",
+            'seuil' => 10,
+            'seuil_texte' => "Si le total dépasse 10, vous pourriez être victime d'un déséquilibre progestérone/oestrogènes.",
             'questions' => [
                 ['t' => "Avant les règles (3–10 j) : sautes d'humeur ou maux de tête ?", 'w' => 4],
                 ['t' => 'Avant les règles : épisodes de fringales alimentaires ?', 'w' => 4],
