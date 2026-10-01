@@ -635,6 +635,9 @@ $diathTips = [
         <button type="submit" form="notesForm" class="btn btn-primary btn-sm">
             <i class="bi bi-save me-1"></i>Enregistrer les notes
         </button>
+        <a href="{{ route('questionnaire.pdf', $client) }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-file-earmark-pdf me-1"></i>PDF réponses
+        </a>
         <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
             <i class="bi bi-printer me-1"></i>Imprimer
         </button>

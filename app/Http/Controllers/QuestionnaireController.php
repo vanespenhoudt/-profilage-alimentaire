@@ -7,6 +7,7 @@ use App\Enums\Role;
 use App\Models\Client;
 use App\Models\Questionnaire;
 use App\Services\QuestionnaireScorer;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -128,6 +129,31 @@ class QuestionnaireController extends Controller
         $data        = QuestionnaireData::class;
 
         return view('questionnaire.bilan', compact('client', 'questionnaire', 'allSessions', 'data'));
+    }
+
+    // -----------------------------------------------------------------------
+    // Export PDF des questions / réponses (session active)
+    // -----------------------------------------------------------------------
+
+    public function pdf(Request $request, Client $client): \Illuminate\Http\Response|RedirectResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $questionnaire = $client->questionnaire;
+
+        if (! $questionnaire || empty($questionnaire->answers)) {
+            return redirect()
+                ->route('clients.show', $client)
+                ->with('error', 'Aucune réponse enregistrée pour ce client.');
+        }
+
+        $answers   = QuestionnaireScorer::normalizeMetaboliqueAnswers($questionnaire->answers);
+        $completed = $questionnaire->getCompletedQuestionnaires();
+        $filename  = 'questionnaire-' . Str::slug($client->nom_complet) . '-' . now()->format('Y-m-d') . '.pdf';
+
+        return Pdf::loadView('questionnaire.pdf', compact('client', 'questionnaire', 'answers', 'completed'))
+            ->setPaper('a4')
+            ->stream($filename);
     }
 
     // -----------------------------------------------------------------------

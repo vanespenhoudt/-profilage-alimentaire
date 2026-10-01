@@ -394,4 +394,44 @@ class QuestionnaireControllerTest extends TestCase
             ->get(route('questionnaire.show', $client))
             ->assertForbidden();
     }
+
+    // -----------------------------------------------------------------------
+    // Export PDF
+    // -----------------------------------------------------------------------
+
+    public function test_pdf_returns_pdf_for_owner_conseiller(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+        Questionnaire::create([
+            'client_id' => $client->id,
+            'is_active' => true,
+            'answers'   => ['groupe_sanguin' => 'A', 'd1a' => 'd1', 'v0' => '4', 'mb_01_A' => '1', 'jr1_0' => '1', 'h1_0' => '1', 'ctx1' => 'adulte', 'ca1' => '1'],
+        ]);
+
+        $this->actingAs($conseiller)
+            ->get(route('questionnaire.pdf', $client))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+    }
+
+    public function test_pdf_redirects_when_no_answers(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+
+        $this->actingAs($conseiller)
+            ->get(route('questionnaire.pdf', $client))
+            ->assertRedirect(route('clients.show', $client));
+    }
+
+    public function test_pdf_is_forbidden_for_other_conseiller(): void
+    {
+        $client = $this->makeClientFor($this->makeConseiller());
+        Questionnaire::create(['client_id' => $client->id, 'is_active' => true, 'answers' => ['groupe_sanguin' => 'O']]);
+
+        $this->actingAs($this->makeConseiller())
+            ->get(route('questionnaire.pdf', $client))
+            ->assertForbidden();
+    }
 }

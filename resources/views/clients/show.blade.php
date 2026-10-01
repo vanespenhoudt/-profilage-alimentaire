@@ -308,6 +308,11 @@
     <a href="{{ route('questionnaire.bilan', $client) }}" class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
         <i class="bi bi-bar-chart-line me-1"></i>Voir le bilan
     </a>
+    @if(!empty($client->questionnaire->answers))
+    <a href="{{ route('questionnaire.pdf', $client) }}" target="_blank" class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center">
+        <i class="bi bi-file-earmark-pdf me-1"></i>PDF des réponses
+    </a>
+    @endif
     <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center"
             data-bs-toggle="modal" data-bs-target="#nouvelleSessionModal"
             dusk="btn-open-nouvelle-session">

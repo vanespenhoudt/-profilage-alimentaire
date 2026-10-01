@@ -53,6 +53,7 @@ Route::middleware(['auth', 'role:conseiller'])->group(function () {
     Route::post('/clients/{client}/questionnaire/save', [QuestionnaireController::class, 'autosave'])->name('questionnaire.autosave');
     Route::post('/clients/{client}/questionnaire', [QuestionnaireController::class, 'store'])->name('questionnaire.store');
     Route::get('/clients/{client}/bilan', [QuestionnaireController::class, 'bilan'])->name('questionnaire.bilan');
+    Route::get('/clients/{client}/questionnaire/pdf', [QuestionnaireController::class, 'pdf'])->name('questionnaire.pdf');
     Route::post('/clients/{client}/bilan/notes', [QuestionnaireController::class, 'saveNotes'])->name('questionnaire.bilan.notes.save');
     Route::post('/clients/{client}/questionnaire/token', [QuestionnaireController::class, 'generateToken'])->name('questionnaire.generate-token');
     Route::post('/clients/{client}/questionnaire/nouvelle-session', [QuestionnaireController::class, 'nouvelleSession'])->name('questionnaire.nouvelle-session');
