@@ -141,13 +141,13 @@ class QuestionnaireController extends Controller
 
         $questionnaire = $client->questionnaire;
 
-        if (! $questionnaire || empty($questionnaire->answers)) {
+        if (! $questionnaire || (empty($questionnaire->answers) && ! $questionnaire->menu_text && ! $questionnaire->aliments_text)) {
             return redirect()
                 ->route('clients.show', $client)
                 ->with('error', 'Aucune réponse enregistrée pour ce client.');
         }
 
-        $answers   = QuestionnaireScorer::normalizeMetaboliqueAnswers($questionnaire->answers);
+        $answers   = QuestionnaireScorer::normalizeMetaboliqueAnswers($questionnaire->answers ?? []);
         $completed = $questionnaire->getCompletedQuestionnaires();
         $filename  = 'questionnaire-' . Str::slug($client->nom_complet) . '-' . now()->format('Y-m-d') . '.pdf';
 

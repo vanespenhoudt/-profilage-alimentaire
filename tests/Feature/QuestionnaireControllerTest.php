@@ -434,4 +434,22 @@ class QuestionnaireControllerTest extends TestCase
             ->get(route('questionnaire.pdf', $client))
             ->assertForbidden();
     }
+
+    public function test_pdf_works_with_only_menu_and_aliments(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $client     = $this->makeClientFor($conseiller);
+        Questionnaire::create([
+            'client_id'     => $client->id,
+            'is_active'     => true,
+            'answers'       => [],
+            'menu_text'     => '<p><strong>Jour 1</strong> : soupe</p>',
+            'aliments_text' => "Chocolat\nFromage",
+        ]);
+
+        $this->actingAs($conseiller)
+            ->get(route('questionnaire.pdf', $client))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf');
+    }
 }

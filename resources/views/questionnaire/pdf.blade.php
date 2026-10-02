@@ -29,6 +29,9 @@ $has     = fn (string $section) => in_array($section, $completed, true);
     .sel { background: #ecfdf5; font-weight: bold; }
     .muted { color: #94a3b8; font-style: italic; }
     .pill { display: inline-block; padding: 1mm 3mm; background: #1e3a5f; color: #fff; font-weight: bold; }
+    .free-text { border: 1px solid #e2e8f0; padding: 2mm 3mm; background: #f8fafc; }
+    .free-text p { margin: 0 0 1.5mm; }
+    .free-text h1, .free-text h2, .free-text h3, .free-text h4 { font-size: 10pt; color: #1e3a5f; background: none; padding: 0; margin: 2mm 0 1mm; }
     .footer { position: fixed; bottom: -10mm; left: 0; right: 0; text-align: center; font-size: 7.5pt; color: #94a3b8; }
 </style>
 </head>
@@ -216,6 +219,38 @@ $has     = fn (string $section) => in_array($section, $completed, true);
     @endforeach
 </table>
 @endforeach
+@endif
+
+{{-- ══ Repas & aliments préférés ══ --}}
+@if($questionnaire->menu_text || $questionnaire->menu_file_name || $questionnaire->aliments_text)
+@php
+    $menu = $questionnaire->menu_text;
+    if ($menu && $menu !== strip_tags($menu)) {
+        // Texte riche (éditeur conseiller) : balises de mise en forme uniquement, sans attributs
+        $menu = strip_tags($menu, '<p><br><ul><ol><li><strong><b><em><i><u><h1><h2><h3><h4>');
+        $menu = preg_replace('/<(\w+)\s[^>]*>/', '<$1>', $menu);
+    } elseif ($menu) {
+        $menu = nl2br(e($menu));
+    }
+@endphp
+<h2>Repas &amp; aliments préférés</h2>
+
+<h3>Repas (3 journées types)</h3>
+@if($menu)
+<div class="free-text">{!! $menu !!}</div>
+@else
+<p class="muted">Aucun repas décrit.</p>
+@endif
+@if($questionnaire->menu_file_name)
+<p class="muted">Fichier joint : {{ $questionnaire->menu_file_name }} (disponible dans l'application)</p>
+@endif
+
+<h3>Aliments préférés</h3>
+@if($questionnaire->aliments_text)
+<div class="free-text">{!! nl2br(e($questionnaire->aliments_text)) !!}</div>
+@else
+<p class="muted">Aucun aliment indiqué.</p>
+@endif
 @endif
 
 </body>
