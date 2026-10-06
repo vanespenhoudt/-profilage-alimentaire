@@ -28,6 +28,7 @@ class Client extends Model
         'bt',
         'rgpd',
         'notes',
+        'profilage_fait_at',
     ];
 
     protected function casts(): array
@@ -46,6 +47,7 @@ class Client extends Model
             'taille'     => 'encrypted',
             'poids'      => 'encrypted',
             'rgpd'       => 'boolean',
+            'profilage_fait_at' => 'datetime',
         ];
     }
 

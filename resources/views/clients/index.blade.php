@@ -61,6 +61,7 @@
                             <th>Conseiller</th>
                             @endif
                             <th>RGPD</th>
+                            <th class="text-center">Profilage fait</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -83,6 +84,13 @@
                                 @else
                                     <span class="badge-rgpd-wait">En attente</span>
                                 @endif
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" class="form-check-input js-profilage"
+                                       data-url="{{ route('clients.profilage', $client) }}"
+                                       title="{{ $client->profilage_fait_at ? 'Fait le ' . $client->profilage_fait_at->format('d/m/Y') : 'Pas encore fait' }}"
+                                       dusk="chk-profilage-{{ $client->id }}"
+                                       @checked($client->profilage_fait_at)>
                             </td>
                             <td>
                                 <a href="{{ route('clients.show', $client) }}" class="btn btn-sm btn-outline-secondary me-1"
@@ -116,4 +124,31 @@
         @endif
     </div>
 </div>
+
+<script>
+document.querySelectorAll('.js-profilage').forEach(function (box) {
+    box.addEventListener('change', function () {
+        var fait = box.checked;
+        box.disabled = true;
+        fetch(box.dataset.url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ fait: fait })
+        })
+        .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+        .then(function (data) {
+            box.title = data.fait ? 'Fait le ' + data.date : 'Pas encore fait';
+        })
+        .catch(function () {
+            box.checked = !fait;
+            alert("Impossible d'enregistrer. Réessayez.");
+        })
+        .finally(function () { box.disabled = false; });
+    });
+});
+</script>
 @endsection

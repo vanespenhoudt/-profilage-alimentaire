@@ -48,6 +48,7 @@ Route::middleware(['auth', 'role:conseiller'])->group(function () {
     Route::put('/clients/{client}', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
     Route::delete('/clients/{client}/anonymize', [ClientController::class, 'anonymize'])->name('clients.anonymize');
+    Route::patch('/clients/{client}/profilage', [ClientController::class, 'toggleProfilage'])->name('clients.profilage');
 
     Route::get('/clients/{client}/questionnaire', [QuestionnaireController::class, 'show'])->name('questionnaire.show');
     Route::post('/clients/{client}/questionnaire/save', [QuestionnaireController::class, 'autosave'])->name('questionnaire.autosave');
