@@ -46,6 +46,7 @@
                             <th>Nom complet</th>
                             <th>Téléphone</th>
                             <th>Date création</th>
+                            <th class="text-center">Questionnaire</th>
                             <th class="text-center">Profilage fait</th>
                             <th>Actions</th>
                         </tr>
@@ -59,6 +60,9 @@
                             <td class="fw-medium">{{ $client->nom_complet }}</td>
                             <td>{{ $client->tel }}</td>
                             <td class="text-muted small">{{ $client->created_at->format('d/m/Y') }}</td>
+                            <td class="text-center">
+                                @include('clients.partials.questionnaire-status')
+                            </td>
                             <td class="text-center">
                                 @include('clients.partials.profilage-checkbox')
                             </td>

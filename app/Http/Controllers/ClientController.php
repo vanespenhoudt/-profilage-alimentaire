@@ -20,8 +20,8 @@ class ClientController extends Controller
         $search = $request->input('search');
 
         $query = $user->role === Role::SuperAdmin
-            ? Client::with('conseiller')
-            : $user->clients();
+            ? Client::with(['conseiller', 'questionnaire'])
+            : $user->clients()->with('questionnaire');
 
         $allClients = $query->orderBy('created_at', 'desc')->get();
 

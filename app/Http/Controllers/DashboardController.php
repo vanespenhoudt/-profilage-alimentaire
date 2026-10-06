@@ -18,7 +18,7 @@ class DashboardController extends Controller
         }
 
         $totalClients   = $user->clients()->count();
-        $clientsRecents = $user->clients()->latest()->take(10)->get();
+        $clientsRecents = $user->clients()->with('questionnaire')->latest()->take(10)->get();
         $myInvitations  = $user->sentInvitations()->with('invitedBy')->latest()->get();
 
         return view('dashboard', compact('totalClients', 'clientsRecents', 'myInvitations'));
