@@ -61,6 +61,7 @@
                             <th>Conseiller</th>
                             @endif
                             <th>RGPD</th>
+                            <th class="text-center">Questionnaire</th>
                             <th class="text-center">Profilage fait</th>
                             <th>Actions</th>
                         </tr>
@@ -84,6 +85,9 @@
                                 @else
                                     <span class="badge-rgpd-wait">En attente</span>
                                 @endif
+                            </td>
+                            <td class="text-center">
+                                @include('clients.partials.questionnaire-status')
                             </td>
                             <td class="text-center">
                                 @include('clients.partials.profilage-checkbox')

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\Role;
 use App\Models\Client;
+use App\Models\Questionnaire;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -76,5 +77,24 @@ class ClientProfilageTest extends TestCase
             ->assertOk()
             ->assertSee('Profilage fait')
             ->assertSee('Fait le ' . now()->format('d/m/Y'));
+    }
+
+    public function test_lists_show_questionnaire_status(): void
+    {
+        $conseiller = $this->makeConseiller();
+        $sans       = Client::factory()->create(['conseiller_id' => $conseiller->id]);
+        $encours    = Client::factory()->create(['conseiller_id' => $conseiller->id]);
+        $soumis     = Client::factory()->create(['conseiller_id' => $conseiller->id]);
+        Questionnaire::create(['client_id' => $encours->id, 'is_active' => true, 'answers' => ['groupe_sanguin' => 'A']]);
+        Questionnaire::create(['client_id' => $soumis->id, 'is_active' => true, 'answers' => ['groupe_sanguin' => 'O'], 'submitted_at' => now()]);
+
+        foreach (['clients.index', 'dashboard'] as $route) {
+            $this->actingAs($conseiller)
+                ->get(route($route))
+                ->assertOk()
+                ->assertSee('Pas répondu')
+                ->assertSee('Commencé, pas encore soumis')
+                ->assertSee('Soumis le ' . now()->format('d/m/Y'));
+        }
     }
 }
