@@ -7,6 +7,7 @@ use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -160,6 +161,21 @@ class ClientController extends Controller
 
         return redirect()->route('clients.show', $client)
             ->with('success', 'Les données personnelles du client ont été anonymisées.');
+    }
+
+    public function toggleProfilage(Request $request, Client $client): JsonResponse
+    {
+        $this->authorizeClientAccess($request->user(), $client);
+
+        $request->validate(['fait' => 'required|boolean']);
+
+        $client->profilage_fait_at = $request->boolean('fait') ? now() : null;
+        $client->save();
+
+        return response()->json([
+            'fait' => $client->profilage_fait_at !== null,
+            'date' => $client->profilage_fait_at?->format('d/m/Y'),
+        ]);
     }
 
     private function authorizeClientAccess(\App\Models\User $user, Client $client): void
