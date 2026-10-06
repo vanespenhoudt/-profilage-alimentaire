@@ -65,4 +65,16 @@ class ClientProfilageTest extends TestCase
             ->assertSee('Profilage fait')
             ->assertSee('Fait le ' . now()->format('d/m/Y'));
     }
+
+    public function test_dashboard_shows_profilage_checkbox(): void
+    {
+        $conseiller = $this->makeConseiller();
+        Client::factory()->create(['conseiller_id' => $conseiller->id, 'profilage_fait_at' => now()]);
+
+        $this->actingAs($conseiller)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Profilage fait')
+            ->assertSee('Fait le ' . now()->format('d/m/Y'));
+    }
 }
