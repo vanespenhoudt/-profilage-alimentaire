@@ -46,6 +46,7 @@
                             <th>Nom complet</th>
                             <th>Téléphone</th>
                             <th>Date création</th>
+                            <th class="text-center">Profilage fait</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -58,6 +59,9 @@
                             <td class="fw-medium">{{ $client->nom_complet }}</td>
                             <td>{{ $client->tel }}</td>
                             <td class="text-muted small">{{ $client->created_at->format('d/m/Y') }}</td>
+                            <td class="text-center">
+                                @include('clients.partials.profilage-checkbox')
+                            </td>
                             <td>
                                 <a href="{{ route('clients.show', $client) }}" class="btn btn-sm btn-outline-secondary me-1">
                                     <i class="bi bi-eye"></i>
@@ -165,4 +169,5 @@
         @endif
     </div>
 </div>
+@include('clients.partials.profilage-script')
 @endsection
