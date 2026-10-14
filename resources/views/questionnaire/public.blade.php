@@ -64,6 +64,37 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
     <p class="text-muted-pa fs-13 mt-1">Cliquez sur <strong>Soumettre</strong> quand vous avez terminé.</p>
 </div>
 
+{{-- Conseil pause ───────────────────────────────────────────────── --}}
+<div class="alert alert-info d-flex gap-2 align-items-start fs-13" role="note">
+    <i class="bi bi-info-circle-fill mt-1"></i>
+    <div>
+        <strong>Vous faites une pause ?</strong> Vos réponses sont enregistrées au fur et à mesure.
+        Vous pouvez fermer cette page et revenir plus tard avec le même lien.
+        Si un message rouge apparaît, <strong>ne fermez pas la page</strong> et suivez ses indications.
+    </div>
+</div>
+
+{{-- Alerte échec de sauvegarde ─────────────────────────────────────── --}}
+<div class="alert alert-danger shadow-sm d-none" id="saveErrorBanner" role="alert"
+     style="position:sticky;top:calc(env(safe-area-inset-top, 0px) + 8px);z-index:1050;">
+    <div class="d-flex gap-2 align-items-start">
+        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+        <div class="flex-grow-1">
+            <strong>Attention : vos dernières réponses ne sont pas enregistrées.</strong><br>
+            <span class="fs-13">Ne fermez pas cette page. Cliquez sur le bouton ci-dessous : la page se recharge et vos réponses sont conservées.</span>
+            <div class="mt-2">
+                <button type="button" class="btn btn-danger btn-sm" id="reloadKeepBtn">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Recharger sans rien perdre
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-success d-none fs-13" id="draftRestoredBanner" role="status">
+    <i class="bi bi-check-circle-fill me-1"></i>Vos réponses non enregistrées ont été récupérées et sauvegardées.
+</div>
+
 {{-- Statut sauvegarde ───────────────────────────────────────────── --}}
 <div class="d-flex align-items-center gap-2 mb-3">
     <span class="pub-save-status" id="saveStatus">
@@ -811,22 +842,78 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
 
         fetch(SAVE_URL, {
             method: 'POST',
-            headers: { 'X-CSRF-TOKEN': CSRF },
+            headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
             body: fd,
         })
-        .then(r => r.json())
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
         .then(d => {
             spinner.classList.add('d-none');
-            if (d.saved) {
-                status.innerHTML = '<i class="bi bi-cloud-check me-1" style="color:var(--color-primary-dark);"></i>Dernière sauvegarde : ' + d.time;
-                showToast();
-            }
+            if (!d.saved) throw new Error('not saved');
+            status.innerHTML = '<i class="bi bi-cloud-check me-1" style="color:var(--color-primary-dark);"></i>Dernière sauvegarde : ' + d.time;
+            showToast();
+            saveFailed = false;
+            document.getElementById('saveErrorBanner').classList.add('d-none');
+            clearDraft();
         })
         .catch(() => {
             spinner.classList.add('d-none');
-            status.textContent = 'Erreur de sauvegarde — vérifiez votre connexion.';
+            status.textContent = 'Erreur de sauvegarde — vos dernières réponses ne sont pas enregistrées.';
+            onSaveFailed();
         });
     }
+
+    // ── Brouillon local : protège les réponses quand la sauvegarde échoue ──
+    // (connexion perdue, erreur serveur, session expirée sur un ancien navigateur…)
+    const DRAFT_KEY = 'pa-draft-' + TOKEN;
+    let saveFailed  = false;
+
+    function fieldsOf(form) {
+        return Array.from(form.elements).filter(el => el.name && el.name !== '_token' && el.type !== 'file');
+    }
+
+    function saveDraft() {
+        const draft = {};
+        fieldsOf(document.getElementById('questForm')).forEach(el => {
+            if (el.type === 'checkbox' || el.type === 'radio') draft[el.name + '|' + el.value] = el.checked;
+            else draft[el.name] = el.value;
+        });
+        try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (_) {}
+    }
+
+    function clearDraft() {
+        try { localStorage.removeItem(DRAFT_KEY); } catch (_) {}
+    }
+
+    function restoreDraft() {
+        let draft = null;
+        try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (_) {}
+        if (!draft) return;
+        fieldsOf(document.getElementById('questForm')).forEach(el => {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                const k = el.name + '|' + el.value;
+                if (k in draft) el.checked = draft[k];
+            } else if (el.name in draft) {
+                el.value = draft[el.name];
+            }
+        });
+        document.getElementById('draftRestoredBanner').classList.remove('d-none');
+        autoSave();
+    }
+
+    function onSaveFailed() {
+        saveFailed = true;
+        saveDraft();
+        document.getElementById('saveErrorBanner').classList.remove('d-none');
+    }
+
+    document.getElementById('reloadKeepBtn').addEventListener('click', function () {
+        saveDraft();
+        window.location.reload();
+    });
+
+    // Filet de sécurité : si une sauvegarde a échoué, chaque modification est gardée localement
+    document.addEventListener('change', () => { if (saveFailed) saveDraft(); });
+    document.addEventListener('input',  () => { if (saveFailed) saveDraft(); });
 
     function showToast() {
         const toast = document.getElementById('saveToast');
@@ -970,13 +1057,23 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Vérification…';
 
         // 1. Sauvegarde synchrone avant validation
+        let preSaveOk = false;
         try {
-            await fetch(SAVE_URL, {
+            const r = await fetch(SAVE_URL, {
                 method: 'POST',
-                headers: { 'X-CSRF-TOKEN': CSRF },
+                headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
                 body: new FormData(document.getElementById('questForm')),
             });
-        } catch (_) { /* continue anyway */ }
+            preSaveOk = r.ok;
+        } catch (_) { /* réseau */ }
+
+        if (!preSaveOk) {
+            onSaveFailed();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-send me-2"></i>Soumettre le questionnaire';
+            return;
+        }
 
         // 2. Validation des sections
         try {
@@ -1027,7 +1124,7 @@ $totalCanaris = count(QuestionnaireData::$canaris_adulte)
         scheduleAutoSave();
     });
     document.addEventListener('input',  (e) => { if (e.target.matches('textarea, input[type="text"]')) scheduleAutoSave(); });
-    document.addEventListener('DOMContentLoaded', () => { updateBadges(); updateCanarisBlocks(); });
+    document.addEventListener('DOMContentLoaded', () => { restoreDraft(); updateBadges(); updateCanarisBlocks(); });
 
     document.getElementById('questAccordion').addEventListener('shown.bs.collapse', function (e) {
         const item   = e.target.closest('.accordion-item');

@@ -332,7 +332,8 @@ class QuestionnaireController extends Controller
         $questionnaire = $client->questionnaire
             ?? Questionnaire::create(['client_id' => $client->id, 'is_active' => true]);
 
-        $questionnaire->token                   = Str::random(48);
+        // On garde le lien existant : les clients qui l'ont déjà reçu peuvent continuer à l'utiliser
+        $questionnaire->token                 ??= Str::random(48);
         $questionnaire->sections                = $validated['sections'] ?? null;
         $questionnaire->menu_visible_client     = $request->boolean('menu_visible_client');
         $questionnaire->bilan_visible_client    = $request->boolean('bilan_visible_client');

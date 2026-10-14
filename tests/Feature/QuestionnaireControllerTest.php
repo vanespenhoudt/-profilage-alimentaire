@@ -169,7 +169,7 @@ class QuestionnaireControllerTest extends TestCase
         $this->assertSame(48, strlen($questionnaire->token));
     }
 
-    public function test_generate_token_regenerates_token_if_one_already_existed(): void
+    public function test_generate_token_keeps_existing_token_so_old_links_still_work(): void
     {
         $conseiller    = $this->makeConseiller();
         $client        = $this->makeClientFor($conseiller);
@@ -182,7 +182,7 @@ class QuestionnaireControllerTest extends TestCase
             ->post(route('questionnaire.generate-token', $client));
 
         $questionnaire->refresh();
-        $this->assertNotSame('old-token-value', $questionnaire->token);
+        $this->assertSame('old-token-value', $questionnaire->token);
     }
 
     // -----------------------------------------------------------------------
