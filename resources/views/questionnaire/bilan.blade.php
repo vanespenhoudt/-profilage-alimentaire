@@ -8,6 +8,7 @@ use App\Data\QuestionnaireData;
 $scores  = $questionnaire->scores ?? [];
 $notes   = $questionnaire->interpretation_notes ?? [];
 $answers = $questionnaire->answers ?? [];
+$nonApplicable = $client->isHomme($answers) ? QuestionnaireData::$femmes_uniquement : [];
 
 /* ── Tips Julia Ross (jr1→jr8) ───────────────────────────────── */
 $jrTips = [
@@ -780,6 +781,15 @@ $diathTips = [
                                 $pct       = $max > 0 ? min(100, round(($jr['total'] / $max) * 100)) : 0;
                                 $seuil_pct = $max > 0 ? min(100, round(($jr['seuil'] / $max) * 100)) : 0;
                             @endphp
+                            @if(in_array($classe['id'], $nonApplicable, true))
+                            <tr class="text-muted-pa">
+                                <td class="ps-4 py-3">{{ $classe['titre'] }}</td>
+                                <td class="text-center py-3">—</td>
+                                <td class="text-center py-3">—</td>
+                                <td class="text-center py-3" colspan="2"><span class="fst-italic">Non applicable (homme)</span></td>
+                            </tr>
+                            @continue
+                            @endif
                             <tr class="{{ $jr['depasse'] ? 'row-alerte' : '' }}">
                                 <td class="ps-4 py-3">{{ $classe['titre'] }}</td>
                                 <td class="text-center fw-bold py-3 fs-13 {{ $jr['depasse'] ? 'text-alerte' : '' }}">
@@ -833,6 +843,7 @@ $diathTips = [
                 @php
                     $jrDepasses = collect(QuestionnaireData::$julia_ross)
                         ->filter(fn($c) => (($scores['julia_ross'] ?? [])[$c['id']]['depasse'] ?? false))
+                        ->reject(fn($c) => in_array($c['id'], $nonApplicable, true))
                         ->values();
                 @endphp
                 @if($jrDepasses->isNotEmpty())
@@ -1317,6 +1328,15 @@ $diathTips = [
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
                     @foreach(QuestionnaireData::$hormones as $cat)
+                    @if(in_array($cat['id'], $nonApplicable, true))
+                    <li class="list-group-item py-3 px-4 text-muted-pa">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="flex-grow-1 hormones-cat-name">{{ $cat['titre'] }}</span>
+                            <span class="fst-italic">Non applicable (homme)</span>
+                        </div>
+                    </li>
+                    @continue
+                    @endif
                     @php
                         $hor   = ($scores['hormones'] ?? [])[$cat['id']] ?? ['total' => 0, 'max' => 0];
                         $pct   = $hor['max'] > 0 ? round(($hor['total'] / $hor['max']) * 100) : 0;
@@ -1492,13 +1512,13 @@ $diathTips = [
     </div>
 
     {{-- ════════════════════════════════════════════════════
-         MENU 5 JOURS
+         MENU 3 JOURNÉES
     ════════════════════════════════════════════════════ --}}
     <div class="col-12">
         <div class="card">
             <div class="section-header">
                 <i class="bi bi-journal-richtext"></i>
-                <span>Menu 5 jours</span>
+                <span>Menu 3 journées</span>
             </div>
             <div class="card-body p-4">
 
@@ -1542,8 +1562,8 @@ $diathTips = [
                 @elseif(!($clientView ?? false))
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Quels sont vos 10 aliments préférés ?</label>
-                        <textarea rows="6" class="form-control" readonly
-                                  style="background:var(--color-bg-input);resize:none;">{{ $questionnaire->aliments_text ?? '' }}</textarea>
+                        {{-- Bloc qui s'agrandit avec le contenu (un textarea à hauteur fixe masquait les dernières lignes, surtout à l'impression) --}}
+                        <div class="form-control" style="background:var(--color-bg-input);white-space:pre-wrap;height:auto;min-height:6em;">{{ $questionnaire->aliments_text ?? '' }}</div>
                     </div>
                 @endif
 

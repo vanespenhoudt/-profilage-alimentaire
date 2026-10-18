@@ -95,4 +95,16 @@ class Client extends Model
     {
         return $this->prenom . ' ' . $this->nom;
     }
+
+    /**
+     * Sexe masculin d'après la fiche (champ texte libre) ou, à défaut, la réponse
+     * « identite_sexe » du questionnaire. Inconnu ou ambigu → false.
+     */
+    public function isHomme(array $answers = []): bool
+    {
+        $sexe = $this->sexe ?: ($answers['identite_sexe'] ?? '');
+        $sexe = mb_strtolower(trim(rtrim((string) $sexe, '.')));
+
+        return in_array($sexe, ['m', 'h', 'homme', 'masculin', 'male', 'mâle', 'man', 'garçon', 'garcon'], true);
+    }
 }

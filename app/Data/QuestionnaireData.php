@@ -467,6 +467,9 @@ class QuestionnaireData
         ]],
     ];
 
+    /** Blocs réservés aux femmes : affichés « Non applicable » dans le bilan d'un homme. */
+    public static array $femmes_uniquement = ['jr6', 'h1'];
+
     public static array $canaris_adulte = [
         ['id' => 'ca1',  'texte' => 'Épuisement chronique depuis toujours',                     'poids' => 2],
         ['id' => 'ca2',  'texte' => 'Hypersensibilité aux parfums, solvants, fumée',            'poids' => 2],
