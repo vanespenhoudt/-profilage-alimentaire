@@ -102,11 +102,30 @@ class BilanAffichageTest extends TestCase
     {
         $this->bilan([], ['answers' => $this->diathese('d2')])
             ->assertSee('Roseau — terrain à ménager (énergie à construire, récupération lente, besoin de repos)')
-            ->assertSee('Terrain fragilisé')
+            ->assertSee('Terrain à ménager')
+            ->assertDontSee('Terrain fragilisé')
             ->assertSee('Entrée en cure progressive, sur quelques semaines ; pas de cure excessive (ex. tout cru).')
             ->assertSee('Attention à ne pas surprotéiner le quotidien.')
             ->assertSee('Exercice doux (stretching, yoga, taichi) ; repos prioritaire.')
             ->assertSee('Besoin d\'un suivi encadré, avec des rendez-vous réguliers.')
             ->assertDontSee('terrain déficitaire');
+    }
+
+    public function test_diathese_egalite_resultat_non_tranche_sans_guide(): void
+    {
+        // Enfance : 3 D1 / 1 D2 — Adulte : 1 D1 / 3 D2 → 4 / 4
+        $answers = ['d1a' => 'd1', 'd1b' => 'd1', 'd1c' => 'd1', 'd1d' => 'd2',
+                    'd2a' => 'd1', 'd2b' => 'd2', 'd2c' => 'd2', 'd2d' => 'd2', 'groupe_sanguin' => 'A'];
+
+        $this->bilan([], ['answers' => $answers])
+            ->assertSee('Résultat non tranché')
+            ->assertSee('Questionnaire non concluant : selon Taty, dans les cas trop flous on n\'utilise pas cette part du profilage.', false)
+            ->assertSee('Confirmer par l\'iris ou en entretien (comportement dans l\'enfance), sinon s\'appuyer sur les autres outils.', false)
+            ->assertSee('Enfance : D1 3 · D2 1')
+            ->assertSee('Adulte : D1 1 · D2 3')
+            ->assertDontSee('Terrain robuste')
+            ->assertDontSee('Terrain à ménager')
+            ->assertDontSee('équilibré D1/D2')
+            ->assertSee('notes[diathese]', false);
     }
 }
