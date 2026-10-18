@@ -31,6 +31,12 @@ class DuskTestSeeder extends Seeder
 {
     public function run(): void
     {
+        // Données de test (mots de passe connus) : jamais en production
+        if (app()->isProduction()) {
+            $this->command?->error('Seeder de test refusé en production.');
+            return;
+        }
+
         // ── Super Admin ──────────────────────────────────────────────────────
         $admin = User::create([
             'name'     => 'Admin Dusk',

@@ -4,7 +4,8 @@
 
 @if($readonly)
     {{-- Lecture seule : affichage HTML brut --}}
-    <div class="tiptap-readonly">{!! $value ?: '<p class="text-muted-pa fst-italic">Aucun menu enregistré.</p>' !!}</div>
+    @php $safe = \App\Support\MenuText::toSafeHtml($value); @endphp
+    <div class="tiptap-readonly">{!! $safe ?: '<p class="text-muted-pa fst-italic">Aucun menu enregistré.</p>' !!}</div>
 @else
 <style>
 #{{ $uid }} .tiptap-content {
@@ -35,7 +36,7 @@
     <div class="tiptap-content"
          contenteditable="true"
          data-tiptap-content
-         data-placeholder="Ex : Lundi – Petit-déjeuner : flocons d'avoine, fruits rouges…">{!! $value !!}</div>
+         data-placeholder="Ex : Lundi – Petit-déjeuner : flocons d'avoine, fruits rouges…">{!! \App\Support\MenuText::toSafeHtml($value) !!}</div>
     <textarea name="{{ $name }}" class="d-none">{{ $value }}</textarea>
 </div>
 

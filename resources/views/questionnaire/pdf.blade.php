@@ -224,14 +224,7 @@ $has     = fn (string $section) => in_array($section, $completed, true);
 {{-- ══ Repas & aliments préférés ══ --}}
 @if($questionnaire->menu_text || $questionnaire->menu_file_name || $questionnaire->aliments_text)
 @php
-    $menu = $questionnaire->menu_text;
-    if ($menu && $menu !== strip_tags($menu)) {
-        // Texte riche (éditeur conseiller) : balises de mise en forme uniquement, sans attributs
-        $menu = strip_tags($menu, '<p><br><ul><ol><li><strong><b><em><i><u><h1><h2><h3><h4>');
-        $menu = preg_replace('/<(\w+)\s[^>]*>/', '<$1>', $menu);
-    } elseif ($menu) {
-        $menu = nl2br(e($menu));
-    }
+    $menu = \App\Support\MenuText::toSafeHtml($questionnaire->menu_text);
 @endphp
 <h2>Repas &amp; aliments préférés</h2>
 

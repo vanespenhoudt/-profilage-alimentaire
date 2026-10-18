@@ -16,6 +16,12 @@ class TestQuestionnaireSeeder extends Seeder
 {
     public function run(): void
     {
+        // Données de test (mots de passe connus) : jamais en production
+        if (app()->isProduction()) {
+            $this->command?->error('Seeder de test refusé en production.');
+            return;
+        }
+
         $client = Client::all()->first(fn($c) => $c->prenom === 'Sophie')
             ?? Client::first();
 

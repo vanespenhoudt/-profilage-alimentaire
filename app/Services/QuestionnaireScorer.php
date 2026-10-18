@@ -6,6 +6,13 @@ use App\Data\QuestionnaireData;
 
 class QuestionnaireScorer
 {
+    /**
+     * Typage métabolique : écart minimum entre Cueilleur (A) et Chasseur (B)
+     * pour retenir le plus élevé des deux. En dessous → Mixte.
+     * La colonne Mixte (M) n'intervient pas dans la détermination du profil.
+     */
+    public const METABOLIC_GAP_THRESHOLD = 5;
+
     public function calculate(array $answers): array
     {
         $scores = [
@@ -25,19 +32,23 @@ class QuestionnaireScorer
 
     public function interpretMetabolic(array $scores): string
     {
-        $chasseur  = $scores['chasseur']  ?? 0;
-        $cueilleur = $scores['cueilleur'] ?? 0;
-        $mixte     = $scores['mixte']     ?? 0;
+        return self::metabolicProfile(
+            (int) ($scores['cueilleur'] ?? $scores['a'] ?? 0),
+            (int) ($scores['chasseur']  ?? $scores['b'] ?? 0),
+        );
+    }
 
-        if ($chasseur >= $cueilleur + 5 && $chasseur >= $mixte + 5) {
-            return 'Chasseur';
+    /**
+     * Profil métabolique à partir des seuls scores Cueilleur (A) et Chasseur (B) :
+     * le plus élevé des deux si |A − B| ≥ METABOLIC_GAP_THRESHOLD, sinon Mixte.
+     */
+    public static function metabolicProfile(int $cueilleur, int $chasseur): string
+    {
+        if (abs($cueilleur - $chasseur) < self::METABOLIC_GAP_THRESHOLD) {
+            return 'Mixte';
         }
 
-        if ($cueilleur >= $chasseur + 5 && $cueilleur >= $mixte + 5) {
-            return 'Cueilleur';
-        }
-
-        return 'Mixte';
+        return $cueilleur > $chasseur ? 'Cueilleur' : 'Chasseur';
     }
 
     public function interpretAyurveda(array $scores): string
@@ -174,10 +185,10 @@ class QuestionnaireScorer
             }
         }
 
-        $met_type = match(true) {
-            $met_a >= $met_b + 5 && $met_a >= $met_m + 5 => 'Cueilleur A',
-            $met_b >= $met_a + 5 && $met_b >= $met_m + 5 => 'Chasseur B',
-            default                                        => 'Mixte',
+        $met_type = match (self::metabolicProfile($met_a, $met_b)) {
+            'Cueilleur' => 'Cueilleur A',
+            'Chasseur'  => 'Chasseur B',
+            default     => 'Mixte',
         };
 
         return [
