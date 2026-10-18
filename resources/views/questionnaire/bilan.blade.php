@@ -218,7 +218,7 @@ $diathTips = [
         ]],
     ],
     2 => [
-        ['section' => 'Terrain fragilisé', 'items' => [
+        ['section' => 'Terrain à ménager', 'items' => [
             'Fatigue plus présente.',
             'Récupération plus lente.',
             'Sensibilité accrue au stress.',
@@ -1037,7 +1037,7 @@ $diathTips = [
                 @endphp
                 <div class="mt-4">
                     <div class="d-flex justify-content-between mb-1 diag-label-row">
-                        <span class="fw-semibold {{ $totalD1 >= $totalD2 ? 'text-green-dark' : 'text-muted-pa' }}">D1 ({{ $diagPct }}%)</span>
+                        <span class="fw-semibold {{ $totalD1 > $totalD2 ? 'text-green-dark' : 'text-muted-pa' }}">D1 ({{ $diagPct }}%)</span>
                         <span class="fw-semibold {{ $totalD2 > $totalD1 ? 'text-green-dark' : 'text-muted-pa' }}">D2 ({{ 100 - $diagPct }}%)</span>
                     </div>
                     <div class="progress progress-10">
@@ -1051,7 +1051,7 @@ $diathTips = [
                     @elseif($totalD2 > $totalD1)
                         Tendance <strong class="text-muted-pa">D2</strong> — Roseau — terrain à ménager (énergie à construire, récupération lente, besoin de repos).
                     @else
-                        Profil <strong class="text-navy">équilibré D1/D2</strong>.
+                        <strong class="text-navy">Résultat non tranché</strong>
                     @endif
                 </div>
 
@@ -1059,12 +1059,25 @@ $diathTips = [
                 @php
                     $col1Total = $di['c1_d1'] + $di['c1_d2'];
                     $col2Total = $di['c2_d1'] + $di['c2_d2'];
-                    $d1Dom    = $totalD1 >= $totalD2;
-                    $diathNum = $d1Dom ? 1 : 2;
+                    // Égalité D1 = D2 : aucun guide, le résultat n'est pas exploitable
+                    $diathNum = $totalD1 > $totalD2 ? 1 : ($totalD2 > $totalD1 ? 2 : null);
                 @endphp
                 <div class="tip-box tip-box--diathese">
+                    @if($diathNum === null)
                     <div class="tip-title">
-                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $diathNum === 1 ? 'Terrain robuste' : 'Terrain fragilisé' }}
+                        <i class="bi bi-question-circle-fill"></i>Résultat non tranché
+                    </div>
+                    <p class="mb-2 fs-13">
+                        Questionnaire non concluant : selon Taty, dans les cas trop flous on n'utilise pas cette part du profilage.
+                        Confirmer par l'iris ou en entretien (comportement dans l'enfance), sinon s'appuyer sur les autres outils.
+                    </p>
+                    <ul class="tip-list">
+                        <li>Enfance : D1 {{ $di['c1_d1'] }} · D2 {{ $di['c1_d2'] }}</li>
+                        <li>Adulte : D1 {{ $di['c2_d1'] }} · D2 {{ $di['c2_d2'] }}</li>
+                    </ul>
+                    @else
+                    <div class="tip-title">
+                        <i class="bi bi-lightbulb-fill"></i>Guide d'interprétation — {{ $diathNum === 1 ? 'Terrain robuste' : 'Terrain à ménager' }}
                     </div>
                     @foreach($diathTips[$diathNum] as $bloc)
                     <div class="tip-section-title">{{ $bloc['section'] }}</div>
@@ -1074,6 +1087,7 @@ $diathTips = [
                         @endforeach
                     </ul>
                     @endforeach
+                    @endif
                     <p class="text-muted-pa fst-italic mb-0" style="font-size:11px;margin-top:8px;">
                         Source : Taty Lauwers, livret diathèse — Choisir les aliments qu'il me faut
                     </p>
