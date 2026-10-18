@@ -370,7 +370,7 @@ $totalCanaris    = count(QuestionnaireData::$canaris_adulte)
                     @endforeach
 
                     <div class="alert-section-info mt-3">
-                        Résultats : Si votre résultat à l'une ou l'autre classe est supérieur de minimum 5 points aux autres classes, vous êtes de ce type-là.
+                        Résultats : comparez uniquement vos totaux Cueilleur et Chasseur. Si l'écart entre les deux est d'au moins 5 points, vous êtes du type le plus élevé ; sinon, vous êtes Mixte.
                     </div>
 
                 </div>
