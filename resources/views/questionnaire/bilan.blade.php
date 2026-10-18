@@ -213,7 +213,8 @@ $diathTips = [
             'Maintenir un mode de vie équilibré.',
         ]],
         ['section' => 'Priorité', 'items' => [
-            'Passer directement à l\'interprétation des autres profils.',
+            'Cures courtes : 15 jours maximum ; pour un programme long, alterner une quinzaine de cure et une quinzaine ordinaire.',
+            'Exercice dense en complément (jogging, tennis, arts martiaux).',
         ]],
     ],
     2 => [
@@ -228,6 +229,10 @@ $diathTips = [
             'Privilégier le repos.',
             'Augmenter les aliments ressourçants.',
             'Stabiliser les repas.',
+            'Entrée en cure progressive, sur quelques semaines ; pas de cure excessive (ex. tout cru).',
+            'Attention à ne pas surprotéiner le quotidien.',
+            'Exercice doux (stretching, yoga, taichi) ; repos prioritaire.',
+            'Besoin d\'un suivi encadré, avec des rendez-vous réguliers.',
         ]],
         ['section' => 'Priorité', 'items' => [
             'Ressourcer avant de corriger.',
@@ -1042,9 +1047,9 @@ $diathTips = [
                 </div>
                 <div class="mt-3 diag-tend">
                     @if($totalD1 > $totalD2)
-                        Tendance <strong class="text-green-dark">D1</strong> — profil réactif, terrain allergique.
+                        Tendance <strong class="text-green-dark">D1</strong> — Chêne — terrain robuste (énergie naturelle, récupération rapide).
                     @elseif($totalD2 > $totalD1)
-                        Tendance <strong class="text-muted-pa">D2</strong> — profil lent, terrain déficitaire.
+                        Tendance <strong class="text-muted-pa">D2</strong> — Roseau — terrain à ménager (énergie à construire, récupération lente, besoin de repos).
                     @else
                         Profil <strong class="text-navy">équilibré D1/D2</strong>.
                     @endif
@@ -1069,6 +1074,9 @@ $diathTips = [
                         @endforeach
                     </ul>
                     @endforeach
+                    <p class="text-muted-pa fst-italic mb-0" style="font-size:11px;margin-top:8px;">
+                        Source : Taty Lauwers, livret diathèse — Choisir les aliments qu'il me faut
+                    </p>
                     @unless($clientView ?? false)
                     <hr class="tip-separator">
                     <div class="tip-notes-label">Notes du conseiller</div>

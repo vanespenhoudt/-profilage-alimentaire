@@ -24,12 +24,12 @@ class BilanAffichageTest extends TestCase
     private function bilan(array $client = [], array $questionnaire = [])
     {
         $c = Client::factory()->create(['conseiller_id' => $this->conseiller->id] + $client);
-        Questionnaire::create([
+        Questionnaire::create($questionnaire + [
             'client_id' => $c->id,
             'is_active' => true,
             // Classe 6 entièrement cochée (dépassée) + une réponse progestérone
             'answers'   => ['groupe_sanguin' => 'A', 'h1_0' => '1'] + array_fill_keys(array_map(fn ($i) => "jr6_{$i}", range(0, 19)), '1'),
-        ] + $questionnaire);
+        ]);
 
         return $this->actingAs($this->conseiller)->get(route('questionnaire.bilan', $c))->assertOk();
     }
@@ -79,5 +79,34 @@ class BilanAffichageTest extends TestCase
             ->assertSee('<p>Jour 1</p>', false)
             ->assertDontSee('<script>alert(2)</script>', false)
             ->assertDontSee('onclick="alert(1)"', false);
+    }
+
+    private function diathese(string $val): array
+    {
+        return array_fill_keys(['d1a', 'd1b', 'd1c', 'd1d', 'd2a', 'd2b', 'd2c'], $val) + ['groupe_sanguin' => 'A'];
+    }
+
+    public function test_diathese_d1_chene_et_guide_terrain_robuste(): void
+    {
+        $this->bilan([], ['answers' => $this->diathese('d1')])
+            ->assertSee('Chêne — terrain robuste (énergie naturelle, récupération rapide)')
+            ->assertSee('Guide d\'interprétation — Terrain robuste', false)
+            ->assertSee('Cures courtes : 15 jours maximum')
+            ->assertSee('Exercice dense en complément (jogging, tennis, arts martiaux).')
+            ->assertDontSee('Passer directement')
+            ->assertDontSee('terrain allergique')
+            ->assertSee('Source : Taty Lauwers, livret diathèse — Choisir les aliments qu\'il me faut', false);
+    }
+
+    public function test_diathese_d2_roseau_et_guide_terrain_fragilise(): void
+    {
+        $this->bilan([], ['answers' => $this->diathese('d2')])
+            ->assertSee('Roseau — terrain à ménager (énergie à construire, récupération lente, besoin de repos)')
+            ->assertSee('Terrain fragilisé')
+            ->assertSee('Entrée en cure progressive, sur quelques semaines ; pas de cure excessive (ex. tout cru).')
+            ->assertSee('Attention à ne pas surprotéiner le quotidien.')
+            ->assertSee('Exercice doux (stretching, yoga, taichi) ; repos prioritaire.')
+            ->assertSee('Besoin d\'un suivi encadré, avec des rendez-vous réguliers.')
+            ->assertDontSee('terrain déficitaire');
     }
 }
